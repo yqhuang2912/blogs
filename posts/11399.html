@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>代码块渲染测试 | 科学空间</title>
+    <link rel="stylesheet" href="../styles.css">
+
+    <script type="application/json" id="post-metadata">
+        {
+            "id": "11399",
+            "slug": "11399",
+            "title": "代码块渲染测试",
+            "createdAt": "2025-11-04",
+            "day": "4",
+            "month": "Nov",
+            "categories": ["数学研究"],
+            "tags": ["代码", "渲染", "测试"],
+            "summary": [
+                {
+                    "type": "p",
+                    "html": "验证首页摘要与正文中的 code block 与复制按钮、语法高亮在最新样式下的表现。"
+                },
+                {
+                    "type": "p",
+                    "html": "示例代码：<code class=\"language-python\">print(\"hello\")</code>。"
+                }
+            ]
+        }
+    </script>
+
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+</head>
+
+<body>
+    <div data-include="../partials/navbar.html"></div>
+
+    <div class="wrapper single-wrapper">
+        <main class="main-content single-main">
+            <nav class="breadcrumb">
+                <a href="../index.html">首页</a>
+                <span class="crumb-sep">›</span>
+                <a href="#">数学研究</a>
+                <span class="crumb-sep">›</span>
+                <span>代码块渲染测试</span>
+            </nav>
+
+            <article class="single-post">
+                <header class="single-post-header">
+                    <div data-component="post-card" data-day="4" data-month="Nov" data-title="代码块渲染测试"
+                        data-meta="发布于 2025-11-04" data-heading="h1" data-wrapper-class="post-content-wrapper"
+                        data-meta-class="post-meta" data-title-class="post-title"></div>
+                </header>
+
+                <div class="single-post-content">
+                    <p>本文用于确认首页摘要与正文的代码块在复制按钮、语法高亮、背景、边距等方面与参考博客保持一致。</p>
+                    <!-- more -->
+
+                    <section class="post-section" id="python-demo">
+                        <h2>Python 示例 <span class="section-anchor">#</span></h2>
+                        <p>以下示例展示了一个包含注释、多行语句与 f-string 的 Python 代码块：</p>
+                        <pre><code class="language-python">from pathlib import Path
+
+# 加载数据并统计行数
+def count_lines(paths: list[Path]) -> dict[str, int]:
+    summary = {}
+    for path in paths:
+        text = path.read_text(encoding="utf-8")
+        summary[path.name] = len(text.splitlines())
+    return summary
+
+if __name__ == "__main__":
+    stats = count_lines([Path("notes.md"), Path("todo.md")])
+    for name, lines in stats.items():
+        print(f"{name}: {lines} 行")
+</code></pre>
+                    </section>
+
+                    <section class="post-section" id="math-and-code">
+                        <h2>数学公式与代码 <span class="section-anchor">#</span></h2>
+                        <p>我们还测试了公式与代码的组合显示，行内公式 $E = mc^2$ 与块级公式如下：</p>
+                        <p>$$
+                            \nabla_\theta \mathcal{L}(\theta) = \frac{1}{m} \sum_{i=1}^m \nabla_\theta
+                            \ell(h_\theta(x^{(i)}), y^{(i)})
+                            $$</p>
+                        <p>配合一段 JavaScript 代码：</p>
+                        <pre><code class="language-javascript">export function formatMeta(date) {
+    if (!date) {
+        return "";
+    }
+    return `发布于 ${date}`;
+}
+</code></pre>
+                    </section>
+
+                    <section class="post-section" id="plaintext">
+                        <h2>未指定语言的代码块 <span class="section-anchor">#</span></h2>
+                        <p>为了测试默认 fallback，下方代码块没有提供语言类名：</p>
+                        <pre><code>#include <stdio.h>
+
+int main(void) {
+    puts("hello fallback");
+    return 0;
+}
+</code></pre>
+                    </section>
+                </div>
+
+                <footer class="single-post-footer">
+                    <div class="post-meta-info">
+                        分类：<a href="#">数学研究</a>
+                        <span class="meta-divider">|</span>
+                        标签：<a href="#">代码</a>，<a href="#">渲染</a>，<a href="#">测试</a>
+                        <span class="meta-divider">|</span>
+                        发布于：2025-11-04
+                        <span class="meta-divider">|</span>
+                        <a href="#" class="comment-count">0 条评论</a>
+                    </div>
+                </footer>
+            </article>
+        </main>
+
+        <div data-include="../partials/sidebar-post.html"></div>
+    </div>
+
+    <div data-include="../partials/footer.html"></div>
+
+    <script src="../script.js"></script>
+</body>
+
+</html>

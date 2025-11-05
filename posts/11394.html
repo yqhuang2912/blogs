@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>对偶梯度下降的学习率策略 | 科学空间</title>
+    <link rel="stylesheet" href="../styles.css">
+
+    <script type="application/json" id="post-metadata">
+        {
+            "id": "11394",
+            "slug": "11394",
+            "title": "对偶梯度下降的学习率策略",
+            "createdAt": "2025-09-15",
+            "day": "15",
+            "month": "Sep",
+            "categories": ["机器学习"],
+            "tags": ["对偶梯度", "学习率"],
+            "summary": [
+                { "type": "p", "html": "总结对偶梯度下降在不同约束问题中的学习率自适应策略。" },
+                { "type": "p", "html": "提出简洁的更新规则 $\\\\eta_t = \\\\frac{\\\\eta_0}{1 + \\rho t}$ 以抑制震荡。" }
+            ]
+        }
+    </script>
+
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+</head>
+
+<body>
+    <div data-include="../partials/navbar.html"></div>
+
+    <div class="wrapper single-wrapper">
+        <main class="main-content single-main">
+            <nav class="breadcrumb">
+                <a href="../index.html">首页</a>
+                <span class="crumb-sep">›</span>
+                <a href="#">机器学习</a>
+                <span class="crumb-sep">›</span>
+                <span>对偶梯度下降的学习率策略</span>
+            </nav>
+
+            <article class="single-post">
+                <header class="single-post-header">
+                    <div data-component="post-card" data-day="15" data-month="Sep" data-title="对偶梯度下降的学习率策略"
+                        data-meta="发布于 2025-09-15" data-heading="h1" data-wrapper-class="post-content-wrapper"
+                        data-meta-class="post-meta" data-title-class="post-title"></div>
+                </header>
+
+                <div class="single-post-content">
+                    <p>对偶梯度下降的更新式为</p>
+                    <!-- more -->
+                    <p>$$\lambda_{t+1} = \lambda_t - \eta_t \\cdot d_t,$$</p>
+                    <p>其中 $d_t$ 是对偶残差。为了避免震荡，我们提出让学习率随时间衰减：$\\eta_t = \\frac{\\eta_0}{1 + \\rho
+                        t}$。这一策略在保持初期快速下降的同时，确保了后期的稳定收敛。</p>
+                </div>
+
+                <footer class="single-post-footer">
+                    <div class="post-meta-info">
+                        分类：<a href="#">机器学习</a>
+                        <span class="meta-divider">|</span>
+                        标签：<a href="#">对偶梯度</a>，<a href="#">学习率</a>
+                        <span class="meta-divider">|</span>
+                        发布于：2025-09-15
+                    </div>
+                </footer>
+            </article>
+        </main>
+
+        <div data-include="../partials/sidebar-post.html"></div>
+    </div>
+
+    <div data-include="../partials/footer.html"></div>
+
+    <script src="../script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stiefel 流形的投影梯度法 | 科学空间</title>
+    <link rel="stylesheet" href="../styles.css">
+
+    <script type="application/json" id="post-metadata">
+        {
+            "id": "11396",
+            "slug": "11396",
+            "title": "Stiefel 流形的投影梯度法",
+            "createdAt": "2025-10-28",
+            "day": "28",
+            "month": "Oct",
+            "categories": ["数学研究"],
+            "tags": ["Stiefel", "梯度法"],
+            "summary": [
+                { "type": "p", "html": "给出在 Stiefel 流形 $\\\\mathrm{St}(n, k)$ 上执行投影梯度法的完整推导。" },
+                { "type": "p", "html": "关键投影：$\\\\Pi_{\\\\mathrm{St}}(Y) = (Y(3I - Y^{\\\\top}Y))/2$。" }
+            ]
+        }
+    </script>
+
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+</head>
+
+<body>
+    <div data-include="../partials/navbar.html"></div>
+
+    <div class="wrapper single-wrapper">
+        <main class="main-content single-main">
+            <nav class="breadcrumb">
+                <a href="../index.html">首页</a>
+                <span class="crumb-sep">›</span>
+                <a href="#">数学研究</a>
+                <span class="crumb-sep">›</span>
+                <span>Stiefel 流形的投影梯度法</span>
+            </nav>
+
+            <article class="single-post">
+                <header class="single-post-header">
+                    <div data-component="post-card" data-day="28" data-month="Oct" data-title="Stiefel 流形的投影梯度法"
+                        data-meta="发布于 2025-10-28" data-heading="h1" data-wrapper-class="post-content-wrapper"
+                        data-meta-class="post-meta" data-title-class="post-title"></div>
+                </header>
+
+                <div class="single-post-content">
+                    <p>Stiefel 流形 $\\mathrm{St}(n, k)$ 定义为所有 $n \times k$ 正交矩阵的集合，满足 $X^{\\top}X =
+                        I_k$。对任意基于梯度的更新，我们需要将结果重新投影回流形。本文推导了基于 Cayley 变换的二阶近似投影：</p>
+                    <!-- more -->
+                    <p>$$\\Pi_{\\mathrm{St}}(Y) = Y(3I - Y^{\\top}Y)/2.$$</p>
+                    <p>这一公式在小步长假设下与极分解投影近似等价，但计算成本更低。</p>
+                </div>
+
+                <footer class="single-post-footer">
+                    <div class="post-meta-info">
+                        分类：<a href="#">数学研究</a>
+                        <span class="meta-divider">|</span>
+                        标签：<a href="#">Stiefel</a>，<a href="#">梯度法</a>
+                        <span class="meta-divider">|</span>
+                        发布于：2025-10-28
+                    </div>
+                </footer>
+            </article>
+        </main>
+
+        <div data-include="../partials/sidebar-post.html"></div>
+    </div>
+
+    <div data-include="../partials/footer.html"></div>
+
+    <script src="../script.js"></script>
+</body>
+
+</html>

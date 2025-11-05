@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>低精度 Attention 可能存在有偏的舍入误差 | 科学空间</title>
+    <link rel="stylesheet" href="../styles.css">
+
+    <script type="application/json" id="post-metadata">
+        {
+            "id": "11385",
+            "slug": "11385",
+            "title": "低精度 Attention 可能存在有偏的舍入误差",
+            "createdAt": "2025-10-27",
+            "day": "27",
+            "month": "Oct",
+            "categories": ["信息时代"],
+            "tags": ["近似", "分析", "优化", "Attention", "低精度"],
+            "summary": [
+                { "type": "p", "html": "前段时间笔者在 arXiv 上刷到了论文《Why Low-Precision Transformer Training Fails: An Analysis on Flash Attention》，里面描述的实验现象和我们在训练 Kimi K2 时遇到的情况高度吻合，比如都是第二层 Attention 开始不稳定。" },
+                { "type": "h3", "html": "结论简述" },
+                { "type": "p", "html": "论文认为即便把 block_size 取到训练长度那么大，相同的问题依然存在，说明 Flash Attention 的分块并不是根源，而是低精度计算带来的有偏舍入误差。" }
+            ]
+        }
+    </script>
+
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+</head>
+
+<body>
+    <div data-include="../partials/navbar.html"></div>
+
+    <div class="wrapper single-wrapper">
+        <main class="main-content single-main">
+            <nav class="breadcrumb">
+                <a href="../index.html">首页</a>
+                <span class="crumb-sep">›</span>
+                <a href="#">信息时代</a>
+                <span class="crumb-sep">›</span>
+                <span>低精度 Attention 可能存在有偏的舍入误差</span>
+            </nav>
+
+            <article class="single-post">
+                <header class="single-post-header">
+                    <div data-component="post-card" data-day="27" data-month="Oct"
+                        data-title="低精度 Attention 可能存在有偏的舍入误差" data-meta="发布于 2025-10-27" data-heading="h1"
+                        data-wrapper-class="post-content-wrapper" data-meta-class="post-meta"
+                        data-title-class="post-title"></div>
+                </header>
+
+                <div class="single-post-content">
+                    <p class="intro">低精度训练是把 Transformer 模型推向大规模的关键工程手段，但一旦计算链路中出现系统性的舍入偏差，整个网络就可能以极快的速度漂移。最近的论文把目光聚焦到
+                        Attention 的核心算子上，指出 bias 并非出在分块策略，而是出在精度本身。</p>
+
+                    <section class="post-section" id="background">
+                        <h2>背景动机 <span class="section-anchor">#</span></h2>
+                        <p>在 GPT 类模型中，我们习惯把激活、梯度乃至优化器状态都压到 8 位甚至 4 位。过去人们认为标准化层和 Softmax
+                            的鲁棒性足够兜住误差，但实际部署常常在第二层左右就爆炸。作者通过对比 float16 与 int8+scale 的训练轨迹，展示了清晰的漂移趋势。</p>
+                        <div class="highlight-info">
+                            <strong>小提示：</strong> 关注激活范围和动态缩放表可以帮助快速定位误差源头。
+                        </div>
+                    </section>
+
+                    <!-- more -->
+
+                    <section class="post-section" id="phenomena">
+                        <h2>实验现象 <span class="section-anchor">#</span></h2>
+                        <p>论文使用 Flash Attention 作为代表实现，但把 block_size 调到整个序列长度后，梯度依旧带偏。这说明 block kernel
+                            只是放大了问题，而不是造成问题。真正的 culprit 是 Query-Key 相乘时的舍入噪声，它会以固定方向积累，导致注意力权重远离 Softmax 的原始分布。</p>
+                    </section>
+
+                    <section class="post-section" id="bias-source">
+                        <h2>误差来源 <span class="section-anchor">#</span></h2>
+                        <p>当我们把乘加操作放在低精度上时，舍入并不满足零均值。尤其是在累积阶段，bias 会随 token 长度线性增长，从而在第二层迅速显现。作者给出了一个简化的一维模型，证明 bias
+                            的幅度和 log-sum-exp 的曲率直接相关。</p>
+                        <div class="ordered-steps">
+                            <p><strong>关键推断：</strong></p>
+                            <ol>
+                                <li>低精度乘法的舍入误差可以拆成零均值部分与常量偏置。</li>
+                                <li>Attention 的累积把常量偏置放大为 token 相关项。</li>
+                                <li>Softmax 的指数放大进一步破坏归一性。</li>
+                                <li>最终梯度回传无法抵消该漂移。</li>
+                            </ol>
+                        </div>
+                    </section>
+
+                    <section class="post-section" id="mitigation">
+                        <h2>缓解思路 <span class="section-anchor">#</span></h2>
+                        <p>作者尝试了三种方向：其一是把 QK^T 的累积保持在更高位宽，其二是使用 Stochastic Rounding 打乱偏置方向，其三是对缩放参数实施 per-head
+                            自适应校准。在我们的实验里，第一种策略最稳定，但需要额外带宽；第三种策略兼顾了效率，却需要额外的校准步骤。</p>
+                        <div class="highlight-warning">
+                            <strong>注意：</strong> 当使用 Stochastic Rounding 时，要确保随机数源的周期足够长，否则偏置会重新对齐。
+                        </div>
+                    </section>
+
+                    <section class="post-section" id="summary">
+                        <h2>文章小结 <span class="section-anchor">#</span></h2>
+                        <ul class="summary-list">
+                            <li>Attention 的低精度误差具有方向性，不能视为纯噪声。</li>
+                            <li>分块策略不是根源，真正的问题在于算子的精度上下限。</li>
+                            <li>提高累积精度或引入随机舍入都能显著改善训练稳定性。</li>
+                            <li>缩放参数的动态校准提供了一个兼顾效率的权衡方案。</li>
+                        </ul>
+                        <p>下一步我们计划把这些思路迁移到解码阶段的推理 kernel，看看是否可以得到同样的改善。</p>
+                    </section>
+                </div>
+
+                <footer class="single-post-footer">
+                    <div class="post-meta-info">
+                        分类：<a href="#">信息时代</a>
+                        <span class="meta-divider">|</span>
+                        标签：<a href="#">近似</a>，<a href="#">分析</a>，<a href="#">优化</a>，<a href="#">Attention</a>，<a
+                            href="#">低精度</a>
+                        <span class="meta-divider">|</span>
+                        发布于：2025-10-27
+                        <span class="meta-divider">|</span>
+                        <a href="#" class="comment-count">1 条评论</a>
+                    </div>
+                    <div class="post-nav">
+                        <a href="11388.html" class="prev-post">‹ 上一篇：流形上的最速下降：5. 对偶梯度下降</a>
+                        <a href="#" class="next-post">下一篇：MuP 之上：1. 好模型的三个特征 ›</a>
+                    </div>
+                </footer>
+            </article>
+
+            <section class="related-posts">
+                <h3>你也许还对下面的内容感兴趣</h3>
+                <ul>
+                    <li><a href="11388.html">流形上的最速下降：5. 对偶梯度下降</a></li>
+                    <li><a href="#">随机矩阵的谱范数的快速估计</a></li>
+                    <li><a href="#">AdamW 的 Weight RMS 的渐近估计</a></li>
+                    <li><a href="#">重新思考学习率与 Batch Size（四）：EMA</a></li>
+                    <li><a href="#">重新思考学习率与 Batch Size（三）：Muon</a></li>
+                    <li><a href="#">重新思考学习率与 Batch Size（二）：平均场</a></li>
+                    <li><a href="#">为什么 Adam 的 Update RMS 是 0.2？</a></li>
+                    <li><a href="#">流形上的最速下降：4. Muon + 谱球面</a></li>
+                </ul>
+            </section>
+        </main>
+
+        <div data-include="../partials/sidebar-post.html"></div>
+    </div>
+
+    <div data-include="../partials/footer.html"></div>
+
+    <script src="../script.js"></script>
+</body>
+
+</html>

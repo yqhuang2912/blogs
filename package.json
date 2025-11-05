@@ -1,0 +1,9 @@
+{
+  "name": "scientific-spaces-blog",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Static blog front-end assets",
+  "scripts": {
+    "generate:posts": "node scripts/generate-post-manifest.js"
+  }
+}

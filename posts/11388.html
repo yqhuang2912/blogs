@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>流形上的最速下降：5. 对偶梯度下降 | 科学空间</title>
+    <link rel="stylesheet" href="../styles.css">
+
+    <script type="application/json" id="post-metadata">
+        {
+            "id": "11388",
+            "slug": "11388",
+            "title": "流形上的最速下降：5. 对偶梯度下降",
+            "createdAt": "2025-11-03",
+            "day": "3",
+            "month": "Nov",
+            "categories": ["数学研究"],
+            "tags": ["矩阵", "优化器", "Muon", "约束", "最速下降"],
+            "summary": [
+                { "type": "p", "html": "前四篇文章我们求解了几个具体的、给参数添加等式约束的最速下降问题，其中第三、四篇的问题难以求得解析解，于是我们提出了相应的不动点迭代法。其中第三篇文章《流形上的最速下降：3. Muon + Stiefel》所研究的\"Stiefel流形上的Muon\"，问题提出自 Jeremy Bernstein 的《Orthogonal manifold》一文。" },
+                { "type": "h3", "html": "基本概念" },
+                { "type": "p", "html": "Jeremy Bernstein 的解法，最后发表在 Thinking Machines Lab 的博客《Modular Manifolds》中，是该实验室的第二篇博客，文章中将其称为\"对偶上升（Dual Ascent）\"，但笔者这里还是结合前四篇的内容，将其称为\"对偶梯度下降\"。" },
+                { "type": "p", "html": "数学公式示例：行内公式 $E = mc^2$，块级公式：" },
+                { "type": "p", "html": "$$\\nabla_\\theta \\mathcal{L}(\\theta) = \\frac{1}{m}\\sum_{i=1}^m \\nabla_\\theta \\ell(h_\\theta(x^{(i)}), y^{(i)})$$" }
+            ]
+        }
+    </script>
+
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+</head>
+
+<body>
+    <div data-include="../partials/navbar.html"></div>
+
+    <div class="wrapper single-wrapper">
+        <main class="main-content single-main">
+            <nav class="breadcrumb">
+                <a href="../index.html">首页</a>
+                <span class="crumb-sep">›</span>
+                <a href="#">数学研究</a>
+                <span class="crumb-sep">›</span>
+                <span>流形上的最速下降：5. 对偶梯度下降</span>
+            </nav>
+
+            <article class="single-post">
+                <header class="single-post-header">
+                    <div data-component="post-card" data-day="3" data-month="Nov" data-title="流形上的最速下降：5. 对偶梯度下降"
+                        data-meta="发布于 2025-11-03" data-heading="h1" data-wrapper-class="post-content-wrapper"
+                        data-meta-class="post-meta" data-title-class="post-title"></div>
+                </header>
+
+                <!-- <div class="single-post-toolbar">
+                    <span class="toolbar-label">分享：</span>
+                    <a href="#" class="share-link">微博</a>
+                    <a href="#" class="share-link">微信</a>
+                    <a href="#" class="share-link">Twitter</a>
+                    <a href="#" class="share-link">LinkedIn</a>
+                    <span class="toolbar-divider"></span>
+                    <a href="#" class="btn-green">打赏本文</a>
+                    <a href="#" class="btn-outline">打印</a>
+                </div> -->
+
+                <div class="single-post-content">
+                    <p class="intro">前四篇文章我们求解了几个具体的、给参数添加等式约束的最速下降问题，其中第三、四篇的问题难以求得解析解，于是我们提出了相应的不动点迭代法。本篇文章聚焦于 Jeremy
+                        Bernstein 在《Modular Manifolds》中提出的“对偶梯度下降（Dual Gradient Descent）”解法，尝试把它融入我们此前搭建的理论框架中。</p>
+
+                    <section class="post-section" id="basic-concepts">
+                        <h2>基本概念 <span class="section-anchor">#</span></h2>
+                        <p>Jeremy Bernstein 的解法，发表在 Thinking Machines Lab 的博客《Modular Manifolds》中，文中称其为“对偶上升（Dual
+                            Ascent）”。这里我们沿用“对偶梯度下降”的命名，以保持与前几篇文章的风格一致。设 $\boldsymbol{W} \in \mathbb{R}^{n \times
+                            m}$、$\boldsymbol{G} \in \mathbb{R}^{n \times m}$，我们记谱范数为 $\Vert\boldsymbol{G}\Vert_2$，核范数为
+                            $\Vert\boldsymbol{G}\Vert_*$。</p>
+                        <p>$$\nabla_{\boldsymbol{G}}\Vert\boldsymbol{G}\Vert_* = \sum_i \boldsymbol{u}_i
+                            \boldsymbol{v}_i^{\top} = \boldsymbol{U}\boldsymbol{V}^{\top} =
+                            \operatorname{msign}(\boldsymbol{G})$$</p>
+                        <p>也就是说，核范数的梯度恰好是 $\operatorname{msign}$ 算子。这一点将在后续的对偶推导中扮演核心角色。与此同时，我们也会频繁用到
+                            $\mathrm{tr}(\cdot)$、$\operatorname{sign}(\cdot)$ 等符号，因此建议读者先回顾前文中的符号约定。</p>
+                        <div class="highlight-info">
+                            <strong>小提示：</strong> 如果你想快速回顾前四篇内容，可以从 <a href="#">《流形上的最速下降：1. 基础篇》</a> 开始按顺序阅读。
+                        </div>
+                    </section>
+
+                    <!-- more -->
+
+                    <section class="post-section" id="problem">
+                        <h2>问题描述 <span class="section-anchor">#</span></h2>
+                        <p>我们继续沿用“Muon + Stiefel”与“Muon + 谱球面”的设定。前者要求在 Stiefel 流形上寻找
+                            $\boldsymbol{\Phi}$，后者则加入了谱球面约束。关键在于：最终都需要求解一个额外的等式约束，而传统的不动点迭代法往往难以快速收敛。</p>
+                        <p>例如，在“Muon + 谱球面”中，我们需要解下式：</p>
+                        <p>$$\max_{\boldsymbol{\Phi}} \operatorname{tr}(\boldsymbol{G}^{\top}\boldsymbol{\Phi}) \quad
+                            \text{s.t.}\quad \Vert\boldsymbol{\Phi}\Vert_2 = 1,\quad
+                            \operatorname{tr}(\boldsymbol{\Theta}^{\top}\boldsymbol{\Phi}) = 0$$</p>
+                        <p>其中待定系数 $\lambda$ 的存在使得问题转化为求解一个非线性方程。对偶梯度下降正是将该方程转为优化问题，从而以梯度下降的方式逼近解。</p>
+                        <h3>引入核范数梯度</h3>
+                        <p>回顾前文，我们可以把等式约束 $\operatorname{tr}(\boldsymbol{\Theta}^{\top}\boldsymbol{\Phi}) = 0$
+                            看作是核范数梯度为零的条件。具体来说，设目标函数为：</p>
+                        <p>$$f(\lambda) = \Vert\boldsymbol{G} + \lambda \boldsymbol{\Theta}\Vert_*$$</p>
+                    </section>
+
+                    <section class="post-section" id="dual-goal">
+                        <h2>对偶目标 <span class="section-anchor">#</span></h2>
+                        <p>引入核范数梯度等式后，我们发现约束条件恰好对应着某个核范数的梯度。这意味着可以寻找 $\lambda^*$ 使得：</p>
+                        <p>$$\lambda^* = \arg\min_{\lambda} \Vert\boldsymbol{G} + \lambda \boldsymbol{\Theta}\Vert_*$$
+                        </p>
+                        <p>从而把求解 $\operatorname{tr}(\boldsymbol{\Theta}^{\top}\boldsymbol{\Phi}) = 0$
+                            转换为寻找极值点的问题。由于核范数没有最大值，故我们专注于其最小值。</p>
+                        <div class="ordered-steps">
+                            <p><strong>推导思路：</strong></p>
+                            <ol>
+                                <li>原目标是让 $\operatorname{tr}(\boldsymbol{\Theta}^{\top}\boldsymbol{\Phi}) = 0$。</li>
+                                <li>该量正好是核范数对 $\lambda$ 的梯度。</li>
+                                <li>梯度为零通常对应极值点。</li>
+                                <li>因此求解原方程等价于寻找核范数的极小值。</li>
+                            </ol>
+                        </div>
+                    </section>
+
+                    <section class="post-section" id="gradient-descent">
+                        <h2>梯度下降 <span class="section-anchor">#</span></h2>
+                        <p>确定目标后，算法流程便呼之欲出。以“Muon + 谱球面”为例，梯度下降的更新规则如下：</p>
+                        <p>$$\lambda \leftarrow \lambda - \eta\,
+                            \operatorname{tr}(\boldsymbol{\Theta}^{\top}\boldsymbol{\Phi})
+                            \quad\text{其中}\quad \boldsymbol{\Phi} = \operatorname{msign}(\boldsymbol{G} + \lambda
+                            \boldsymbol{\Theta}).$$
+                        </p>
+                        <p>在实践中，我们可以结合动量、学习率衰减等技巧来提升收敛速度。值得注意的是，虽然对偶梯度下降的每一步迭代比不动点法更简单，但往往需要更多步数来达到相同精度。</p>
+                        <div class="highlight-warning">
+                            <strong>注意：</strong> 对偶梯度下降依赖于对核范数梯度的稳定计算。当矩阵奇异值分布较复杂时，数值实现需要额外的小心。
+                        </div>
+                    </section>
+
+                    <section class="post-section" id="stiefel">
+                        <h2>Stiefel 上 <span class="section-anchor">#</span></h2>
+                        <p>对于“Muon + Stiefel”，待定矩阵 $\boldsymbol{X}$ 需要满足对称性约束。我们令 $\boldsymbol{X} = \boldsymbol{\Lambda}
+                            + \boldsymbol{\Lambda}^{\top}$，则其梯度更新可以写成：</p>
+                        <p>$$\boldsymbol{\Lambda} \leftarrow \boldsymbol{\Lambda} - \eta
+                            (\boldsymbol{W}^{\top}\boldsymbol{\Phi} + \boldsymbol{\Phi}^{\top}\boldsymbol{W})$$</p>
+                        <p>这一更新与前文的不动点迭代形式十分相近，只不过现在我们明确了目标函数，从而可以加入更丰富的优化技巧。</p>
+                    </section>
+
+                    <section class="post-section" id="lagrange">
+                        <h2>拉氏乘数 <span class="section-anchor">#</span></h2>
+                        <p>对偶梯度下降并非偶然现象，而是拉格朗日乘数法在流形设置下的自然延伸。我们可以把原问题等价为：</p>
+                        <p>$$\max_{\Vert\boldsymbol{\Phi}\Vert_2 \leq 1} \min_{\lambda \in \mathbb{R}}
+                            \operatorname{tr}(\boldsymbol{G}^{\top}\boldsymbol{\Phi}) + \lambda
+                            \operatorname{tr}(\boldsymbol{\Theta}^{\top}\boldsymbol{\Phi})$$</p>
+                        <p>利用极小极大定理交换次序后，就得到了核范数的对偶形式。由此可知，对偶梯度下降实质上是在对拉格朗日乘数执行梯度下降。</p>
+                    </section>
+
+                    <section class="post-section" id="summary">
+                        <h2>文章小结 <span class="section-anchor">#</span></h2>
+                        <ul class="summary-list">
+                            <li>通过核范数的梯度，我们把额外约束转化为最小化问题。</li>
+                            <li>对偶梯度下降的每次更新都依赖于 $\operatorname{msign}(\cdot)$，因此实现需要稳定的奇异值分解。</li>
+                            <li>在“Muon + Stiefel”场景下，对称性约束可以通过引入 $\boldsymbol{\Lambda}$ 化简。</li>
+                            <li>理论上，这一方法等价于拉格朗日乘数法的一个特例。</li>
+                        </ul>
+                        <p>如果你还希望进一步探索，可以参考 <a href="#">《流形上的最速下降：4. Muon + 谱球面》</a> 或 <a href="#">《流形上的最速下降：3. Muon +
+                                Stiefel》</a>，那里给出了更详尽的推导细节。</p>
+                    </section>
+                </div>
+
+                <footer class="single-post-footer">
+                    <div class="post-meta-info">
+                        分类：<a href="#">数学研究</a>
+                        <span class="meta-divider">|</span>
+                        标签：<a href="#">矩阵</a>，<a href="#">优化器</a>，<a href="#">Muon</a>，<a href="#">约束</a>，<a
+                            href="#">最速下降</a>
+                        <span class="meta-divider">|</span>
+                        发布于：2025-11-03
+                        <span class="meta-divider">|</span>
+                        <a href="#" class="comment-count">1 条评论</a>
+                    </div>
+                    <div class="post-nav">
+                        <a href="#" class="prev-post">‹ 上一篇：低精度 Attention 可能存在有偏的舍入误差</a>
+                        <a href="#" class="next-post">下一篇：MuP 之上：1. 好模型的三个特征 ›</a>
+                    </div>
+                </footer>
+            </article>
+
+            <section class="related-posts">
+                <h3>你也许还对下面的内容感兴趣</h3>
+                <ul>
+                    <li><a href="#">MuP之上：1. 好模型的三个特征</a></li>
+                    <li><a href="#">随机矩阵的谱范数的快速估计</a></li>
+                    <li><a href="#">AdamW 的 Weight RMS 的渐近估计</a></li>
+                    <li><a href="#">重新思考学习率与 Batch Size（四）：EMA</a></li>
+                    <li><a href="#">重新思考学习率与 Batch Size（三）：Muon</a></li>
+                    <li><a href="#">重新思考学习率与 Batch Size（二）：平均场</a></li>
+                    <li><a href="#">为什么 Adam 的 Update RMS 是 0.2？</a></li>
+                    <li><a href="#">流形上的最速下降：4. Muon + 谱球面</a></li>
+                </ul>
+            </section>
+
+
+        </main>
+
+        <div data-include="../partials/sidebar-post.html"></div>
+    </div>
+
+    <div data-include="../partials/footer.html"></div>
+
+    <script src="../script.js"></script>
+</body>
+
+</html>

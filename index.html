@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>科学空间 | Scientific Spaces</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- MathJax 配置 -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+</head>
+<body>
+    <div data-include="partials/navbar.html"></div>
+
+    <div class="wrapper">
+        <main class="main-content">
+            <section class="post-list" data-post-list>
+                <p class="post-list-placeholder">正在加载文章...</p>
+            </section>
+            <nav class="pagination" data-pagination hidden></nav>
+        </main>
+
+        <div data-include="partials/sidebar-home.html"></div>
+    </div>
+
+    <div data-include="partials/footer.html"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

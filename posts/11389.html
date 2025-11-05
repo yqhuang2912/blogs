@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>流形上的最速下降：6. 拉格朗日重参数化 | 科学空间</title>
+    <link rel="stylesheet" href="../styles.css">
+
+    <script type="application/json" id="post-metadata">
+        {
+            "id": "11389",
+            "slug": "11389",
+            "title": "流形上的最速下降：6. 拉格朗日重参数化",
+            "createdAt": "2025-04-01",
+            "day": "1",
+            "month": "Apr",
+            "categories": ["数学研究"],
+            "tags": ["最速下降", "拉格朗日", "优化"],
+            "summary": [
+                { "type": "p", "html": "本文介绍如何利用拉格朗日重参数化技巧，把带约束的最速下降问题转化为便于求解的无约束形式。" },
+                { "type": "p", "html": "核心思路是通过参数解耦，让梯度更新遵循 $\\\\nabla_{\\\\theta} \\\\mathcal{L}(\\\\theta) = 0$ 的必要条件。" }
+            ]
+        }
+    </script>
+
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+</head>
+
+<body>
+    <div data-include="../partials/navbar.html"></div>
+
+    <div class="wrapper single-wrapper">
+        <main class="main-content single-main">
+            <nav class="breadcrumb">
+                <a href="../index.html">首页</a>
+                <span class="crumb-sep">›</span>
+                <a href="#">数学研究</a>
+                <span class="crumb-sep">›</span>
+                <span>流形上的最速下降：6. 拉格朗日重参数化</span>
+            </nav>
+
+            <article class="single-post">
+                <header class="single-post-header">
+                    <div data-component="post-card" data-day="1" data-month="Apr" data-title="流形上的最速下降：6. 拉格朗日重参数化"
+                        data-meta="发布于 2025-04-01" data-heading="h1" data-wrapper-class="post-content-wrapper"
+                        data-meta-class="post-meta" data-title-class="post-title"></div>
+                </header>
+
+                <div class="single-post-content">
+                    <p>为了把约束优化问题转化为无约束形式，我们通常会引入拉格朗日乘子。然而在流形优化中，更高效的方式是直接重参数化目标变量。设 $\\theta = f(\\phi)$，其中 $f$
+                        满足约束。则原问题</p>
+                    <p>$$\min_{\\theta \\in \mathcal{M}} J(\\theta)$$</p>
+                    <p>转化为</p>
+                    <p>$$\min_{\\phi} J(f(\\phi)).$$</p>
+                    <p>由于 $f$ 保证了 $\\theta$ 始终位于流形 $\\mathcal{M}$ 上，我们可以直接对 $\\phi$ 应用最速下降法。</p>
+                    <p>重参数化的梯度可由链式法则得到：$\\nabla_{\\phi} J(f(\\phi)) = (\\nabla_{\\theta} J)^{\\top} \\cdot
+                        J_f(\\phi)$，其中 $J_f$ 是雅可比矩阵。这种写法不仅避免了显式投影，还能让学习率调节更加稳定。</p>
+
+                    <!-- more -->
+                </div>
+
+                <footer class="single-post-footer">
+                    <div class="post-meta-info">
+                        分类：<a href="#">数学研究</a>
+                        <span class="meta-divider">|</span>
+                        标签：<a href="#">最速下降</a>，<a href="#">拉格朗日</a>，<a href="#">优化</a>
+                        <span class="meta-divider">|</span>
+                        发布于：2025-04-01
+                    </div>
+                </footer>
+            </article>
+        </main>
+
+        <div data-include="../partials/sidebar-post.html"></div>
+    </div>
+
+    <div data-include="../partials/footer.html"></div>
+
+    <script src="../script.js"></script>
+</body>
+
+</html>

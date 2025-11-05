@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>约束优化的对偶间隙分析 | 科学空间</title>
+    <link rel="stylesheet" href="../styles.css">
+
+    <script type="application/json" id="post-metadata">
+        {
+            "id": "11393",
+            "slug": "11393",
+            "title": "约束优化的对偶间隙分析",
+            "createdAt": "2025-08-30",
+            "day": "30",
+            "month": "Aug",
+            "categories": ["数学研究"],
+            "tags": ["对偶间隙", "优化理论"],
+            "summary": [
+                { "type": "p", "html": "通过检测对偶间隙 $g(\\\\lambda) - f(x)$，可以实时监控约束优化的收敛进度。" },
+                { "type": "p", "html": "我们证明了 $g(\\\\lambda) - f(x) \\\\ge 0$，并给出矩阵优化问题下的闭式估计。" }
+            ]
+        }
+    </script>
+
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+</head>
+
+<body>
+    <div data-include="../partials/navbar.html"></div>
+
+    <div class="wrapper single-wrapper">
+        <main class="main-content single-main">
+            <nav class="breadcrumb">
+                <a href="../index.html">首页</a>
+                <span class="crumb-sep">›</span>
+                <a href="#">数学研究</a>
+                <span class="crumb-sep">›</span>
+                <span>约束优化的对偶间隙分析</span>
+            </nav>
+
+            <article class="single-post">
+                <header class="single-post-header">
+                    <div data-component="post-card" data-day="30" data-month="Aug" data-title="约束优化的对偶间隙分析"
+                        data-meta="发布于 2025-08-30" data-heading="h1" data-wrapper-class="post-content-wrapper"
+                        data-meta-class="post-meta" data-title-class="post-title"></div>
+                </header>
+
+                <div class="single-post-content">
+                    <p>对偶间隙是评价约束优化算法收敛性的关键指标。若原始问题为</p>
+                    <p>$$\min_{x \in \mathcal{X}} f(x) \quad \text{s.t.} \quad h_i(x) \le 0,$$</p>
+                    <p>其拉格朗日对偶为</p>
+                    <p>$$\max_{\lambda \ge 0} g(\lambda) = \inf_{x \in \mathcal{X}} L(x, \lambda).$$</p>
+                    <p>本文展示了如何在线估计 $g(\lambda)$，从而提供精确的停止准则。</p>
+
+                    <!-- more -->
+                </div>
+
+                <footer class="single-post-footer">
+                    <div class="post-meta-info">
+                        分类：<a href="#">数学研究</a>
+                        <span class="meta-divider">|</span>
+                        标签：<a href="#">对偶间隙</a>，<a href="#">优化理论</a>
+                        <span class="meta-divider">|</span>
+                        发布于：2025-08-30
+                    </div>
+                </footer>
+            </article>
+        </main>
+
+        <div data-include="../partials/sidebar-post.html"></div>
+    </div>
+
+    <div data-include="../partials/footer.html"></div>
+
+    <script src="../script.js"></script>
+</body>
+
+</html>

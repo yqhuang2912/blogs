@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>约束神经网络的奇异值调控 | 科学空间</title>
+    <link rel="stylesheet" href="../styles.css">
+
+    <script type="application/json" id="post-metadata">
+        {
+            "id": "11395",
+            "slug": "11395",
+            "title": "约束神经网络的奇异值调控",
+            "createdAt": "2025-10-20",
+            "day": "20",
+            "month": "Oct",
+            "categories": ["机器学习"],
+            "tags": ["神经网络", "奇异值", "正则化"],
+            "summary": [
+                { "type": "p", "html": "为了稳定深层网络训练，我们提出对权值矩阵的最大奇异值进行持续调控。" },
+                { "type": "p", "html": "核心公式：$\\\\sigma_1(W_{t+1}) = (1-\\\\gamma) \\\\sigma_1(W_t) + \\\\gamma$。" }
+            ]
+        }
+    </script>
+
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+</head>
+
+<body>
+    <div data-include="../partials/navbar.html"></div>
+
+    <div class="wrapper single-wrapper">
+        <main class="main-content single-main">
+            <nav class="breadcrumb">
+                <a href="../index.html">首页</a>
+                <span class="crumb-sep">›</span>
+                <a href="#">机器学习</a>
+                <span class="crumb-sep">›</span>
+                <span>约束神经网络的奇异值调控</span>
+            </nav>
+
+            <article class="single-post">
+                <header class="single-post-header">
+                    <div data-component="post-card" data-day="20" data-month="Oct" data-title="约束神经网络的奇异值调控"
+                        data-meta="发布于 2025-10-20" data-heading="h1" data-wrapper-class="post-content-wrapper"
+                        data-meta-class="post-meta" data-title-class="post-title"></div>
+                </header>
+
+                <div class="single-post-content">
+                    <p>奇异值调控通过规范化每一层的谱范数，防止梯度爆炸。我们提出了指数移动目标值 $\\gamma$，令最大奇异值逐步靠近设定常数。</p>
+                    <!-- more -->
+                    <p>算法在 Transformer 预训练中表现出色，使得训练曲线更为平滑，并提升了最终 BLEU 指标。</p>
+                </div>
+
+                <footer class="single-post-footer">
+                    <div class="post-meta-info">
+                        分类：<a href="#">机器学习</a>
+                        <span class="meta-divider">|</span>
+                        标签：<a href="#">神经网络</a>，<a href="#">奇异值</a>，<a href="#">正则化</a>
+                        <span class="meta-divider">|</span>
+                        发布于：2025-10-20
+                    </div>
+                </footer>
+            </article>
+        </main>
+
+        <div data-include="../partials/sidebar-post.html"></div>
+    </div>
+
+    <div data-include="../partials/footer.html"></div>
+
+    <script src="../script.js"></script>
+</body>
+
+</html>
