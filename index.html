@@ -26,18 +26,18 @@
     <div class="page-container">
         <div data-include="partials/navbar.html"></div>
 
-        <div class="wrapper">
-            <main class="main-content">
+        <main class="main-content">
+            <div class="wrapper">
                 <section class="post-list" data-post-list>
-                <p class="post-list-placeholder">正在加载文章...</p>
-            </section>
-            <nav class="pagination" data-pagination hidden></nav>
+                    <p class="post-list-placeholder">正在加载文章...</p>
+                </section>
+                <nav class="pagination" data-pagination hidden></nav>
+            </div>
+
+            <div data-include="partials/sidebar-home.html"></div>
         </main>
 
-        <div data-include="partials/sidebar-home.html"></div>
-    </div>
-
-    <div data-include="partials/footer.html"></div>
+        <div data-include="partials/footer.html"></div>
     </div><!-- end page-container -->
 
     <script src="script.js"></script>

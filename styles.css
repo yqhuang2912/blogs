@@ -355,26 +355,26 @@ mjx-container[jax="CHTML"][display="true"] {
 }
 
 /* 容器布局 */
-.wrapper {
-    max-width: calc(var(--layout-max-width) + var(--layout-h-padding) * 2);
-    margin: 6px auto 18px;
-    padding: 0 var(--layout-h-padding);
-    display: flex;
-    gap: 8px;
-    background-color: transparent;
-    align-items: flex-start;
-}
-
-/* 主内容区 */
+/* 主内容区 - 作为白色背景容器 */
 .main-content {
-    flex: 1;
-    min-width: 0;
+    max-width: calc(var(--layout-max-width) + var(--layout-h-padding) * 2);
+    margin: 6px var(--layout-h-padding) 18px;
+    padding: 18px 6px 18px 18px;
     background-color: #fff;
-    padding: 18px 18px;
-    border-radius: 0;
+    border-radius: 6px;
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.16);
     border: 1px solid #d5d9de;
-    border-radius: 6px;
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+}
+
+.wrapper {
+    flex: 1;
+    min-width: 0;
+    background-color: transparent;
+    border-right: 1px dashed #d5d9df;
+    padding-right: 6px;
 }
 
 /* 文章样式 */
@@ -1228,7 +1228,7 @@ mjx-container[jax="CHTML"][display="true"] {
     padding: 10px 11px;
     margin-bottom: 10px;
     border: 1px solid #d5d9de;
-    border-radius: 0;
+    border-radius: 6px;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.12);
 }
 
