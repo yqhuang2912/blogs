@@ -150,6 +150,46 @@ function resolveComponentLink(link, rootPrefix) {
     return `${rootPrefix}${link}`;
 }
 
+function fixPostMetaLinks(rootPrefix) {
+    // Find the post metadata JSON
+    const metadataScript = document.getElementById('post-metadata');
+    if (!metadataScript) {
+        return; // Not a post page
+    }
+
+    let metadata;
+    try {
+        metadata = JSON.parse(metadataScript.textContent);
+    } catch (error) {
+        console.error('Failed to parse post metadata:', error);
+        return;
+    }
+
+    // Find the post-meta div (should be inside post-header after rendering)
+    const postMeta = document.querySelector('.post-header .post-meta, .post-meta');
+    if (!postMeta) {
+        return;
+    }
+
+    // Fix category links
+    const categoryLinks = postMeta.querySelectorAll('.meta-categories a[href="#"]');
+    const categories = Array.isArray(metadata.categories) ? metadata.categories : [];
+    categoryLinks.forEach((link, index) => {
+        if (index < categories.length) {
+            link.href = buildCategoryHref(rootPrefix, categories[index]);
+        }
+    });
+
+    // Fix tag links
+    const tagLinks = postMeta.querySelectorAll('.meta-tags a[href="#"]');
+    const tags = Array.isArray(metadata.tags) ? metadata.tags : [];
+    tagLinks.forEach((link, index) => {
+        if (index < tags.length) {
+            link.href = buildTagHref(rootPrefix, tags[index]);
+        }
+    });
+}
+
 const POSTS_PER_PAGE = 10;
 const SUMMARY_ALLOWED_TAGS = new Set([
     'p',
@@ -189,6 +229,8 @@ async function initIndexPage(rootPrefix) {
 
         await initCategoryNav(rootPrefix, posts, categoryFilter);
         await initTagCloud(rootPrefix, posts, tagFilter);
+        // Index page shows random posts in sidebar
+        await initRandomPosts(rootPrefix, posts);
 
         if (searchQuery) {
             await renderSearchResults(listContainer, paginationContainer, posts, searchQuery, rootPrefix);
@@ -1171,6 +1213,90 @@ async function initTagCloud(rootPrefix, postsArg, activeTag) {
     });
 }
 
+async function initRecentPosts(rootPrefix, postsArg) {
+    const container = document.querySelector('[data-recent-posts]');
+    if (!container) {
+        return;
+    }
+
+    let posts = postsArg;
+    if (!Array.isArray(posts)) {
+        try {
+            posts = await loadAndCachePosts(rootPrefix);
+        } catch (error) {
+            console.error('加载最新文章失败', error);
+            container.innerHTML = '<li><a href="#">加载失败</a></li>';
+            return;
+        }
+    }
+
+    if (!posts || !posts.length) {
+        container.innerHTML = '<li><a href="#">暂无文章</a></li>';
+        return;
+    }
+
+    // Sort by date and get the latest 5 posts
+    const sortedPosts = posts
+        .slice()
+        .sort((a, b) => {
+            const aTime = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+            const bTime = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+            return bTime - aTime;
+        })
+        .slice(0, 5);
+
+    container.innerHTML = '';
+    sortedPosts.forEach((post) => {
+        const li = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = resolveComponentLink(post.link, rootPrefix);
+        link.textContent = post.title || '未命名文章';
+        li.appendChild(link);
+        container.appendChild(li);
+    });
+}
+
+async function initRandomPosts(rootPrefix, postsArg) {
+    const container = document.querySelector('[data-random-posts]');
+    if (!container) {
+        return;
+    }
+
+    let posts = postsArg;
+    if (!Array.isArray(posts)) {
+        try {
+            posts = await loadAndCachePosts(rootPrefix);
+        } catch (error) {
+            console.error('加载随机文章失败', error);
+            container.innerHTML = '<li><a href="#">加载失败</a></li>';
+            return;
+        }
+    }
+
+    if (!posts || !posts.length) {
+        container.innerHTML = '<li><a href="#">暂无文章</a></li>';
+        return;
+    }
+
+    // Shuffle posts and get 5 random ones
+    const shuffled = posts.slice();
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    const randomPosts = shuffled.slice(0, 5);
+
+    container.innerHTML = '';
+    randomPosts.forEach((post) => {
+        const li = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = resolveComponentLink(post.link, rootPrefix);
+        link.textContent = post.title || '未命名文章';
+        li.appendChild(link);
+        container.appendChild(li);
+    });
+}
+
 function initSidebarSearch(rootPrefix) {
     const sections = Array.from(document.querySelectorAll('[data-search-section]'));
     if (!sections.length) {
@@ -1573,10 +1699,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     const initialTag = getTagFilter();
     await injectPartials(rootPrefix);
     await renderComponents(rootPrefix);
+    fixPostMetaLinks(rootPrefix);
+    
+    // Initialize category nav and tag cloud (will be called again in initIndexPage if on index page)
     await initCategoryNav(rootPrefix, undefined, initialCategory);
     await initTagCloud(rootPrefix, undefined, initialTag);
+    
     initSidebarSearch(rootPrefix);
-    await initIndexPage(rootPrefix);
+    await initIndexPage(rootPrefix); // This handles random posts for index page
+    
+    // For non-index pages (like single post pages), initialize sidebar posts here
+    const listContainer = document.querySelector('[data-post-list]');
+    if (!listContainer) {
+        // Not on index page, so show recent posts in sidebar
+        await initRecentPosts(rootPrefix);
+    }
+    
     const postList = document.querySelector('[data-post-list]');
     await typesetMath(postList || document.body);
     enhanceCodeBlocks(document.body);
