@@ -52,40 +52,21 @@
                         data-meta-class="post-meta" data-title-class="post-title"></div>
 
                 <div class="post-content single-post-content">
-                    <p>为了把约束优化问题转化为无约束形式，我们通常会引入拉格朗日乘子。然而在流形优化中，更高效的方式是直接重参数化目标变量。设 $\\theta = f(\\phi)$，其中 $f$
+                    <p>为了把约束优化问题转化为无约束形式，我们通常会引入拉格朗日乘子。然而在流形优化中，更高效的方式是直接重参数化目标变量。设 $\theta = f(\phi)$，其中 $f$
                         满足约束。则原问题</p>
-                    <p>$$\min_{\\theta \\in \mathcal{M}} J(\\theta)$$</p>
+                    <p>$$\min_{\theta \in \mathcal{M}} J(\theta)$$</p>
                     <p>转化为</p>
-                    <p>$$\min_{\\phi} J(f(\\phi)).$$</p>
-                    <p>由于 $f$ 保证了 $\\theta$ 始终位于流形 $\\mathcal{M}$ 上，我们可以直接对 $\\phi$ 应用最速下降法。</p>
-                    <p>重参数化的梯度可由链式法则得到：$\\nabla_{\\phi} J(f(\\phi)) = (\\nabla_{\\theta} J)^{\\top} \\cdot
-                        J_f(\\phi)$，其中 $J_f$ 是雅可比矩阵。这种写法不仅避免了显式投影，还能让学习率调节更加稳定。</p>
+                    <p>$$\min_{\phi} J(f(\phi)).$$</p>
+                    <p>由于 $f$ 保证了 $\theta$ 始终位于流形 $\mathcal{M}$ 上，我们可以直接对 $\phi$ 应用最速下降法。</p>
+                    <p>重参数化的梯度可由链式法则得到：$$\nabla_{\phi} J(f(\phi)) = (\nabla_{\theta} J)^{\top} \cdot J_f(\phi)$$，其中 $J_f$ 是雅可比矩阵。这种写法不仅避免了显式投影，还能让学习率调节更加稳定。</p>
 
                     <!-- more -->
                 </div>
 
-                <div class="post-footer">
-                    <div class="post-nav">
-                        <a href="11390.html" class="prev-post">‹ 上一篇：随机矩阵的谱范数估计</a>
-                        <a href="#" class="next-post">下一篇：暂无下一篇 ›</a>
-                    </div>
-                </div>
+                <div data-component="post-navigation"></div>
             </article>
-
-            <section class="related-posts">
-                <h3>你也许还对下面的内容感兴趣</h3>
-                <ul>
-                    <li><a href="11388.html">流形上的最速下降：5. 对偶梯度下降</a></li>
-                    <li><a href="#">随机矩阵的谱范数的快速估计</a></li>
-                    <li><a href="#">AdamW 的 Weight RMS 的渐近估计</a></li>
-                    <li><a href="#">重新思考学习率与 Batch Size（四）：EMA</a></li>
-                    <li><a href="#">重新思考学习率与 Batch Size（三）：Muon</a></li>
-                    <li><a href="#">重新思考学习率与 Batch Size（二）：平均场</a></li>
-                    <li><a href="#">为什么 Adam 的 Update RMS 是 0.2？</a></li>
-                    <li><a href="#">流形上的最速下降：4. Muon + 谱球面</a></li>
-                </ul>
-            </section>
-        </main>
+            </article>
+</main>
 
         <div data-include="../partials/sidebar-post.html"></div>
     </div>

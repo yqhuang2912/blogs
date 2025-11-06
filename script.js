@@ -1297,6 +1297,69 @@ async function initRandomPosts(rootPrefix, postsArg) {
     });
 }
 
+async function initPostNavigation(rootPrefix) {
+    const navComponents = document.querySelectorAll('[data-component="post-navigation"]');
+    if (!navComponents.length) {
+        return;
+    }
+
+    // Get current post metadata
+    const metadataScript = document.getElementById('post-metadata');
+    if (!metadataScript) {
+        return;
+    }
+
+    let currentPost;
+    try {
+        currentPost = JSON.parse(metadataScript.textContent);
+    } catch (error) {
+        console.error('解析当前文章元数据失败', error);
+        return;
+    }
+
+    // Load all posts
+    let allPosts;
+    try {
+        allPosts = await loadAndCachePosts(rootPrefix);
+    } catch (error) {
+        console.error('加载文章列表失败', error);
+        return;
+    }
+
+    // Sort posts by date (newest first)
+    const sortedPosts = allPosts.slice().sort((a, b) => {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+
+    // Find current post index
+    const currentIndex = sortedPosts.findIndex(post => post.id === currentPost.id);
+    if (currentIndex === -1) {
+        console.error('当前文章未在列表中找到');
+        return;
+    }
+
+    // Get previous and next posts
+    // 上一篇 = 更新的文章 (index - 1)
+    // 下一篇 = 更旧的文章 (index + 1)
+    const prevPost = currentIndex > 0 ? sortedPosts[currentIndex - 1] : null;
+    const nextPost = currentIndex < sortedPosts.length - 1 ? sortedPosts[currentIndex + 1] : null;
+
+    // Generate HTML for navigation links
+    const prevLink = prevPost 
+        ? `<span class="prev-post">‹ 上一篇：<a href="${resolveComponentLink(prevPost.link, rootPrefix)}">${prevPost.title}</a></span>`
+        : '';
+    
+    const nextLink = nextPost
+        ? `<span class="next-post">下一篇：<a href="${resolveComponentLink(nextPost.link, rootPrefix)}">${nextPost.title}</a></span>`
+        : '';
+
+    // Update each navigation component
+    navComponents.forEach(component => {
+        component.setAttribute('data-prev-post-link', prevLink);
+        component.setAttribute('data-next-post-link', nextLink);
+    });
+}
+
 function initSidebarSearch(rootPrefix) {
     const sections = Array.from(document.querySelectorAll('[data-search-section]'));
     if (!sections.length) {
@@ -1698,6 +1761,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const initialCategory = getCategoryFilter();
     const initialTag = getTagFilter();
     await injectPartials(rootPrefix);
+    
+    // For non-index pages, prepare post navigation data before rendering components
+    const listContainer = document.querySelector('[data-post-list]');
+    if (!listContainer) {
+        // Not on index page, initialize post navigation data first
+        await initPostNavigation(rootPrefix);
+    }
+    
     await renderComponents(rootPrefix);
     fixPostMetaLinks(rootPrefix);
     
@@ -1709,7 +1780,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     await initIndexPage(rootPrefix); // This handles random posts for index page
     
     // For non-index pages (like single post pages), initialize sidebar posts here
-    const listContainer = document.querySelector('[data-post-list]');
     if (!listContainer) {
         // Not on index page, so show recent posts in sidebar
         await initRecentPosts(rootPrefix);

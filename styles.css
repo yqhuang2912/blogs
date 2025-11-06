@@ -1010,8 +1010,18 @@ mjx-container[jax="CHTML"][display="true"] {
     font-size: 11px;
 }
 
+/* 只有下一篇时，让它靠右显示 */
+.post-nav .next-post:only-child {
+    margin-left: auto;
+}
+
 .post-nav a {
     color: #4183c4;
+}
+
+.post-nav .prev-post,
+.post-nav .next-post {
+    color: #666;
 }
 
 .related-posts,
