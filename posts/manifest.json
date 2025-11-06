@@ -1,7 +1,56 @@
 {
-  "generatedAt": "2025-11-06T10:48:06.569Z",
-  "postCount": 14,
+  "generatedAt": "2025-11-06T15:47:01.283Z",
+  "postCount": 15,
   "posts": [
+    {
+      "id": "11401",
+      "slug": "sample-post",
+      "title": "一次实验记录：自定义模型的损失分析",
+      "createdAt": "2025-11-06",
+      "day": "6",
+      "month": "Nov",
+      "categories": [
+        "数据实践",
+        "工程实践"
+      ],
+      "tags": [
+        "训练",
+        "日志",
+        "可视化"
+      ],
+      "summary": [
+        {
+          "type": "p",
+          "html": "在这篇短文里，我们记录一次图像分类模型的训练过程。实验运行在单张 RTX 4090 上，总耗时 12 小时。"
+        },
+        {
+          "type": "h2",
+          "html": "数据集准备 <span class=\"section-anchor\">#</span>"
+        },
+        {
+          "type": "p",
+          "html": "原始数据集包含 12 个类别，共 18,240 张样本。我们应用了随机裁剪、颜色抖动与 Mixup 增广。配合 224x224 的输入尺寸，总体扩增倍率约为 2.8 倍。"
+        },
+        {
+          "type": "p",
+          "html": "<img src=\"../assets/11401/chart.png\" alt=\"训练损失曲线\" title=\"训练阶段的损失曲线\">"
+        },
+        {
+          "type": "blockquote",
+          "html": "<blockquote><p>训练前 20 个 epoch 使用余弦退火的 warmup 学习率调度，基础学习率设置为 3e-4。</p></blockquote>"
+        },
+        {
+          "type": "h2",
+          "html": "指标汇总 <span class=\"section-anchor\">#</span>"
+        },
+        {
+          "type": "table",
+          "html": "<table><thead>\n                        <tr>\n                            <th>指标</th>\n                            <th>数值</th>\n                        </tr>\n                    </thead>\n                    <tbody>\n                        <tr>\n                            <td>Top-1 Accuracy</td>\n                            <td>87.4%</td>\n                        </tr>\n                        <tr>\n                            <td>Top-5 Accuracy</td>\n                            <td>96.1%</td>\n                        </tr>\n                        <tr>\n                            <td>F1 Score</td>\n                            <td>0.881</td>\n                        </tr>\n                    </tbody></table>"
+        }
+      ],
+      "link": "posts/sample-post.html",
+      "metaText": "2025-11-06 | 分类：数据实践， 工程实践 | 标签：训练， 日志， 可视化"
+    },
     {
       "id": "11400",
       "slug": "11400",
@@ -261,6 +310,14 @@
         {
           "type": "p",
           "html": "对偶梯度下降的更新式为"
+        },
+        {
+          "type": "p",
+          "html": "$$\\lambda_{t+1} = \\lambda_t - \\eta_t \\cdot d_t,$$"
+        },
+        {
+          "type": "p",
+          "html": "其中 $d_t$ 是对偶残差。为了避免震荡，我们提出让学习率随时间衰减：$\\eta_t = \\frac{\\eta_0}{1 + \\rho\r\n                            t}$。这一策略在保持初期快速下降的同时，确保了后期的稳定收敛。"
         }
       ],
       "link": "posts/11394.html",
