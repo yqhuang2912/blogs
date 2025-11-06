@@ -374,7 +374,7 @@ mjx-container[jax="CHTML"][display="true"] {
     min-width: 0;
     background-color: transparent;
     border-right: 1px dashed #d5d9df;
-    padding-right: 6px;
+    padding: 0 12px 0 0;
 }
 
 /* 文章样式 */
@@ -393,7 +393,7 @@ mjx-container[jax="CHTML"][display="true"] {
 .post-header {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
+    gap: 8px;
     margin-bottom: 12px;
 }
 
@@ -440,12 +440,15 @@ mjx-container[jax="CHTML"][display="true"] {
 .post-header-content {
     flex: 1;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .post-title {
     font-size: 16px;
-    margin: 0 0 6px 0;
-    line-height: 1.4;
+    margin: 0 0 4px 0;
+    line-height: 1.3;
     font-weight: 600;
 }
 
@@ -463,7 +466,7 @@ mjx-container[jax="CHTML"][display="true"] {
     color: #999;
     font-size: 11px;
     margin: 0;
-    line-height: 1.5;
+    line-height: 1.4;
 }
 
 .kimi-link {
