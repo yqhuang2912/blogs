@@ -358,7 +358,7 @@ mjx-container[jax="CHTML"][display="true"] {
 /* 主内容区 - 作为白色背景容器 */
 .main-content {
     max-width: calc(var(--layout-max-width) + var(--layout-h-padding) * 2);
-    margin: 6px var(--layout-h-padding) 18px;
+    margin: 6px var(--layout-h-padding) 6px;
     padding: 18px 6px 18px 18px;
     background-color: #fff;
     border-radius: 6px;
@@ -379,14 +379,14 @@ mjx-container[jax="CHTML"][display="true"] {
 
 /* 文章样式 */
 .post {
-    margin-bottom: 16px;
-    padding-bottom: 14px;
-    border-bottom: 1px dashed #d5d9df;
+    margin-bottom: 10px;
+    padding-bottom: 0;
+    border-bottom: none;
     position: relative;
 }
 
 .post:last-child {
-    border-bottom: none;
+    margin-bottom: 0;
 }
 
 /* 文章头部组件 - 可复用 */
@@ -1455,26 +1455,26 @@ mjx-container[jax="CHTML"][display="true"] {
 
 /* 页脚 */
 .footer {
-    background-color: #f5f5f5;
-    padding: 25px 20px;
-    text-align: center;
+    background-color: transparent;
+    color: #e5e8ec;
+    margin: 0 var(--layout-h-padding);
+    padding: 4px 6px;
     font-size: 11px;
-    color: #999;
-    border-top: 1px solid #e0e0e0;
-    margin-top: 40px;
-    line-height: 2;
+    text-align: center;
+    line-height: 1.6;
 }
 
 .footer p {
-    margin: 5px 0;
+    margin: 2px 0;
 }
 
 .footer a {
-    color: #4183c4;
+    color: #f5f7fa;
 }
 
 .footer a:hover {
-    color: #1e70bf;
+    color: #97bf0d;
+    text-decoration: none;
 }
 
 /* 响应式设�?*/
