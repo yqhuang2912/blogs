@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
@@ -41,26 +41,17 @@
 </head>
 
 <body>
-    <div data-include="../partials/navbar.html"></div>
+    <div class="page-container">
+        <div data-include="../partials/navbar.html"></div>
 
-    <div class="wrapper single-wrapper">
-        <main class="main-content single-main">
-            <nav class="breadcrumb">
-                <a href="../index.html">首页</a>
-                <span class="crumb-sep">›</span>
-                <a href="#">数学研究</a>
-                <span class="crumb-sep">›</span>
-                <span>谱球面上的投影算子</span>
-            </nav>
-
-            <article class="single-post">
-                <header class="single-post-header">
-                    <div data-component="post-card" data-day="1" data-month="Jun" data-title="谱球面上的投影算子"
-                        data-meta="发布于 2025-06-01" data-heading="h1" data-wrapper-class="post-content-wrapper"
+    <div class="wrapper">
+        <main class="main-content">
+            <article class="post">
+                <div data-component="post-header" data-day="1" data-month="Jun" data-title="谱球面上的投影算子"
+                        data-meta='<span class="meta-item meta-date">2025-06-01</span><span class="meta-divider">|</span><span class="meta-item meta-categories">分类：<a href="#">数学研究</a></span><span class="meta-divider">|</span><span class="meta-item meta-tags">标签：<a href="#">谱球面</a>，<a href="#">投影</a>，<a href="#">优化</a></span>' data-heading="h1" 
                         data-meta-class="post-meta" data-title-class="post-title"></div>
-                </header>
 
-                <div class="single-post-content">
+                <div class="post-content single-post-content">
                     <p>谱球面上的投影算子在优化中非常常用。设矩阵 $Y$ 的奇异值分解为 $U \Sigma V^{\top}$，其中 $\Sigma = \operatorname{diag}(\sigma_1,
                         \ldots, \sigma_n)$。为了得到 $\Pi_{\mathcal{S}}(Y)$，我们只需把最大奇异值归一化：</p>
 
@@ -72,24 +63,38 @@
                     <!-- more -->
                 </div>
 
-                <footer class="single-post-footer">
-                    <div class="post-meta-info">
-                        分类：<a href="#">数学研究</a>
-                        <span class="meta-divider">|</span>
-                        标签：<a href="#">谱球面</a>，<a href="#">投影</a>，<a href="#">优化</a>
-                        <span class="meta-divider">|</span>
-                        发布于：2025-06-01
+                <div class="post-footer">
+                    <div class="post-nav">
+                        <a href="11392.html" class="prev-post">‹ 上一篇：Muon 优化的动量调度</a>
+                        <a href="11390.html" class="next-post">下一篇：随机矩阵的谱范数估计 ›</a>
                     </div>
-                </footer>
+                </div>
             </article>
+
+            <section class="related-posts">
+                <h3>你也许还对下面的内容感兴趣</h3>
+                <ul>
+                    <li><a href="11388.html">流形上的最速下降：5. 对偶梯度下降</a></li>
+                    <li><a href="#">随机矩阵的谱范数的快速估计</a></li>
+                    <li><a href="#">AdamW 的 Weight RMS 的渐近估计</a></li>
+                    <li><a href="#">重新思考学习率与 Batch Size（四）：EMA</a></li>
+                    <li><a href="#">重新思考学习率与 Batch Size（三）：Muon</a></li>
+                    <li><a href="#">重新思考学习率与 Batch Size（二）：平均场</a></li>
+                    <li><a href="#">为什么 Adam 的 Update RMS 是 0.2？</a></li>
+                    <li><a href="#">流形上的最速下降：4. Muon + 谱球面</a></li>
+                </ul>
+            </section>
         </main>
 
         <div data-include="../partials/sidebar-post.html"></div>
     </div>
 
     <div data-include="../partials/footer.html"></div>
+    </div><!-- end page-container -->
 
     <script src="../script.js"></script>
 </body>
 
 </html>
+
+

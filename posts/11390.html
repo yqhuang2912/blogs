@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
@@ -41,26 +41,17 @@
 </head>
 
 <body>
-    <div data-include="../partials/navbar.html"></div>
+    <div class="page-container">
+        <div data-include="../partials/navbar.html"></div>
 
-    <div class="wrapper single-wrapper">
-        <main class="main-content single-main">
-            <nav class="breadcrumb">
-                <a href="../index.html">首页</a>
-                <span class="crumb-sep">›</span>
-                <a href="#">数学研究</a>
-                <span class="crumb-sep">›</span>
-                <span>随机矩阵的谱范数估计</span>
-            </nav>
-
-            <article class="single-post">
-                <header class="single-post-header">
-                    <div data-component="post-card" data-day="13" data-month="May" data-title="随机矩阵的谱范数估计"
-                        data-meta="发布于 2025-05-13" data-heading="h1" data-wrapper-class="post-content-wrapper"
+    <div class="wrapper">
+        <main class="main-content">
+            <article class="post">
+                <div data-component="post-header" data-day="13" data-month="May" data-title="随机矩阵的谱范数估计"
+                        data-meta='<span class="meta-item meta-date">2025-05-13</span><span class="meta-divider">|</span><span class="meta-item meta-categories">分类：<a href="#">数学研究</a></span><span class="meta-divider">|</span><span class="meta-item meta-tags">标签：<a href="#">随机矩阵</a>，<a href="#">谱范数</a></span>' data-heading="h1" 
                         data-meta-class="post-meta" data-title-class="post-title"></div>
-                </header>
 
-                <div class="single-post-content">
+                <div class="post-content single-post-content">
                     <p>设有随机矩阵 $A \in \mathbb{R}^{n \times
                         n}$，我们希望在不进行完整奇异值分解的情况下估计其谱范数。随机化幂法提供了一种低成本的方式，仅需重复乘以随机向量即可逼近最大奇异值。</p>
                     <p>具体而言，我们初始化单位向量 $x_0$，迭代 $x_{k+1} = \frac{Ax_k}{\|Ax_k\|_2}$。当迭代收敛时，$\|Ax_k\|_2$
@@ -69,24 +60,38 @@
                     <!-- more -->
                 </div>
 
-                <footer class="single-post-footer">
-                    <div class="post-meta-info">
-                        分类：<a href="#">数学研究</a>
-                        <span class="meta-divider">|</span>
-                        标签：<a href="#">随机矩阵</a>，<a href="#">谱范数</a>
-                        <span class="meta-divider">|</span>
-                        发布于：2025-05-13
+                <div class="post-footer">
+                    <div class="post-nav">
+                        <a href="11391.html" class="prev-post">‹ 上一篇：谱球面上的投影算子</a>
+                        <a href="11389.html" class="next-post">下一篇：流形上的最速下降：6. 拉格朗日重参数化 ›</a>
                     </div>
-                </footer>
+                </div>
             </article>
+
+            <section class="related-posts">
+                <h3>你也许还对下面的内容感兴趣</h3>
+                <ul>
+                    <li><a href="11388.html">流形上的最速下降：5. 对偶梯度下降</a></li>
+                    <li><a href="#">随机矩阵的谱范数的快速估计</a></li>
+                    <li><a href="#">AdamW 的 Weight RMS 的渐近估计</a></li>
+                    <li><a href="#">重新思考学习率与 Batch Size（四）：EMA</a></li>
+                    <li><a href="#">重新思考学习率与 Batch Size（三）：Muon</a></li>
+                    <li><a href="#">重新思考学习率与 Batch Size（二）：平均场</a></li>
+                    <li><a href="#">为什么 Adam 的 Update RMS 是 0.2？</a></li>
+                    <li><a href="#">流形上的最速下降：4. Muon + 谱球面</a></li>
+                </ul>
+            </section>
         </main>
 
         <div data-include="../partials/sidebar-post.html"></div>
     </div>
 
     <div data-include="../partials/footer.html"></div>
+    </div><!-- end page-container -->
 
     <script src="../script.js"></script>
 </body>
 
 </html>
+
+

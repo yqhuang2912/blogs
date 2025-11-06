@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
@@ -47,28 +47,18 @@
 </head>
 
 <body>
-    <div data-include="../partials/navbar.html"></div>
+    <div class="page-container">
+        <div data-include="../partials/navbar.html"></div>
 
-    <div class="wrapper single-wrapper">
-        <main class="main-content single-main">
-            <nav class="breadcrumb">
-                <a href="../index.html">首页</a>
-                <span class="crumb-sep">›</span>
-                <a href="#">数据实践</a>
-                <span class="crumb-sep">›</span>
-                <span>表格展示测试</span>
-            </nav>
-
-            <article class="single-post">
-                <header class="single-post-header">
-                    <div data-component="post-card" data-day="5" data-month="Nov" data-title="表格展示测试"
-                        data-meta="发布于 2025-11-05" data-heading="h1" data-wrapper-class="post-content-wrapper"
+    <div class="wrapper">
+        <main class="main-content">
+            <article class="post">
+                <div data-component="post-header" data-day="5" data-month="Nov" data-title="表格展示测试"
+                        data-meta='<span class="meta-item meta-date">2025-11-05</span><span class="meta-divider">|</span><span class="meta-item meta-categories">分类：<a href="#">数据实践</a></span><span class="meta-divider">|</span><span class="meta-item meta-tags">标签：<a href="#">表格</a>，<a href="#">样式</a>，<a href="#">演示</a></span>' data-heading="h1" 
                         data-meta-class="post-meta" data-title-class="post-title"></div>
-                </header>
 
-                <div class="single-post-content">
+                <div class="post-content single-post-content">
                     <p>本文用于检查表格在最新样式下的表现，包括标题行背景、隔行底色、悬停高亮等效果。</p>
-                    <!-- more -->
 
                     <section class="post-section" id="baseline">
                         <h2>模型表现概览 <span class="section-anchor">#</span></h2>
@@ -116,7 +106,7 @@
                             </tbody>
                         </table>
                     </section>
-
+                    <!-- more -->
                     <section class="post-section" id="stats">
                         <h2>统计摘要 <span class="section-anchor">#</span></h2>
                         <p>为了验证浮动行与边框效果，下方再给出一个包含行列合并的统计摘要：</p>
@@ -160,24 +150,34 @@
                     </section>
                 </div>
 
-                <footer class="single-post-footer">
-                    <div class="post-meta-info">
-                        分类：<a href="#">数据实践</a>
-                        <span class="meta-divider">|</span>
-                        标签：<a href="#">表格</a>，<a href="#">样式</a>，<a href="#">演示</a>
-                        <span class="meta-divider">|</span>
-                        发布于：2025-11-05
-                        <span class="meta-divider">|</span>
-                        <a href="#" class="comment-count">0 条评论</a>
+                <footer class="post-footer">
+                    <div class="post-nav">
+                        <a href="#" class="prev-post">‹ 上一篇：暂无上一篇</a>
+                        <a href="11399.html" class="next-post">下一篇：代码块渲染测试 ›</a>
                     </div>
                 </footer>
             </article>
+
+            <section class="related-posts">
+                <h3>你也许还对下面的内容感兴趣</h3>
+                <ul>
+                    <li><a href="11388.html">流形上的最速下降：5. 对偶梯度下降</a></li>
+                    <li><a href="#">随机矩阵的谱范数的快速估计</a></li>
+                    <li><a href="#">AdamW 的 Weight RMS 的渐近估计</a></li>
+                    <li><a href="#">重新思考学习率与 Batch Size（四）：EMA</a></li>
+                    <li><a href="#">重新思考学习率与 Batch Size（三）：Muon</a></li>
+                    <li><a href="#">重新思考学习率与 Batch Size（二）：平均场</a></li>
+                    <li><a href="#">为什么 Adam 的 Update RMS 是 0.2？</a></li>
+                    <li><a href="#">流形上的最速下降：4. Muon + 谱球面</a></li>
+                </ul>
+            </section>
         </main>
 
         <div data-include="../partials/sidebar-post.html"></div>
     </div>
 
     <div data-include="../partials/footer.html"></div>
+    </div><!-- end page-container -->
 
     <script src="../script.js"></script>
 </body>

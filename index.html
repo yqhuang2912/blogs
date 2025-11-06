@@ -23,11 +23,12 @@
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
 </head>
 <body>
-    <div data-include="partials/navbar.html"></div>
+    <div class="page-container">
+        <div data-include="partials/navbar.html"></div>
 
-    <div class="wrapper">
-        <main class="main-content">
-            <section class="post-list" data-post-list>
+        <div class="wrapper">
+            <main class="main-content">
+                <section class="post-list" data-post-list>
                 <p class="post-list-placeholder">正在加载文章...</p>
             </section>
             <nav class="pagination" data-pagination hidden></nav>
@@ -37,6 +38,7 @@
     </div>
 
     <div data-include="partials/footer.html"></div>
+    </div><!-- end page-container -->
 
     <script src="script.js"></script>
 </body>

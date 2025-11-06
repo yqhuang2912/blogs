@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
@@ -41,26 +41,17 @@
 </head>
 
 <body>
-    <div data-include="../partials/navbar.html"></div>
+    <div class="page-container">
+        <div data-include="../partials/navbar.html"></div>
 
-    <div class="wrapper single-wrapper">
-        <main class="main-content single-main">
-            <nav class="breadcrumb">
-                <a href="../index.html">首页</a>
-                <span class="crumb-sep">›</span>
-                <a href="#">机器学习</a>
-                <span class="crumb-sep">›</span>
-                <span>Muon 优化的动量调度</span>
-            </nav>
-
-            <article class="single-post">
-                <header class="single-post-header">
-                    <div data-component="post-card" data-day="12" data-month="Jul" data-title="Muon 优化的动量调度"
-                        data-meta="发布于 2025-07-12" data-heading="h1" data-wrapper-class="post-content-wrapper"
+    <div class="wrapper">
+        <main class="main-content">
+            <article class="post">
+                <div data-component="post-header" data-day="12" data-month="Jul" data-title="Muon 优化的动量调度"
+                            data-meta='<span class="meta-item meta-date">2025-07-12</span><span class="meta-divider">|</span><span class="meta-item meta-categories">分类：<a href="#">机器学习</a></span><span class="meta-divider">|</span><span class="meta-item meta-tags">标签：<a href="#">Muon</a>，<a href="#">优化器</a>，<a href="#">动量</a></span>' data-heading="h1" 
                         data-meta-class="post-meta" data-title-class="post-title"></div>
-                </header>
 
-                <div class="single-post-content">
+                <div class="post-content single-post-content">
                     <p>Muon 优化器通过引入对偶变量平衡权值范数与梯度范数。为了进一步提升训练稳定性，我们提出引入时间相关的动量系数 $\\beta_t$：</p>
                     <p>$$m_t = \\beta_t m_{t-1} + (1-\\beta_t) g_t,$$</p>
                     <p>其中 $g_t$ 为瞬时梯度。本文给出了 $\\beta_t$ 的自适应调节策略：$\\beta_t = 1 - \frac{1}{(t +
@@ -69,24 +60,38 @@
                     <!-- more -->
                 </div>
 
-                <footer class="single-post-footer">
-                    <div class="post-meta-info">
-                        分类：<a href="#">机器学习</a>
-                        <span class="meta-divider">|</span>
-                        标签：<a href="#">Muon</a>，<a href="#">优化器</a>，<a href="#">动量</a>
-                        <span class="meta-divider">|</span>
-                        发布于：2025-07-12
+                <div class="post-footer">
+                    <div class="post-nav">
+                        <a href="11393.html" class="prev-post">‹ 上一篇：约束优化的对偶间隙分析</a>
+                        <a href="11391.html" class="next-post">下一篇：谱球面上的投影算子 ›</a>
                     </div>
-                </footer>
+                </div>
             </article>
+
+            <section class="related-posts">
+                <h3>你也许还对下面的内容感兴趣</h3>
+                <ul>
+                    <li><a href="11388.html">流形上的最速下降：5. 对偶梯度下降</a></li>
+                    <li><a href="#">随机矩阵的谱范数的快速估计</a></li>
+                    <li><a href="#">AdamW 的 Weight RMS 的渐近估计</a></li>
+                    <li><a href="#">重新思考学习率与 Batch Size（四）：EMA</a></li>
+                    <li><a href="#">重新思考学习率与 Batch Size（三）：Muon</a></li>
+                    <li><a href="#">重新思考学习率与 Batch Size（二）：平均场</a></li>
+                    <li><a href="#">为什么 Adam 的 Update RMS 是 0.2？</a></li>
+                    <li><a href="#">流形上的最速下降：4. Muon + 谱球面</a></li>
+                </ul>
+            </section>
         </main>
 
         <div data-include="../partials/sidebar-post.html"></div>
     </div>
 
     <div data-include="../partials/footer.html"></div>
+    </div><!-- end page-container -->
 
     <script src="../script.js"></script>
 </body>
 
 </html>
+
+

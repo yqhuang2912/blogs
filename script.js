@@ -51,7 +51,7 @@ async function renderComponents(rootPrefix) {
             const templateString = await loadComponentTemplate(name, rootPrefix);
             const bodyContent = element.innerHTML;
             const data = collectComponentData(element);
-            const markup = buildComponentMarkup(templateString, data, bodyContent, rootPrefix);
+            const markup = await buildComponentMarkup(templateString, data, bodyContent, rootPrefix);
 
             const template = document.createElement('template');
             template.innerHTML = markup.trim();
@@ -90,7 +90,7 @@ function collectComponentData(element) {
     }, {});
 }
 
-function buildComponentMarkup(templateString, data, bodyContent, rootPrefix) {
+async function buildComponentMarkup(templateString, data, bodyContent, rootPrefix) {
     const titleText = data.TITLE || '';
     const headingTag = (data.HEADING || 'h2').toLowerCase();
     const wrapperClass = data.WRAPPER_CLASS || 'post-content-wrapper';
@@ -118,10 +118,26 @@ function buildComponentMarkup(templateString, data, bodyContent, rootPrefix) {
 
     const combinedMap = { ...data, ...baseMap };
 
-    return Object.entries(combinedMap).reduce((markup, [key, value]) => {
+    // First pass: process INCLUDE directives
+    let markup = templateString;
+    const includePattern = /\{\{INCLUDE:([a-zA-Z0-9_-]+)\}\}/g;
+    const includeMatches = [...templateString.matchAll(includePattern)];
+    
+    for (const match of includeMatches) {
+        const componentName = match[1];
+        try {
+            const includedTemplate = await loadComponentTemplate(componentName, rootPrefix);
+            markup = markup.replace(match[0], includedTemplate);
+        } catch (err) {
+            console.error(`Failed to include component: ${componentName}`, err);
+        }
+    }
+
+    // Second pass: replace all other placeholders
+    return Object.entries(combinedMap).reduce((result, [key, value]) => {
         const pattern = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
-        return markup.replace(pattern, () => value ?? '');
-    }, templateString);
+        return result.replace(pattern, () => value ?? '');
+    }, markup);
 }
 
 function resolveComponentLink(link, rootPrefix) {
@@ -135,7 +151,19 @@ function resolveComponentLink(link, rootPrefix) {
 }
 
 const POSTS_PER_PAGE = 10;
-const SUMMARY_ALLOWED_TAGS = new Set(['p', 'h2', 'h3', 'h4', 'h5', 'ul', 'ol', 'li', 'blockquote']);
+const SUMMARY_ALLOWED_TAGS = new Set([
+    'p',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'ul',
+    'ol',
+    'li',
+    'blockquote',
+    'table',
+    'figure',
+]);
 let mathJaxReadyPromise;
 const HIGHLIGHT_CSS_URL = 'https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github.min.css';
 const HIGHLIGHT_JS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js';
@@ -293,10 +321,9 @@ function createPostArticle(post, rootPrefix) {
     card.setAttribute('data-month', post.month || '');
     card.setAttribute('data-title', post.title || '');
     card.setAttribute('data-link', post.link || '');
-    card.setAttribute('data-meta', post.metaText || formatMetaText(post.createdAt));
+    card.setAttribute('data-meta', buildPostMetaHtml(post, rootPrefix));
 
     const summaryHtml = buildSummaryHtml(post.summary);
-    const footerHtml = buildFooterHtml(post, rootPrefix);
     const readMoreHref = resolveComponentLink(post.link, rootPrefix) || '#';
 
     card.innerHTML = `
@@ -304,18 +331,43 @@ function createPostArticle(post, rootPrefix) {
             ${summaryHtml}
             <p><a href="${readMoreHref}" class="read-more">点击阅读全文...</a></p>
         </div>
-        ${footerHtml}
     `;
 
     article.appendChild(card);
     return article;
 }
 
-function formatMetaText(createdAt) {
-    if (!createdAt) {
-        return '';
+function buildPostMetaHtml(post, rootPrefix) {
+    const segments = [];
+
+    const createdAt = post && post.createdAt ? escapeHtml(post.createdAt) : '';
+    if (createdAt) {
+        segments.push(`<span class="meta-item meta-date">${createdAt}</span>`);
     }
-    return `发布于 ${createdAt}`;
+
+    const categories = Array.isArray(post && post.categories) ? post.categories : [];
+    const categoryHtml = categories.length
+        ? categories
+            .map((category) => {
+                const href = buildCategoryHref(rootPrefix, category);
+                return `<a href="${href}">${escapeHtml(category)}</a>`;
+            })
+            .join('， ')
+        : '<span class="post-taxonomy-empty">未分类</span>';
+    segments.push(`<span class="meta-item meta-categories">分类：${categoryHtml}</span>`);
+
+    const tags = Array.isArray(post && post.tags) ? post.tags : [];
+    const tagHtml = tags.length
+        ? tags
+            .map((tag) => {
+                const href = buildTagHref(rootPrefix, tag);
+                return `<a href="${href}">${escapeHtml(tag)}</a>`;
+            })
+            .join('， ')
+        : '<span class="post-taxonomy-empty">暂无标签</span>';
+    segments.push(`<span class="meta-item meta-tags">标签：${tagHtml}</span>`);
+
+    return segments.join('<span class="meta-divider">|</span>');
 }
 
 function buildSummaryHtml(summary) {
@@ -341,34 +393,6 @@ function normalizeLatexEscapes(html) {
         return html;
     }
     return html.replace(/\\\\(?=\S)/g, '\\');
-}
-
-function buildFooterHtml(post, rootPrefix) {
-    const categories = Array.isArray(post.categories) ? post.categories : [];
-    const tags = Array.isArray(post.tags) ? post.tags : [];
-
-    const categoryHtml = categories.length
-        ? categories
-            .map((category) => {
-                const href = buildCategoryHref(rootPrefix, category);
-                return `<a href="${href}">${escapeHtml(category)}</a>`;
-            })
-            .join('， ')
-        : '<span class="post-taxonomy-empty">未分类</span>';
-
-    const tagHtml = tags.length
-        ? tags
-            .map((tag) => {
-                const href = buildTagHref(rootPrefix, tag);
-                return `<a href="${href}">${escapeHtml(tag)}</a>`;
-            })
-            .join('， ')
-        : '<span class="post-taxonomy-empty">暂无标签</span>';
-
-    return `<div class="post-footer">
-        分类：${categoryHtml} &nbsp;&nbsp;
-        标签：${tagHtml}
-    </div>`;
 }
 
 function enhanceCodeBlocks(root) {

@@ -50,8 +50,30 @@ async function loadPostMetadata(filePath, fileName) {
         tags: Array.isArray(metadata.tags) ? metadata.tags : [],
         summary,
         link: metadata.link || `posts/${slug}.html`,
-        metaText: metadata.metaText || (metadata.createdAt ? `发布于 ${metadata.createdAt}` : ''),
+        metaText: buildMetaText(metadata),
     };
+}
+
+function buildMetaText(metadata) {
+    if (!metadata) {
+        return '';
+    }
+
+    const segments = [];
+
+    if (metadata.createdAt) {
+        segments.push(String(metadata.createdAt));
+    }
+
+    const categories = Array.isArray(metadata.categories) ? metadata.categories.filter(Boolean) : [];
+    const categoryText = categories.length ? categories.join('， ') : '未分类';
+    segments.push(`分类：${categoryText}`);
+
+    const tags = Array.isArray(metadata.tags) ? metadata.tags.filter(Boolean) : [];
+    const tagText = tags.length ? tags.join('， ') : '暂无标签';
+    segments.push(`标签：${tagText}`);
+
+    return segments.join(' | ');
 }
 
 function extractSummaryBlocks(rawHtml, metadataSummary) {
@@ -73,7 +95,8 @@ function collectBlocksBeforeMarker(rawHtml) {
         return [];
     }
 
-    const contentStart = rawHtml.indexOf('<div class="single-post-content"');
+    // Look for either "post-content single-post-content" or just "post-content"
+    const contentStart = rawHtml.search(/<div[^>]*class="[^"]*post-content[^"]*"/i);
     if (contentStart === -1) {
         return [];
     }
@@ -89,7 +112,7 @@ function collectBlocksBeforeMarker(rawHtml) {
 }
 
 function collectInitialBlocks(rawHtml, limit) {
-    const contentStart = rawHtml.indexOf('<div class="single-post-content"');
+    const contentStart = rawHtml.search(/<div[^>]*class="[^"]*post-content[^"]*"/i);
     if (contentStart === -1) {
         return [];
     }
@@ -109,16 +132,43 @@ function collectBlocks(fragment, limit = Infinity) {
     }
 
     const results = [];
-    const blockRegex = /<(p|h2|h3|h4|h5|ul|ol|blockquote)([^>]*)>([\s\S]*?)<\/\1>/gi;
+    
+    // Remove section tags but keep their content
+    // Use a simple approach: repeatedly remove section tags
+    let workingFragment = fragment;
+    let prevLength = 0;
+    while (workingFragment.length !== prevLength) {
+        prevLength = workingFragment.length;
+        workingFragment = workingFragment.replace(/<section[^>]*>/gi, '').replace(/<\/section>/gi, '');
+    }
+    
+    const blockRegex = /<(p|h2|h3|h4|h5|ul|ol|blockquote|figure|table|pre)([^>]*)>([\s\S]*?)<\/\1>/gi;
     let match;
 
-    while ((match = blockRegex.exec(fragment)) && results.length < limit) {
+    while ((match = blockRegex.exec(workingFragment)) && results.length < limit) {
         const type = match[1].toLowerCase();
+        const attributes = (match[2] || '').trim();
         const innerHtml = (match[3] || '').trim();
+        
         if (!innerHtml) {
             continue;
         }
-        results.push({ type, html: innerHtml });
+
+        // For complex elements (table, ul, ol, blockquote, figure, pre), 
+        // preserve the outer tag to maintain structure
+        const needsOuterTag = ['table', 'ul', 'ol', 'blockquote', 'figure', 'pre'].includes(type);
+        
+        let html;
+        if (needsOuterTag) {
+            // Reconstruct the complete element with its tag and attributes
+            const attrString = attributes ? ` ${attributes}` : '';
+            html = `<${type}${attrString}>${innerHtml}</${type}>`;
+        } else {
+            // For simple elements (p, h2-h5), just use the inner content
+            html = innerHtml;
+        }
+        
+        results.push({ type, html });
     }
 
     return results;

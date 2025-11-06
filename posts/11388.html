@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
@@ -44,24 +44,15 @@
 </head>
 
 <body>
-    <div data-include="../partials/navbar.html"></div>
+    <div class="page-container">
+        <div data-include="../partials/navbar.html"></div>
 
-    <div class="wrapper single-wrapper">
-        <main class="main-content single-main">
-            <nav class="breadcrumb">
-                <a href="../index.html">首页</a>
-                <span class="crumb-sep">›</span>
-                <a href="#">数学研究</a>
-                <span class="crumb-sep">›</span>
-                <span>流形上的最速下降：5. 对偶梯度下降</span>
-            </nav>
-
-            <article class="single-post">
-                <header class="single-post-header">
-                    <div data-component="post-card" data-day="3" data-month="Nov" data-title="流形上的最速下降：5. 对偶梯度下降"
-                        data-meta="发布于 2025-11-03" data-heading="h1" data-wrapper-class="post-content-wrapper"
+    <div class="wrapper">
+        <main class="main-content">
+            <article class="post">
+                <div data-component="post-header" data-day="3" data-month="Nov" data-title="流形上的最速下降：5. 对偶梯度下降"
+                        data-meta='<span class="meta-item meta-date">2025-11-03</span><span class="meta-divider">|</span><span class="meta-item meta-categories">分类：<a href="#">数学研究</a></span><span class="meta-divider">|</span><span class="meta-item meta-tags">标签：<a href="#">矩阵</a>，<a href="#">优化器</a>，<a href="#">Muon</a>，<a href="#">约束</a>，<a href="#">最速下降</a></span>' data-heading="h1" 
                         data-meta-class="post-meta" data-title-class="post-title"></div>
-                </header>
 
                 <!-- <div class="single-post-toolbar">
                     <span class="toolbar-label">分享：</span>
@@ -74,7 +65,7 @@
                     <a href="#" class="btn-outline">打印</a>
                 </div> -->
 
-                <div class="single-post-content">
+                <div class="post-content single-post-content">
                     <p class="intro">前四篇文章我们求解了几个具体的、给参数添加等式约束的最速下降问题，其中第三、四篇的问题难以求得解析解，于是我们提出了相应的不动点迭代法。本篇文章聚焦于 Jeremy
                         Bernstein 在《Modular Manifolds》中提出的“对偶梯度下降（Dual Gradient Descent）”解法，尝试把它融入我们此前搭建的理论框架中。</p>
 
@@ -174,28 +165,18 @@
                     </section>
                 </div>
 
-                <footer class="single-post-footer">
-                    <div class="post-meta-info">
-                        分类：<a href="#">数学研究</a>
-                        <span class="meta-divider">|</span>
-                        标签：<a href="#">矩阵</a>，<a href="#">优化器</a>，<a href="#">Muon</a>，<a href="#">约束</a>，<a
-                            href="#">最速下降</a>
-                        <span class="meta-divider">|</span>
-                        发布于：2025-11-03
-                        <span class="meta-divider">|</span>
-                        <a href="#" class="comment-count">1 条评论</a>
-                    </div>
+                <div class="post-footer">
                     <div class="post-nav">
-                        <a href="#" class="prev-post">‹ 上一篇：低精度 Attention 可能存在有偏的舍入误差</a>
-                        <a href="#" class="next-post">下一篇：MuP 之上：1. 好模型的三个特征 ›</a>
+                        <a href="11398.html" class="prev-post">‹ 上一篇：对偶梯度下降的数值实验</a>
+                        <a href="11397.html" class="next-post">下一篇：对偶变量的收缩映射证明 ›</a>
                     </div>
-                </footer>
+                </div>
             </article>
 
             <section class="related-posts">
                 <h3>你也许还对下面的内容感兴趣</h3>
                 <ul>
-                    <li><a href="#">MuP之上：1. 好模型的三个特征</a></li>
+                    <li><a href="11388.html">流形上的最速下降：5. 对偶梯度下降</a></li>
                     <li><a href="#">随机矩阵的谱范数的快速估计</a></li>
                     <li><a href="#">AdamW 的 Weight RMS 的渐近估计</a></li>
                     <li><a href="#">重新思考学习率与 Batch Size（四）：EMA</a></li>
@@ -213,8 +194,11 @@
     </div>
 
     <div data-include="../partials/footer.html"></div>
+    </div><!-- end page-container -->
 
     <script src="../script.js"></script>
 </body>
 
 </html>
+
+

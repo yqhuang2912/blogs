@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2025-11-04T16:23:23.179Z",
+  "generatedAt": "2025-11-06T10:07:15.951Z",
   "postCount": 14,
   "posts": [
     {
@@ -21,10 +21,22 @@
         {
           "type": "p",
           "html": "本文用于检查表格在最新样式下的表现，包括标题行背景、隔行底色、悬停高亮等效果。"
+        },
+        {
+          "type": "h2",
+          "html": "模型表现概览 <span class=\"section-anchor\">#</span>"
+        },
+        {
+          "type": "p",
+          "html": "下表列出了四个候选模型在验证集上的核心指标："
+        },
+        {
+          "type": "table",
+          "html": "<table class=\"latex-table\"><caption>表 1：不同模型的关键性能对比</caption>\r\n                            <thead>\r\n                                <tr>\r\n                                    <th>模型</th>\r\n                                    <th>参数量（M）</th>\r\n                                    <th>准确率</th>\r\n                                    <th>召回率</th>\r\n                                    <th>F1 分数</th>\r\n                                </tr>\r\n                            </thead>\r\n                            <tbody>\r\n                                <tr>\r\n                                    <td>Baseline-CNN</td>\r\n                                    <td>28.6</td>\r\n                                    <td>0.871</td>\r\n                                    <td>0.842</td>\r\n                                    <td>0.856</td>\r\n                                </tr>\r\n                                <tr>\r\n                                    <td>Hybrid-Transformer</td>\r\n                                    <td>82.4</td>\r\n                                    <td>0.906</td>\r\n                                    <td>0.897</td>\r\n                                    <td>0.901</td>\r\n                                </tr>\r\n                                <tr>\r\n                                    <td>LightSeq</td>\r\n                                    <td>18.2</td>\r\n                                    <td>0.861</td>\r\n                                    <td>0.884</td>\r\n                                    <td>0.872</td>\r\n                                </tr>\r\n                                <tr>\r\n                                    <td>AutoML-Search</td>\r\n                                    <td>145.7</td>\r\n                                    <td>0.918</td>\r\n                                    <td>0.905</td>\r\n                                    <td>0.911</td>\r\n                                </tr>\r\n                            </tbody></table>"
         }
       ],
       "link": "posts/11400.html",
-      "metaText": "发布于 2025-11-05"
+      "metaText": "2025-11-05 | 分类：数据实践 | 标签：表格， 样式， 演示"
     },
     {
       "id": "11398",
@@ -47,7 +59,7 @@
         }
       ],
       "link": "posts/11398.html",
-      "metaText": "发布于 2025-11-04"
+      "metaText": "2025-11-04 | 分类：机器学习 | 标签：对偶梯度， 实验"
     },
     {
       "id": "11399",
@@ -68,10 +80,22 @@
         {
           "type": "p",
           "html": "本文用于确认首页摘要与正文的代码块在复制按钮、语法高亮、背景、边距等方面与参考博客保持一致。"
+        },
+        {
+          "type": "h2",
+          "html": "Python 示例 <span class=\"section-anchor\">#</span>"
+        },
+        {
+          "type": "p",
+          "html": "以下示例展示了一个包含注释、多行语句与 f-string 的 Python 代码块："
+        },
+        {
+          "type": "pre",
+          "html": "<pre><code class=\"language-python\">from pathlib import Path\r\n\r\n# 加载数据并统计行数\r\ndef count_lines(paths: list[Path]) -> dict[str, int]:\r\n    summary = {}\r\n    for path in paths:\r\n        text = path.read_text(encoding=\"utf-8\")\r\n        summary[path.name] = len(text.splitlines())\r\n    return summary\r\n\r\nif __name__ == \"__main__\":\r\n    stats = count_lines([Path(\"notes.md\"), Path(\"todo.md\")])\r\n    for name, lines in stats.items():\r\n        print(f\"{name}: {lines} 行\")\r\n</code></pre>"
         }
       ],
       "link": "posts/11399.html",
-      "metaText": "发布于 2025-11-04"
+      "metaText": "2025-11-04 | 分类：数学研究 | 标签：代码， 渲染， 测试"
     },
     {
       "id": "11388",
@@ -113,7 +137,7 @@
         }
       ],
       "link": "posts/11388.html",
-      "metaText": "发布于 2025-11-03"
+      "metaText": "2025-11-03 | 分类：数学研究 | 标签：矩阵， 优化器， Muon， 约束， 最速下降"
     },
     {
       "id": "11397",
@@ -136,7 +160,7 @@
         }
       ],
       "link": "posts/11397.html",
-      "metaText": "发布于 2025-11-02"
+      "metaText": "2025-11-02 | 分类：数学研究 | 标签：收缩映射， 对偶变量"
     },
     {
       "id": "11396",
@@ -159,7 +183,7 @@
         }
       ],
       "link": "posts/11396.html",
-      "metaText": "发布于 2025-10-28"
+      "metaText": "2025-10-28 | 分类：数学研究 | 标签：Stiefel， 梯度法"
     },
     {
       "id": "11385",
@@ -193,7 +217,7 @@
         }
       ],
       "link": "posts/11385.html",
-      "metaText": "发布于 2025-10-27"
+      "metaText": "2025-10-27 | 分类：信息时代 | 标签：近似， 分析， 优化， Attention， 低精度"
     },
     {
       "id": "11395",
@@ -217,7 +241,7 @@
         }
       ],
       "link": "posts/11395.html",
-      "metaText": "发布于 2025-10-20"
+      "metaText": "2025-10-20 | 分类：机器学习 | 标签：神经网络， 奇异值， 正则化"
     },
     {
       "id": "11394",
@@ -240,7 +264,7 @@
         }
       ],
       "link": "posts/11394.html",
-      "metaText": "发布于 2025-09-15"
+      "metaText": "2025-09-15 | 分类：机器学习 | 标签：对偶梯度， 学习率"
     },
     {
       "id": "11393",
@@ -279,7 +303,7 @@
         }
       ],
       "link": "posts/11393.html",
-      "metaText": "发布于 2025-08-30"
+      "metaText": "2025-08-30 | 分类：数学研究 | 标签：对偶间隙， 优化理论"
     },
     {
       "id": "11392",
@@ -311,7 +335,7 @@
         }
       ],
       "link": "posts/11392.html",
-      "metaText": "发布于 2025-07-12"
+      "metaText": "2025-07-12 | 分类：机器学习 | 标签：Muon， 优化器， 动量"
     },
     {
       "id": "11391",
@@ -351,7 +375,7 @@
         }
       ],
       "link": "posts/11391.html",
-      "metaText": "发布于 2025-06-01"
+      "metaText": "2025-06-01 | 分类：数学研究 | 标签：谱球面， 投影， 优化"
     },
     {
       "id": "11390",
@@ -382,7 +406,7 @@
         }
       ],
       "link": "posts/11390.html",
-      "metaText": "发布于 2025-05-13"
+      "metaText": "2025-05-13 | 分类：数学研究 | 标签：随机矩阵， 谱范数"
     },
     {
       "id": "11389",
@@ -426,7 +450,7 @@
         }
       ],
       "link": "posts/11389.html",
-      "metaText": "发布于 2025-04-01"
+      "metaText": "2025-04-01 | 分类：数学研究 | 标签：最速下降， 拉格朗日， 优化"
     }
   ]
 }

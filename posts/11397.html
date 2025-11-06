@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
@@ -41,7 +41,8 @@
 </head>
 
 <body>
-    <div data-include="../partials/navbar.html"></div>
+    <div class="page-container">
+        <div data-include="../partials/navbar.html"></div>
 
     <div class="wrapper single-wrapper">
         <main class="main-content single-main">
@@ -56,7 +57,7 @@
             <article class="single-post">
                 <header class="single-post-header">
                     <div data-component="post-card" data-day="2" data-month="Nov" data-title="对偶变量的收缩映射证明"
-                        data-meta="发布于 2025-11-02" data-heading="h1" data-wrapper-class="post-content-wrapper"
+                        data-meta='<span class="meta-item meta-date">2025-11-02</span><span class="meta-divider">|</span><span class="meta-item meta-categories">分类：<a href="#">数学研究</a></span><span class="meta-divider">|</span><span class="meta-item meta-tags">标签：<a href="#">收缩映射</a>，<a href="#">对偶变量</a></span>' data-heading="h1" data-wrapper-class="post-content-wrapper"
                         data-meta-class="post-meta" data-title-class="post-title"></div>
                 </header>
 
@@ -68,21 +69,33 @@
                 </div>
 
                 <footer class="single-post-footer">
-                    <div class="post-meta-info">
-                        分类：<a href="#">数学研究</a>
-                        <span class="meta-divider">|</span>
-                        标签：<a href="#">收缩映射</a>，<a href="#">对偶变量</a>
-                        <span class="meta-divider">|</span>
-                        发布于：2025-11-02
+                    <div class="post-nav">
+                        <a href="11388.html" class="prev-post">‹ 上一篇：流形上的最速下降：5. 对偶梯度下降</a>
+                        <a href="11396.html" class="next-post">下一篇：Stiefel 流形的投影梯度法 ›</a>
                     </div>
                 </footer>
             </article>
+
+            <section class="related-posts">
+                <h3>你也许还对下面的内容感兴趣</h3>
+                <ul>
+                    <li><a href="11388.html">流形上的最速下降：5. 对偶梯度下降</a></li>
+                    <li><a href="#">随机矩阵的谱范数的快速估计</a></li>
+                    <li><a href="#">AdamW 的 Weight RMS 的渐近估计</a></li>
+                    <li><a href="#">重新思考学习率与 Batch Size（四）：EMA</a></li>
+                    <li><a href="#">重新思考学习率与 Batch Size（三）：Muon</a></li>
+                    <li><a href="#">重新思考学习率与 Batch Size（二）：平均场</a></li>
+                    <li><a href="#">为什么 Adam 的 Update RMS 是 0.2？</a></li>
+                    <li><a href="#">流形上的最速下降：4. Muon + 谱球面</a></li>
+                </ul>
+            </section>
         </main>
 
         <div data-include="../partials/sidebar-post.html"></div>
     </div>
 
     <div data-include="../partials/footer.html"></div>
+    </div><!-- end page-container -->
 
     <script src="../script.js"></script>
 </body>

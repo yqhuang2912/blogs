@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
@@ -42,27 +42,23 @@
 </head>
 
 <body>
-    <div data-include="../partials/navbar.html"></div>
+    <div class="page-container">
+        <div data-include="../partials/navbar.html"></div>
 
-    <div class="wrapper single-wrapper">
-        <main class="main-content single-main">
-            <nav class="breadcrumb">
-                <a href="../index.html">首页</a>
-                <span class="crumb-sep">›</span>
-                <a href="#">信息时代</a>
-                <span class="crumb-sep">›</span>
-                <span>低精度 Attention 可能存在有偏的舍入误差</span>
-            </nav>
+    <div class="wrapper">
+        <main class="main-content">
+            <article class="post">
+                <div data-component="post-header" 
+                     data-day="27" 
+                     data-month="Oct"
+                     data-title="低精度 Attention 可能存在有偏的舍入误差" 
+                     data-link=""
+                     data-meta='<span class="meta-item meta-date">2025-10-27</span><span class="meta-divider">|</span><span class="meta-item meta-categories">分类：<a href="#">信息时代</a></span><span class="meta-divider">|</span><span class="meta-item meta-tags">标签：<a href="#">近似</a>，<a href="#">分析</a>，<a href="#">优化</a>，<a href="#">Attention</a>，<a href="#">低精度</a></span>'
+                     data-heading="h1"
+                     data-meta-class="post-meta"
+                     data-title-class="post-title"></div>
 
-            <article class="single-post">
-                <header class="single-post-header">
-                    <div data-component="post-card" data-day="27" data-month="Oct"
-                        data-title="低精度 Attention 可能存在有偏的舍入误差" data-meta="发布于 2025-10-27" data-heading="h1"
-                        data-wrapper-class="post-content-wrapper" data-meta-class="post-meta"
-                        data-title-class="post-title"></div>
-                </header>
-
-                <div class="single-post-content">
+                <div class="post-content single-post-content">
                     <p class="intro">低精度训练是把 Transformer 模型推向大规模的关键工程手段，但一旦计算链路中出现系统性的舍入偏差，整个网络就可能以极快的速度漂移。最近的论文把目光聚焦到
                         Attention 的核心算子上，指出 bias 并非出在分块策略，而是出在精度本身。</p>
 
@@ -119,22 +115,12 @@
                     </section>
                 </div>
 
-                <footer class="single-post-footer">
-                    <div class="post-meta-info">
-                        分类：<a href="#">信息时代</a>
-                        <span class="meta-divider">|</span>
-                        标签：<a href="#">近似</a>，<a href="#">分析</a>，<a href="#">优化</a>，<a href="#">Attention</a>，<a
-                            href="#">低精度</a>
-                        <span class="meta-divider">|</span>
-                        发布于：2025-10-27
-                        <span class="meta-divider">|</span>
-                        <a href="#" class="comment-count">1 条评论</a>
-                    </div>
+                <div class="post-footer">
                     <div class="post-nav">
-                        <a href="11388.html" class="prev-post">‹ 上一篇：流形上的最速下降：5. 对偶梯度下降</a>
-                        <a href="#" class="next-post">下一篇：MuP 之上：1. 好模型的三个特征 ›</a>
+                        <a href="11396.html" class="prev-post">‹ 上一篇：Stiefel 流形的投影梯度法</a>
+                        <a href="11395.html" class="next-post">下一篇：约束神经网络的奇异值调控 ›</a>
                     </div>
-                </footer>
+                </div>
             </article>
 
             <section class="related-posts">
@@ -156,6 +142,7 @@
     </div>
 
     <div data-include="../partials/footer.html"></div>
+    </div><!-- end page-container -->
 
     <script src="../script.js"></script>
 </body>
