@@ -26,6 +26,7 @@ summary:
 ## 指标汇总
 
 <table>
+    <caption>表 1. 指标汇总</caption>
     <thead>
         <tr>
             <th>指标</th>
@@ -48,9 +49,18 @@ summary:
     </tbody>
 </table>
 
-<img src="./images/cat.png" alt="This is a cat" width="160" />
+
+<figure>
+  <img src="./images/cat.png" alt="训练阶段的损失曲线", width=360>
+  <figcaption>图 1. 训练阶段的损失曲线</figcaption>
+</figure>
 
 <!-- more -->
+
+## 训练过程
+$$
+\mathcal{L}\_{\text{GRPO}}=\mathbb{E}\_{q\sim P(Q), o \sim \pi\_{\theta\_{\text{old}}}(O|p)}\left[\frac{1}{|o|}\right]
+$$
 
 ### 训练日志片段
 
@@ -64,9 +74,11 @@ for epoch in range(start_epoch, total_epochs):
 
 最终模型的 EMA 版本在验证集上提供了额外 0.6% 的准确率增益。
 
-另外的测试代码
+另外的测试代
 
 ```python
 import torch
-x = func(a+b)
+a = 1000
+b = 2000
+x = func(a+b) # test
 ```

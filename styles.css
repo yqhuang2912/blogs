@@ -27,7 +27,7 @@ body {
 /* 全局统一容器 */
 .page-container {
     max-width: calc(var(--layout-max-width) + var(--layout-h-padding) * 2);
-    margin: 18px auto 12px;
+    margin: 6px auto 6px;
     background-color: #777C7F;
     box-shadow: 0 2px 18px rgba(0, 0, 0, 0.28);
     border-radius: 6px;
@@ -359,7 +359,7 @@ mjx-container[jax="CHTML"][display="true"] {
 .main-content {
     max-width: calc(var(--layout-max-width) + var(--layout-h-padding) * 2);
     margin: 6px var(--layout-h-padding) 6px;
-    padding: 18px 6px 18px 18px;
+    padding: 18px 6px 6px 18px;
     background-color: #fff;
     border-radius: 6px;
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.16);
@@ -530,45 +530,26 @@ mjx-container[jax="CHTML"][display="true"] {
     line-height: 1.82;
     font-size: 13px;
     color: #2f2f2f;
-    font-family: "Consolas", "Microsoft YaHei Mono", "Courier New", monospace;
+    font-family: "Microsoft YaHei Mono", "Courier New", monospace;
 }
 
 .code-block {
+    --code-font-size: 12.6px;
+    --code-line-height: 1.58;
     position: relative;
     margin: 18px 0;
 }
 
 .code-body {
-    display: flex;
-    align-items: stretch;
-    background-color: #f7f9fc;
+    background-color: #f6f3f2;
     border-radius: 2px;
     overflow: hidden;
 }
 
-.code-line-numbers {
-    margin: 0;
-    padding: 10px 6px 10px 8px;
-    list-style: none;
-    min-width: 30px;
-    font-size: 11px;
-    line-height: 1.58;
-    color: #7c8796;
-    font-family: "Consolas", "Microsoft YaHei Mono", "Courier New", monospace;
-    text-align: right;
-    user-select: none;
-    background-color: transparent;
-}
-
-.code-line-numbers li {
-    line-height: 1.58;
-}
-
 .code-scroll {
-    flex: 1;
     overflow: auto;
-    background-color: #f7f9fc;
-    padding: 10px 12px 10px 8px;
+    background-color: #f6f3f2;
+    padding: 10px 16px;
 }
 
 .code-block pre {
@@ -577,17 +558,24 @@ mjx-container[jax="CHTML"][display="true"] {
     border: none;
     border-radius: 0;
     overflow: visible;
-    font-size: 12.6px;
-    line-height: 1.58;
+    font-size: var(--code-font-size);
+    line-height: var(--code-line-height);
     background: transparent;
     font-family: "Consolas", "Microsoft YaHei Mono", "Courier New", monospace;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
     color: #2a2f36;
+    box-shadow: none;
 }
 
 .code-block code {
     display: block;
     background: none;
     padding: 0;
+    font-size: inherit;
+    line-height: inherit;
+    white-space: pre;
+    tab-size: 4;
 }
 
 .code-copy-btn {
@@ -1608,7 +1596,8 @@ code {
     background-color: transparent;
     border: 1px solid #e5e5e5;
     padding: 4px;
-    max-width: 90%;
+    display: table;
+    max-width: 100%;
     box-sizing: border-box;
 }
 
@@ -1645,7 +1634,9 @@ code {
 /* 图片�?figure 元素内的样式 */
 .single-post-content figure img,
 .post-content figure img {
+    display: block;
     margin: 0 auto;
+    max-width: 100%;
     border: none;
 }
 

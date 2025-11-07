@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2025-11-07T05:47:04.532Z",
+  "generatedAt": "2025-11-07T07:44:14.132Z",
   "postCount": 1,
   "posts": [
     {
@@ -26,7 +26,7 @@
         },
         {
           "type": "h2",
-          "html": "数据集准备 <span class=\"section-anchor\">#</span>"
+          "html": "数据集准备"
         },
         {
           "type": "p",
@@ -38,11 +38,15 @@
         },
         {
           "type": "h2",
-          "html": "指标汇总 <span class=\"section-anchor\">#</span>"
+          "html": "指标汇总"
         },
         {
           "type": "table",
-          "html": "<table><thead>\n                        <tr>\n                            <th>指标</th>\n                            <th>数值</th>\n                        </tr>\n                    </thead>\n                    <tbody>\n                        <tr>\n                            <td>Top-1 Accuracy</td>\n                            <td>87.4%</td>\n                        </tr>\n                        <tr>\n                            <td>Top-5 Accuracy</td>\n                            <td>96.1%</td>\n                        </tr>\n                        <tr>\n                            <td>F1 Score</td>\n                            <td>0.881</td>\n                        </tr>\n                    </tbody></table>"
+          "html": "<table><caption>表 1. 指标汇总</caption>\n                    <thead>\n                        <tr>\n                            <th>指标</th>\n                            <th>数值</th>\n                        </tr>\n                    </thead>\n                    <tbody>\n                        <tr>\n                            <td>Top-1 Accuracy</td>\n                            <td>87.4%</td>\n                        </tr>\n                        <tr>\n                            <td>Top-5 Accuracy</td>\n                            <td>96.1%</td>\n                        </tr>\n                        <tr>\n                            <td>F1 Score</td>\n                            <td>0.881</td>\n                        </tr>\n                    </tbody></table>"
+        },
+        {
+          "type": "figure",
+          "html": "<figure><img src=\"../assets/11385/cat.png\" alt=\"训练阶段的损失曲线\" ,=\"\" width=\"360\">\n                  <figcaption>图 1. 训练阶段的损失曲线</figcaption></figure>"
         }
       ],
       "link": "posts/sample-post.html",

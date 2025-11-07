@@ -159,6 +159,7 @@ async function main() {
     let bodyHtml = renderMarkdown(markdownBody, assetsMap);
     bodyHtml = rewriteInlineHtmlImages(bodyHtml, assetsMap);
     bodyHtml = wrapPostContentSections(bodyHtml);
+    bodyHtml = normalizeCodeBlockWhitespace(bodyHtml);
         const metaHtml = buildMetaHtml(createdAt, categories, tags);
 
         const pageHtml = buildPageHtml({
@@ -562,8 +563,7 @@ function renderMarkdown(markdown, assetsMap = new Map()) {
 
     renderer.heading = (text, level, raw) => {
         const slug = slugger.slug(raw);
-        const anchor = level >= 2 && level <= 4 ? ' <span class="section-anchor">#</span>' : '';
-        return `<h${level} id="${slug}">${text}${anchor}</h${level}>\n`;
+        return `<h${level} id="${slug}">${text}</h${level}>\n`;
     };
 
     renderer.image = (href, title, text) => {
@@ -682,12 +682,62 @@ ${contentBlock}
 </html>`;
 }
 
+function normalizeCodeBlockWhitespace(html) {
+    if (typeof html !== 'string' || !html.trim()) {
+        return html;
+    }
+
+    const $ = cheerio.load(`<div id="__code-root">${html}</div>`, {
+        decodeEntities: false,
+    });
+
+    const root = $('#__code-root');
+    root.find('pre code').each((_, element) => {
+        const codeEl = $(element);
+        let content = codeEl.text();
+
+        if (typeof content !== 'string') {
+            return;
+        }
+
+        const normalizedLines = content
+            .replace(/\r\n/g, '\n')
+            .split('\n');
+
+        while (normalizedLines.length && normalizedLines[normalizedLines.length - 1].trim() === '') {
+            normalizedLines.pop();
+        }
+
+        const trimmed = normalizedLines.map((line) => line.replace(/\s+$/u, '')).join('\n');
+        codeEl.text(trimmed);
+    });
+
+    return root.html();
+}
+
 function indentBlock(text, spaces) {
     const indent = ' '.repeat(spaces);
     const normalized = text.replace(/\r\n/g, '\n').trim();
+    let insidePre = false;
+
     return normalized
         .split('\n')
-        .map((line) => `${indent}${line}`)
+        .map((line) => {
+            const openPre = /<pre\b/i.test(line);
+            const closePre = /<\/pre>/i.test(line);
+            const hasContentBeforeClose = closePre && /\S/.test(line.replace(/<\/pre>[\s\S]*$/i, ''));
+            const isPreContent = insidePre && !openPre && (!closePre || hasContentBeforeClose);
+            const result = `${isPreContent ? '' : indent}${line}`;
+
+            if (openPre) {
+                insidePre = true;
+            }
+            if (closePre) {
+                insidePre = false;
+            }
+
+            return result;
+        })
         .join('\n');
 }
 

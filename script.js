@@ -205,7 +205,7 @@ const SUMMARY_ALLOWED_TAGS = new Set([
     'figure',
 ]);
 let mathJaxReadyPromise;
-const HIGHLIGHT_CSS_URL = 'https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github.min.css';
+const HIGHLIGHT_CSS_URL = 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/github.css';
 const HIGHLIGHT_JS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js';
 let highlightReadyPromise;
 let highlightConfigured = false;
@@ -425,6 +425,14 @@ function buildSummaryHtml(summary) {
             const desiredTag = typeof item.type === 'string' ? item.type.toLowerCase() : 'p';
             const tag = SUMMARY_ALLOWED_TAGS.has(desiredTag) ? desiredTag : 'p';
             const normalizedHtml = normalizeLatexEscapes(item.html);
+            const trimmed = normalizedHtml.trim();
+            const openPattern = new RegExp(`^<${tag}(?=\s|>)`, 'i');
+            const closePattern = new RegExp(`</${tag}>\s*$`, 'i');
+
+            if (openPattern.test(trimmed) && closePattern.test(trimmed)) {
+                return trimmed;
+            }
+
             return `<${tag}>${normalizedHtml}</${tag}>`;
         })
         .join('\n');
@@ -435,66 +443,6 @@ function normalizeLatexEscapes(html) {
         return html;
     }
     return html.replace(/\\\\(?=\S)/g, '\\');
-}
-
-function getPreLineCount(pre) {
-    if (!pre) {
-        return 0;
-    }
-
-    const text = (pre.textContent || '').replace(/\r\n/g, '\n');
-    if (!text) {
-        return 1;
-    }
-
-    const trimmed = text.replace(/\s+$/u, '');
-    if (!trimmed) {
-        return 1;
-    }
-
-    const lines = trimmed.split('\n');
-
-    return Math.max(lines.length, 1);
-}
-
-function setLineNumbers(listEl, count) {
-    if (!listEl) {
-        return;
-    }
-
-    const currentCount = listEl.children.length;
-    if (currentCount === count) {
-        return;
-    }
-
-    while (listEl.firstChild) {
-        listEl.removeChild(listEl.firstChild);
-    }
-
-    for (let index = 1; index <= count; index += 1) {
-        const item = document.createElement('li');
-        item.textContent = String(index);
-        listEl.appendChild(item);
-    }
-}
-
-function updateCodeBlockLineNumbers(pre) {
-    if (!pre || typeof pre.closest !== 'function') {
-        return;
-    }
-
-    const block = pre.closest('.code-block');
-    if (!block) {
-        return;
-    }
-
-    const listEl = block.querySelector('.code-line-numbers');
-    if (!listEl) {
-        return;
-    }
-
-    const lineCount = getPreLineCount(pre);
-    setLineNumbers(listEl, lineCount);
 }
 
 function enhanceCodeBlocks(root) {
@@ -519,22 +467,18 @@ function enhanceCodeBlocks(root) {
             return;
         }
 
-    const wrapper = document.createElement('div');
-    wrapper.className = 'code-block';
+        const wrapper = document.createElement('div');
+        wrapper.className = 'code-block';
 
-    const copyButton = document.createElement('button');
-    copyButton.type = 'button';
-    copyButton.className = 'code-copy-btn';
-    copyButton.dataset.originalLabel = '复制代码';
-    copyButton.setAttribute('aria-label', '复制代码');
-    copyButton.title = '复制代码';
+        const copyButton = document.createElement('button');
+        copyButton.type = 'button';
+        copyButton.className = 'code-copy-btn';
+        copyButton.dataset.originalLabel = '复制代码';
+        copyButton.setAttribute('aria-label', '复制代码');
+        copyButton.title = '复制代码';
 
-    const codeBody = document.createElement('div');
-    codeBody.className = 'code-body';
-
-        const lineNumbers = document.createElement('ol');
-        lineNumbers.className = 'code-line-numbers';
-        lineNumbers.setAttribute('aria-hidden', 'true');
+        const codeBody = document.createElement('div');
+        codeBody.className = 'code-body';
 
         const codeScroll = document.createElement('div');
         codeScroll.className = 'code-scroll';
@@ -542,11 +486,7 @@ function enhanceCodeBlocks(root) {
         parent.insertBefore(wrapper, pre);
         pre.dataset.codeEnhanced = 'true';
 
-        const initialLineCount = getPreLineCount(pre);
-        setLineNumbers(lineNumbers, initialLineCount);
-
         codeScroll.appendChild(pre);
-        codeBody.appendChild(lineNumbers);
         codeBody.appendChild(codeScroll);
         wrapper.appendChild(copyButton);
         wrapper.appendChild(codeBody);
@@ -636,10 +576,6 @@ async function highlightCodeBlocks(root) {
         }
 
         hljs.highlightElement(codeEl);
-        const pre = codeEl.closest('pre');
-        if (pre) {
-            updateCodeBlockLineNumbers(pre);
-        }
         codeEl.dataset.highlighted = 'true';
     });
 }

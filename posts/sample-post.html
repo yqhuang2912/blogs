@@ -74,13 +74,14 @@
 
                 <div class="post-content single-post-content">
                 <p>在这篇短文里，我们记录一次图像分类模型的训练过程。实验运行在单张 RTX 4090 上，总耗时 12 小时。</p>
-                <section class="post-section" id="数据集准备"><h2 data-heading-id="数据集准备">数据集准备 <span class="section-anchor">#</span></h2>
+                <section class="post-section" id="数据集准备"><h2 data-heading-id="数据集准备">数据集准备</h2>
                 <p>原始数据集包含 12 个类别，共 18,240 张样本。我们应用了随机裁剪、颜色抖动与 Mixup 增广。配合 224x224 的输入尺寸，总体扩增倍率约为 2.8 倍。<img src="../assets/11385/chart.png" alt="训练损失曲线" title="训练阶段的损失曲线"></p>
                 <blockquote>
                 <p>训练前 20 个 epoch 使用余弦退火的 warmup 学习率调度，基础学习率设置为 3e-4。</p>
                 </blockquote>
-                </section><section class="post-section" id="指标汇总"><h2 data-heading-id="指标汇总">指标汇总 <span class="section-anchor">#</span></h2>
+                </section><section class="post-section" id="指标汇总"><h2 data-heading-id="指标汇总">指标汇总</h2>
                 <table>
+                    <caption>表 1. 指标汇总</caption>
                     <thead>
                         <tr>
                             <th>指标</th>
@@ -103,22 +104,30 @@
                     </tbody>
                 </table>
                 
-                <img src="../assets/11385/cat.png" alt="This is a cat" width="160">
+                
+                <figure>
+                  <img src="../assets/11385/cat.png" alt="训练阶段的损失曲线" ,="" width="360">
+                  <figcaption>图 1. 训练阶段的损失曲线</figcaption>
+                </figure>
                 
                 <!-- more -->
                 
-                <h3 id="训练日志片段">训练日志片段 <span class="section-anchor">#</span></h3>
+                </section><section class="post-section" id="训练过程"><h2 data-heading-id="训练过程">训练过程</h2>
+                <p>$$
+                \mathcal{L}_{\text{GRPO}}=\mathbb{E}_{q\sim P(Q), o \sim \pi_{\theta_{\text{old}}}(O|p)}\left[\frac{1}{|o|}\right]
+                $$</p>
+                <h3 id="训练日志片段">训练日志片段</h3>
                 <pre><code class="language-python">for epoch in range(start_epoch, total_epochs):
-                    stats = train_one_epoch(model, dataloader=train_loader, optimizer=optim)
-                    scheduler.step()
-                    if should_validate(epoch):
-                        evaluate(model, val_loader)
-                </code></pre>
+    stats = train_one_epoch(model, dataloader=train_loader, optimizer=optim)
+    scheduler.step()
+    if should_validate(epoch):
+        evaluate(model, val_loader)</code></pre>
                 <p>最终模型的 EMA 版本在验证集上提供了额外 0.6% 的准确率增益。</p>
-                <p>另外的测试代码</p>
+                <p>另外的测试代</p>
                 <pre><code class="language-python">import torch
-                x = func(a+b)
-                </code></pre></section>
+a = 1000
+b = 2000
+x = func(a+b) # test</code></pre></section>
                 </div>
 
                 <div data-component="post-navigation"></div>
