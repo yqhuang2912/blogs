@@ -388,25 +388,25 @@ function buildPostMetaHtml(post, rootPrefix) {
     }
 
     const categories = Array.isArray(post && post.categories) ? post.categories : [];
-    const categoryHtml = categories.length
-        ? categories
-            .map((category) => {
-                const href = buildCategoryHref(rootPrefix, category);
-                return `<a href="${href}">${escapeHtml(category)}</a>`;
-            })
-            .join('， ')
-        : '<span class="post-taxonomy-empty">未分类</span>';
+        const categoryHtml = categories.length
+            ? categories
+                .map((category) => {
+                    const href = buildCategoryHref(rootPrefix, category);
+                    return `<a href="${href}">${escapeHtml(category)}</a>`;
+                })
+                .join(',')
+            : '<span class="post-taxonomy-empty">未分类</span>';
     segments.push(`<span class="meta-item meta-categories">分类：${categoryHtml}</span>`);
 
     const tags = Array.isArray(post && post.tags) ? post.tags : [];
-    const tagHtml = tags.length
-        ? tags
-            .map((tag) => {
-                const href = buildTagHref(rootPrefix, tag);
-                return `<a href="${href}">${escapeHtml(tag)}</a>`;
-            })
-            .join('， ')
-        : '<span class="post-taxonomy-empty">暂无标签</span>';
+        const tagHtml = tags.length
+            ? tags
+                .map((tag) => {
+                    const href = buildTagHref(rootPrefix, tag);
+                    return `<a href="${href}">${escapeHtml(tag)}</a>`;
+                })
+                .join(',')
+            : '<span class="post-taxonomy-empty">暂无标签</span>';
     segments.push(`<span class="meta-item meta-tags">标签：${tagHtml}</span>`);
 
     return segments.join('<span class="meta-divider">|</span>');
@@ -437,6 +437,66 @@ function normalizeLatexEscapes(html) {
     return html.replace(/\\\\(?=\S)/g, '\\');
 }
 
+function getPreLineCount(pre) {
+    if (!pre) {
+        return 0;
+    }
+
+    const text = (pre.textContent || '').replace(/\r\n/g, '\n');
+    if (!text) {
+        return 1;
+    }
+
+    const trimmed = text.replace(/\s+$/u, '');
+    if (!trimmed) {
+        return 1;
+    }
+
+    const lines = trimmed.split('\n');
+
+    return Math.max(lines.length, 1);
+}
+
+function setLineNumbers(listEl, count) {
+    if (!listEl) {
+        return;
+    }
+
+    const currentCount = listEl.children.length;
+    if (currentCount === count) {
+        return;
+    }
+
+    while (listEl.firstChild) {
+        listEl.removeChild(listEl.firstChild);
+    }
+
+    for (let index = 1; index <= count; index += 1) {
+        const item = document.createElement('li');
+        item.textContent = String(index);
+        listEl.appendChild(item);
+    }
+}
+
+function updateCodeBlockLineNumbers(pre) {
+    if (!pre || typeof pre.closest !== 'function') {
+        return;
+    }
+
+    const block = pre.closest('.code-block');
+    if (!block) {
+        return;
+    }
+
+    const listEl = block.querySelector('.code-line-numbers');
+    if (!listEl) {
+        return;
+    }
+
+    const lineCount = getPreLineCount(pre);
+    setLineNumbers(listEl, lineCount);
+}
+
 function enhanceCodeBlocks(root) {
     if (typeof document === 'undefined') {
         return;
@@ -454,23 +514,42 @@ function enhanceCodeBlocks(root) {
             return;
         }
 
-        const wrapper = document.createElement('div');
-        wrapper.className = 'code-block';
-
-        const copyButton = document.createElement('button');
-        copyButton.type = 'button';
-        copyButton.className = 'code-copy-btn';
-        copyButton.textContent = '复制代码';
-
         const parent = pre.parentNode;
         if (!parent) {
             return;
         }
 
+    const wrapper = document.createElement('div');
+    wrapper.className = 'code-block';
+
+    const copyButton = document.createElement('button');
+    copyButton.type = 'button';
+    copyButton.className = 'code-copy-btn';
+    copyButton.dataset.originalLabel = '复制代码';
+    copyButton.setAttribute('aria-label', '复制代码');
+    copyButton.title = '复制代码';
+
+    const codeBody = document.createElement('div');
+    codeBody.className = 'code-body';
+
+        const lineNumbers = document.createElement('ol');
+        lineNumbers.className = 'code-line-numbers';
+        lineNumbers.setAttribute('aria-hidden', 'true');
+
+        const codeScroll = document.createElement('div');
+        codeScroll.className = 'code-scroll';
+
         parent.insertBefore(wrapper, pre);
         pre.dataset.codeEnhanced = 'true';
+
+        const initialLineCount = getPreLineCount(pre);
+        setLineNumbers(lineNumbers, initialLineCount);
+
+        codeScroll.appendChild(pre);
+        codeBody.appendChild(lineNumbers);
+        codeBody.appendChild(codeScroll);
         wrapper.appendChild(copyButton);
-        wrapper.appendChild(pre);
+        wrapper.appendChild(codeBody);
     });
 }
 
@@ -557,6 +636,10 @@ async function highlightCodeBlocks(root) {
         }
 
         hljs.highlightElement(codeEl);
+        const pre = codeEl.closest('pre');
+        if (pre) {
+            updateCodeBlockLineNumbers(pre);
+        }
         codeEl.dataset.highlighted = 'true';
     });
 }
@@ -578,20 +661,29 @@ async function handleCodeCopyClick(event) {
     }
 
     const codeText = pre.innerText;
-    const originalLabel = button.dataset.label || '复制代码';
-    button.dataset.label = originalLabel;
+    const originalLabel = button.dataset.originalLabel || '复制代码';
+    const setButtonLabel = (value) => {
+        button.setAttribute('aria-label', value);
+        button.title = value;
+    };
+
     button.disabled = true;
+    button.classList.remove('copied', 'copy-error');
+    setButtonLabel('复制中…');
 
     try {
         await writeClipboard(codeText);
-        button.textContent = '已复制';
+        button.classList.add('copied');
+        setButtonLabel('复制成功');
     } catch (error) {
         console.error('复制代码失败', error);
-        button.textContent = '复制失败';
+        button.classList.add('copy-error');
+        setButtonLabel('复制失败');
     }
 
     window.setTimeout(() => {
-        button.textContent = button.dataset.label || '复制代码';
+        button.classList.remove('copied', 'copy-error');
+        setButtonLabel(originalLabel);
         button.disabled = false;
     }, 2000);
 }

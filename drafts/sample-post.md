@@ -8,13 +8,13 @@ tags:
   - 训练
   - 日志
   - 可视化
+  - 测试
 summary:
   - type: p
     html: "快速记录一次模型训练实验的配置与关键指标。"
   - type: p
     html: "包含训练曲线截图与核心结论。"
 ---
-
 在这篇短文里，我们记录一次图像分类模型的训练过程。实验运行在单张 RTX 4090 上，总耗时 12 小时。
 
 ## 数据集准备
@@ -50,7 +50,7 @@ summary:
     </tbody>
 </table>
 
-<img src="./images/logo.png" alt="项目 Logo" width="160" />
+<img src="./images/cat.png" alt="This is a cat" width="160" />
 
 <!-- more -->
 

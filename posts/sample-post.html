@@ -9,7 +9,7 @@
 
     <script type="application/json" id="post-metadata">
         {
-            "id": "11401",
+            "id": "11385",
             "slug": "sample-post",
             "title": "一次实验记录：自定义模型的损失分析",
             "createdAt": "2025-11-06",
@@ -22,7 +22,8 @@
             "tags": [
                 "训练",
                 "日志",
-                "可视化"
+                "可视化",
+                "测试"
             ],
             "summary": [
                 {
@@ -66,20 +67,20 @@
                      data-month="Nov"
                      data-title="一次实验记录：自定义模型的损失分析"
                      data-link=""
-                     data-meta="&lt;span class=&quot;meta-item meta-date&quot;&gt;2025-11-06&lt;/span&gt;&lt;span class=&quot;meta-divider&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;meta-item meta-categories&quot;&gt;分类：&lt;a href=&quot;#&quot;&gt;数据实践&lt;/a&gt;， &lt;a href=&quot;#&quot;&gt;工程实践&lt;/a&gt;&lt;/span&gt;&lt;span class=&quot;meta-divider&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;meta-item meta-tags&quot;&gt;标签：&lt;a href=&quot;#&quot;&gt;训练&lt;/a&gt;， &lt;a href=&quot;#&quot;&gt;日志&lt;/a&gt;， &lt;a href=&quot;#&quot;&gt;可视化&lt;/a&gt;&lt;/span&gt;"
+                     data-meta="&lt;span class=&quot;meta-item meta-date&quot;&gt;2025-11-06&lt;/span&gt;&lt;span class=&quot;meta-divider&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;meta-item meta-categories&quot;&gt;分类：&lt;a href=&quot;#&quot;&gt;数据实践&lt;/a&gt;,&lt;a href=&quot;#&quot;&gt;工程实践&lt;/a&gt;&lt;/span&gt;&lt;span class=&quot;meta-divider&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;meta-item meta-tags&quot;&gt;标签：&lt;a href=&quot;#&quot;&gt;训练&lt;/a&gt;,&lt;a href=&quot;#&quot;&gt;日志&lt;/a&gt;,&lt;a href=&quot;#&quot;&gt;可视化&lt;/a&gt;,&lt;a href=&quot;#&quot;&gt;测试&lt;/a&gt;&lt;/span&gt;"
                      data-heading="h1"
                      data-meta-class="post-meta"
                      data-title-class="post-title"></div>
 
                 <div class="post-content single-post-content">
                 <p>在这篇短文里，我们记录一次图像分类模型的训练过程。实验运行在单张 RTX 4090 上，总耗时 12 小时。</p>
-                <h2 id="数据集准备">数据集准备 <span class="section-anchor">#</span></h2>
+                <section class="post-section" id="数据集准备"><h2 data-heading-id="数据集准备">数据集准备 <span class="section-anchor">#</span></h2>
                 <p>原始数据集包含 12 个类别，共 18,240 张样本。我们应用了随机裁剪、颜色抖动与 Mixup 增广。配合 224x224 的输入尺寸，总体扩增倍率约为 2.8 倍。</p>
-                <p><img src="../assets/11401/chart.png" alt="训练损失曲线" title="训练阶段的损失曲线"></p>
+                <p><img src="../assets/11385/chart.png" alt="训练损失曲线" title="训练阶段的损失曲线"></p>
                 <blockquote>
                 <p>训练前 20 个 epoch 使用余弦退火的 warmup 学习率调度，基础学习率设置为 3e-4。</p>
                 </blockquote>
-                <h2 id="指标汇总">指标汇总 <span class="section-anchor">#</span></h2>
+                </section><h2 id="指标汇总">指标汇总 <span class="section-anchor">#</span></h2>
                 <table>
                     <thead>
                         <tr>
@@ -103,16 +104,16 @@
                     </tbody>
                 </table>
                 
-                <img src="../assets/11401/logo.png" alt="项目 Logo" width="160" />
+                <img src="../assets/11385/cat.png" alt="This is a cat" width="160">
                 
                 <!-- more -->
                 
                 <h3 id="训练日志片段">训练日志片段 <span class="section-anchor">#</span></h3>
                 <pre><code class="language-python">for epoch in range(start_epoch, total_epochs):
-                    stats = train_one_epoch(model, dataloader=train_loader, optimizer=optim)
-                    scheduler.step()
-                    if should_validate(epoch):
-                        evaluate(model, val_loader)
+    stats = train_one_epoch(model, dataloader=train_loader, optimizer=optim)
+    scheduler.step()
+    if should_validate(epoch):
+        evaluate(model, val_loader)
                 </code></pre>
                 <p>最终模型的 EMA 版本在验证集上提供了额外 0.6% 的准确率增益。</p>
                 </div>

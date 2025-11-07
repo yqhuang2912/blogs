@@ -66,11 +66,11 @@ function buildMetaText(metadata) {
     }
 
     const categories = Array.isArray(metadata.categories) ? metadata.categories.filter(Boolean) : [];
-    const categoryText = categories.length ? categories.join('， ') : '未分类';
+        const categoryText = categories.length ? categories.join(',') : '未分类';
     segments.push(`分类：${categoryText}`);
 
     const tags = Array.isArray(metadata.tags) ? metadata.tags.filter(Boolean) : [];
-    const tagText = tags.length ? tags.join('， ') : '暂无标签';
+        const tagText = tags.length ? tags.join(',') : '暂无标签';
     segments.push(`标签：${tagText}`);
 
     return segments.join(' | ');

@@ -5,6 +5,7 @@ const path = require('path');
 const { spawn } = require('child_process');
 const matter = require('gray-matter');
 const { marked } = require('marked');
+const cheerio = require('cheerio');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
 const POSTS_DIR = path.join(ROOT_DIR, 'posts');
@@ -155,8 +156,9 @@ async function main() {
         };
 
         const metadataJson = JSON.stringify(metadata, null, 4);
-        let bodyHtml = renderMarkdown(markdownBody, assetsMap);
-        bodyHtml = rewriteInlineHtmlImages(bodyHtml, assetsMap);
+    let bodyHtml = renderMarkdown(markdownBody, assetsMap);
+    bodyHtml = rewriteInlineHtmlImages(bodyHtml, assetsMap);
+    bodyHtml = wrapPostContentSections(bodyHtml);
         const metaHtml = buildMetaHtml(createdAt, categories, tags);
 
         const pageHtml = buildPageHtml({
@@ -590,7 +592,7 @@ function buildMetaHtml(createdAt, categories, tags) {
     if (categories.length) {
         const categoryHtml = categories
             .map((category) => `<a href="#">${escapeHtml(category)}</a>`)
-            .join('， ');
+            .join(',');
         segments.push(`<span class="meta-item meta-categories">分类：${categoryHtml}</span>`);
     } else {
         segments.push('<span class="meta-item meta-categories">分类：<span class="post-taxonomy-empty">未分类</span></span>');
@@ -601,7 +603,7 @@ function buildMetaHtml(createdAt, categories, tags) {
     if (tags.length) {
         const tagHtml = tags
             .map((tag) => `<a href="#">${escapeHtml(tag)}</a>`)
-            .join('， ');
+            .join(',');
         segments.push(`<span class="meta-item meta-tags">标签：${tagHtml}</span>`);
     } else {
         segments.push('<span class="meta-item meta-tags">标签：<span class="post-taxonomy-empty">暂无标签</span></span>');
@@ -799,6 +801,75 @@ function rewriteInlineHtmlImages(html, assetsMap) {
 
         return tag;
     });
+}
+
+function wrapPostContentSections(html) {
+    if (typeof html !== 'string' || !html.trim()) {
+        return html;
+    }
+
+    const $ = cheerio.load(`<div id="__post-root">${html}</div>`, {
+        decodeEntities: false,
+    });
+
+    const root = $('#__post-root');
+    const container = root.get(0);
+    if (!container || !container.firstChild) {
+        return html;
+    }
+
+    let node = container.firstChild;
+    while (node) {
+        const nextNode = node.nextSibling;
+        if (node.type === 'tag' && node.name === 'h2') {
+            const heading = $(node);
+
+            if (heading.parents('section').length) {
+                node = nextNode;
+                continue;
+            }
+
+            const headingId = (heading.attr('id') || '').trim();
+            const fallbackId = slugifyHeading(extractHeadingPlainText(heading));
+            const sectionId = headingId || fallbackId;
+
+            if (!sectionId) {
+                node = nextNode;
+                continue;
+            }
+
+            const section = $('<section></section>');
+            section.addClass('post-section');
+            section.attr('id', sectionId);
+
+            heading.removeAttr('id');
+            heading.attr('data-heading-id', sectionId);
+
+            heading.before(section);
+            section.append(heading);
+
+            let siblingNode = section.get(0).nextSibling;
+            while (siblingNode) {
+                if (siblingNode.type === 'tag' && siblingNode.name === 'h2') {
+                    break;
+                }
+                const nextSibling = siblingNode.nextSibling;
+                section.append($(siblingNode));
+                siblingNode = nextSibling;
+            }
+        }
+
+        node = nextNode;
+    }
+
+    return root.html().trim();
+}
+
+function extractHeadingPlainText(heading) {
+    const clone = heading.clone();
+    clone.find('.section-anchor').remove();
+    const text = clone.text().replace(/#/g, '').trim();
+    return text;
 }
 
 async function processMarkdownAssets({ markdown, markdownPath, postId }) {

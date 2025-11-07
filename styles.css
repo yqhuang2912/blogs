@@ -536,21 +536,49 @@ mjx-container[jax="CHTML"][display="true"] {
 .code-block {
     position: relative;
     margin: 18px 0;
-    background: linear-gradient(180deg, #fefefe 0%, #f2f6fb 100%);
-    border: 1px solid #c6d2e1;
-    border-radius: 4px;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92), 0 1px 2px rgba(16, 31, 56, 0.06);
+}
+
+.code-body {
+    display: flex;
+    align-items: stretch;
+    background-color: #f7f9fc;
+    border-radius: 2px;
     overflow: hidden;
+}
+
+.code-line-numbers {
+    margin: 0;
+    padding: 10px 6px 10px 8px;
+    list-style: none;
+    min-width: 30px;
+    font-size: 11px;
+    line-height: 1.58;
+    color: #7c8796;
+    font-family: "Consolas", "Microsoft YaHei Mono", "Courier New", monospace;
+    text-align: right;
+    user-select: none;
+    background-color: transparent;
+}
+
+.code-line-numbers li {
+    line-height: 1.58;
+}
+
+.code-scroll {
+    flex: 1;
+    overflow: auto;
+    background-color: #f7f9fc;
+    padding: 10px 12px 10px 8px;
 }
 
 .code-block pre {
     margin: 0;
-    padding: 20px 26px 18px;
+    padding: 0;
     border: none;
     border-radius: 0;
-    overflow-x: auto;
-    font-size: 13px;
-    line-height: 1.82;
+    overflow: visible;
+    font-size: 12.6px;
+    line-height: 1.58;
     background: transparent;
     font-family: "Consolas", "Microsoft YaHei Mono", "Courier New", monospace;
     color: #2a2f36;
@@ -564,29 +592,42 @@ mjx-container[jax="CHTML"][display="true"] {
 
 .code-copy-btn {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    border: 1px solid #c7ccd1;
-    background: linear-gradient(180deg, #fcfcfc 0%, #f1f1f1 100%);
-    color: #666;
-    font-size: 11px;
-    padding: 4px 10px;
-    border-radius: 3px;
+    top: 4px;
+    right: 4px;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.9);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7785' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='9' y='9' width='11' height='11' rx='2.25'/%3E%3Cpath d='M5 15.5V5a2 2 0 0 1 2-2h10.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 14px 14px;
     cursor: pointer;
-    transition: all 0.15s ease;
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+    transition: background-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease, background-image 0.18s ease;
+    box-shadow: 0 2px 6px rgba(16, 24, 40, 0.16);
 }
 
 .code-copy-btn:hover {
-    background: #f4f9ff;
-    border-color: #b6d2ff;
-    color: #2c6ba8;
+    background-color: rgba(244, 247, 252, 0.95);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.2);
 }
 
 .code-copy-btn:active {
-    background: #e7f0ff;
-    border-color: #8ab2f6;
-    color: #1f4f8d;
+    transform: scale(0.95);
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.24);
+}
+
+.code-copy-btn.copied {
+    background-color: #33a06f;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l4 4L19 6'/%3E%3C/svg%3E");
+}
+
+.code-copy-btn.copy-error {
+    background-color: #d64545;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E");
 }
 
 .code-copy-btn:disabled {
