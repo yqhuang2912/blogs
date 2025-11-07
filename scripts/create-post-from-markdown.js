@@ -857,6 +857,9 @@ function wrapPostContentSections(html) {
                 section.append($(siblingNode));
                 siblingNode = nextSibling;
             }
+
+            node = section.get(0).nextSibling;
+            continue;
         }
 
         node = nextNode;

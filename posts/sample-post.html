@@ -75,12 +75,11 @@
                 <div class="post-content single-post-content">
                 <p>在这篇短文里，我们记录一次图像分类模型的训练过程。实验运行在单张 RTX 4090 上，总耗时 12 小时。</p>
                 <section class="post-section" id="数据集准备"><h2 data-heading-id="数据集准备">数据集准备 <span class="section-anchor">#</span></h2>
-                <p>原始数据集包含 12 个类别，共 18,240 张样本。我们应用了随机裁剪、颜色抖动与 Mixup 增广。配合 224x224 的输入尺寸，总体扩增倍率约为 2.8 倍。</p>
-                <p><img src="../assets/11385/chart.png" alt="训练损失曲线" title="训练阶段的损失曲线"></p>
+                <p>原始数据集包含 12 个类别，共 18,240 张样本。我们应用了随机裁剪、颜色抖动与 Mixup 增广。配合 224x224 的输入尺寸，总体扩增倍率约为 2.8 倍。<img src="../assets/11385/chart.png" alt="训练损失曲线" title="训练阶段的损失曲线"></p>
                 <blockquote>
                 <p>训练前 20 个 epoch 使用余弦退火的 warmup 学习率调度，基础学习率设置为 3e-4。</p>
                 </blockquote>
-                </section><h2 id="指标汇总">指标汇总 <span class="section-anchor">#</span></h2>
+                </section><section class="post-section" id="指标汇总"><h2 data-heading-id="指标汇总">指标汇总 <span class="section-anchor">#</span></h2>
                 <table>
                     <thead>
                         <tr>
@@ -110,12 +109,16 @@
                 
                 <h3 id="训练日志片段">训练日志片段 <span class="section-anchor">#</span></h3>
                 <pre><code class="language-python">for epoch in range(start_epoch, total_epochs):
-    stats = train_one_epoch(model, dataloader=train_loader, optimizer=optim)
-    scheduler.step()
-    if should_validate(epoch):
-        evaluate(model, val_loader)
+                    stats = train_one_epoch(model, dataloader=train_loader, optimizer=optim)
+                    scheduler.step()
+                    if should_validate(epoch):
+                        evaluate(model, val_loader)
                 </code></pre>
                 <p>最终模型的 EMA 版本在验证集上提供了额外 0.6% 的准确率增益。</p>
+                <p>另外的测试代码</p>
+                <pre><code class="language-python">import torch
+                x = func(a+b)
+                </code></pre></section>
                 </div>
 
                 <div data-component="post-navigation"></div>
