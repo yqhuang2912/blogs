@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CT重建基础原理 | 科学空间</title>
+    <link rel="stylesheet" href="../styles.css">
+
+    <script type="application/json" id="post-metadata">
+        {
+            "id": "11388",
+            "slug": "ct-recon-basic",
+            "title": "CT重建基础原理",
+            "createdAt": "2025-11-07",
+            "day": "7",
+            "month": "Nov",
+            "categories": [
+                "CT重建"
+            ],
+            "tags": [
+                "技术分享"
+            ],
+            "summary": [
+                {
+                    "type": "p",
+                    "html": "CT重建基础原理"
+                }
+            ],
+            "link": "posts/ct-recon-basic.html"
+        }
+    </script>
+
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\(', '\)']],
+                displayMath: [['$$', '$$'], ['\[', '\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+</head>
+
+<body>
+    <div class="page-container">
+        <div data-include="../partials/navbar.html"></div>
+
+    <main class="main-content">
+        <div class="wrapper">
+            <article class="post">
+                <div data-component="post-header"
+                     data-day="7"
+                     data-month="Nov"
+                     data-title="CT重建基础原理"
+                     data-link=""
+                     data-meta="&lt;span class=&quot;meta-item meta-date&quot;&gt;2025-11-07&lt;/span&gt;&lt;span class=&quot;meta-divider&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;meta-item meta-categories&quot;&gt;分类：&lt;a href=&quot;#&quot;&gt;CT重建&lt;/a&gt;&lt;/span&gt;&lt;span class=&quot;meta-divider&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;meta-item meta-tags&quot;&gt;标签：&lt;a href=&quot;#&quot;&gt;技术分享&lt;/a&gt;&lt;/span&gt;"
+                     data-heading="h1"
+                     data-meta-class="post-meta"
+                     data-title-class="post-title"></div>
+
+                <div class="post-content single-post-content">
+                <p>这是我们在医院通常可以看到的一个拍摄CT的机器的图片。</p>
+                <figure>
+                  <img src="../assets/11388/ct-device.png" alt="CT设备">
+                  <figcaption>CT设备</figcaption>
+                </figure>
+                
+                <p>CT设备得到的图片跟我们平时体检时拍摄的X光片（DR）不太一样，X光片是二维的投影图像，而CT图像是三维的体积数据，可以通过对二维投影图像进行重建得到。CT可以实现高分辨率的，横断面的图像采集，能够清晰地显示人体内部的结构信息，因此在医学影像中有着广泛的应用。</p>
+                <!-- more -->
+                
+                <p>CT的优点：</p>
+                <ul>
+                <li>不同器官，不同的组织没有重叠在一起，我们可以清晰地看到每个器官的结构</li>
+                <li>高对比度：CT对软组织和骨骼的对比度较高，能够更好地区分不同类型的组织</li>
+                <li>更均匀的剂量分布：因为它是围着人体转360度扫描的，所以剂量分布更均匀</li>
+                </ul>
+                <p>但也不全是优点，CT跟投射成像相比的缺点是：</p>
+                <ul>
+                <li>辐射剂量更高：因为CT需要多次扫描，辐射剂量相对较高，而X光片只需要一次拍摄</li>
+                <li>没有动态信息：CT由于剂量大，扫描速度慢，无法实现动态成像，图像是静态的，无法提供实时的动态信息</li>
+                <li>空间分辨率低：相较于乳腺钼靶成像，CT的空间分辨率较低，无法显示非常细小的结构</li>
+                </ul>
+                <figure>
+                  <img src="../assets/11388/typical-ct-iamges.png" alt="典型的CT图像">
+                  <figcaption>典型的CT图像</figcaption>
+                </figure>
+                </div>
+
+                <div data-component="post-navigation"></div>
+            </article>
+        </div>
+
+        <div data-include="../partials/sidebar-post.html"></div>
+    </main>
+
+    <div data-include="../partials/footer.html"></div>
+    </div><!-- end page-container -->
+
+    <script src="../script.js"></script>
+</body>
+
+</html>

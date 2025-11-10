@@ -1,7 +1,106 @@
 {
-  "generatedAt": "2025-11-07T07:44:14.132Z",
-  "postCount": 1,
+  "generatedAt": "2025-11-10T11:32:45.500Z",
+  "postCount": 5,
   "posts": [
+    {
+      "id": "11389",
+      "slug": "verl-code-preview",
+      "title": "VERL代码走读",
+      "createdAt": "2025-11-10",
+      "day": "10",
+      "month": "Nov",
+      "categories": [
+        "AI Infra"
+      ],
+      "tags": [
+        "VERL",
+        "动手实践"
+      ],
+      "summary": [
+        {
+          "type": "p",
+          "html": "VERL代码走读"
+        }
+      ],
+      "link": "posts/verl-code-preview.html",
+      "metaText": "2025-11-10 | 分类：AI Infra | 标签：VERL,动手实践"
+    },
+    {
+      "id": "11388",
+      "slug": "ct-recon-basic",
+      "title": "CT重建基础原理",
+      "createdAt": "2025-11-07",
+      "day": "7",
+      "month": "Nov",
+      "categories": [
+        "CT重建"
+      ],
+      "tags": [
+        "技术分享"
+      ],
+      "summary": [
+        {
+          "type": "p",
+          "html": "这是我们在医院通常可以看到的一个拍摄CT的机器的图片。"
+        },
+        {
+          "type": "figure",
+          "html": "<figure><img src=\"../assets/11388/ct-device.png\" alt=\"CT设备\">\n                  <figcaption>CT设备</figcaption></figure>"
+        },
+        {
+          "type": "p",
+          "html": "CT设备得到的图片跟我们平时体检时拍摄的X光片（DR）不太一样，X光片是二维的投影图像，而CT图像是三维的体积数据，可以通过对二维投影图像进行重建得到。CT可以实现高分辨率的，横断面的图像采集，能够清晰地显示人体内部的结构信息，因此在医学影像中有着广泛的应用。"
+        }
+      ],
+      "link": "posts/ct-recon-basic.html",
+      "metaText": "2025-11-07 | 分类：CT重建 | 标签：技术分享"
+    },
+    {
+      "id": "11387",
+      "slug": "lora",
+      "title": "LoRA技术原理",
+      "createdAt": "2025-11-07",
+      "day": "7",
+      "month": "Nov",
+      "categories": [
+        "大模型"
+      ],
+      "tags": [
+        "模型微调",
+        "技术分享"
+      ],
+      "summary": [
+        {
+          "type": "p",
+          "html": "LoRA技术原理"
+        }
+      ],
+      "link": "posts/lora.html",
+      "metaText": "2025-11-07 | 分类：大模型 | 标签：模型微调,技术分享"
+    },
+    {
+      "id": "11386",
+      "slug": "sft-finetune-qwen2_5vl-7b",
+      "title": "使用SFT微调Qwen2.5-VL-7B模型",
+      "createdAt": "2025-11-07",
+      "day": "7",
+      "month": "Nov",
+      "categories": [
+        "大模型"
+      ],
+      "tags": [
+        "模型微调",
+        "动手实践"
+      ],
+      "summary": [
+        {
+          "type": "p",
+          "html": "使用SFT微调Qwen2.5-VL-7B模型"
+        }
+      ],
+      "link": "posts/sft-finetune-qwen2_5vl-7b.html",
+      "metaText": "2025-11-07 | 分类：大模型 | 标签：模型微调,动手实践"
+    },
     {
       "id": "11385",
       "slug": "sample-post",
@@ -42,11 +141,11 @@
         },
         {
           "type": "table",
-          "html": "<table><caption>表 1. 指标汇总</caption>\n                    <thead>\n                        <tr>\n                            <th>指标</th>\n                            <th>数值</th>\n                        </tr>\n                    </thead>\n                    <tbody>\n                        <tr>\n                            <td>Top-1 Accuracy</td>\n                            <td>87.4%</td>\n                        </tr>\n                        <tr>\n                            <td>Top-5 Accuracy</td>\n                            <td>96.1%</td>\n                        </tr>\n                        <tr>\n                            <td>F1 Score</td>\n                            <td>0.881</td>\n                        </tr>\n                    </tbody></table>"
+          "html": "<table><caption>表 1. 指标汇总</caption>\r\n                    <thead>\r\n                        <tr>\r\n                            <th>指标</th>\r\n                            <th>数值</th>\r\n                        </tr>\r\n                    </thead>\r\n                    <tbody>\r\n                        <tr>\r\n                            <td>Top-1 Accuracy</td>\r\n                            <td>87.4%</td>\r\n                        </tr>\r\n                        <tr>\r\n                            <td>Top-5 Accuracy</td>\r\n                            <td>96.1%</td>\r\n                        </tr>\r\n                        <tr>\r\n                            <td>F1 Score</td>\r\n                            <td>0.881</td>\r\n                        </tr>\r\n                    </tbody></table>"
         },
         {
           "type": "figure",
-          "html": "<figure><img src=\"../assets/11385/cat.png\" alt=\"训练阶段的损失曲线\" ,=\"\" width=\"360\">\n                  <figcaption>图 1. 训练阶段的损失曲线</figcaption></figure>"
+          "html": "<figure><img src=\"../assets/11385/cat.png\" alt=\"训练阶段的损失曲线\" ,=\"\" width=\"360\">\r\n                  <figcaption>图 1. 训练阶段的损失曲线</figcaption></figure>"
         }
       ],
       "link": "posts/sample-post.html",
