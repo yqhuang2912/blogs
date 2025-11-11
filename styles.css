@@ -71,10 +71,12 @@ mjx-container[jax="CHTML"][display="true"] {
 .math-block {
     margin: 16px auto;
     text-align: center;
+    overflow-x: auto;
 }
 
 .math-block mjx-container {
     display: inline-block !important;
+    max-width: 100%;
 }
 
 .post-content mjx-container[jax="CHTML"]:not([display="true"]),
@@ -837,7 +839,7 @@ mjx-container[jax="CHTML"][display="true"] {
     line-height: 1.75;
     margin-bottom: 8px;
     text-align: justify;
-    overflow-x: auto;
+    overflow-wrap: anywhere;
 }
 
 .post-content p {
