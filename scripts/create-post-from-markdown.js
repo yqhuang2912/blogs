@@ -4,6 +4,20 @@ const fs = require('fs/promises');
 const path = require('path');
 const { spawn } = require('child_process');
 const matter = require('gray-matter');
+
+if (typeof globalThis.File === 'undefined') {
+    const { Blob } = require('node:buffer');
+    class FilePolyfill extends Blob {
+        constructor(parts, filename, options = {}) {
+            super(parts, options);
+            this.name = filename ?? '';
+            this.lastModified = options.lastModified ?? Date.now();
+            this.webkitRelativePath = '';
+        }
+    }
+    globalThis.File = FilePolyfill;
+}
+
 const { marked } = require('marked');
 const cheerio = require('cheerio');
 
@@ -156,10 +170,10 @@ async function main() {
         };
 
         const metadataJson = JSON.stringify(metadata, null, 4);
-    let bodyHtml = renderMarkdown(markdownBody, assetsMap);
-    bodyHtml = rewriteInlineHtmlImages(bodyHtml, assetsMap);
-    bodyHtml = wrapPostContentSections(bodyHtml);
-    bodyHtml = normalizeCodeBlockWhitespace(bodyHtml);
+        let bodyHtml = renderMarkdown(markdownBody, assetsMap);
+        bodyHtml = rewriteInlineHtmlImages(bodyHtml, assetsMap);
+        bodyHtml = wrapPostContentSections(bodyHtml);
+        bodyHtml = normalizeCodeBlockWhitespace(bodyHtml);
         const metaHtml = buildMetaHtml(createdAt, categories, tags);
 
         const pageHtml = buildPageHtml({
@@ -607,7 +621,7 @@ function protectMathSegments(markdown) {
     const patterns = [
         /\\\[[\s\S]+?\\\]/g,
         /\$\$[\s\S]+?\$\$/g,
-        /\$(?:\\.|[^\$\r\n\\])+/g,
+        /\$(?:\\.|[^\$\r\n\\])+\$/g,
     ];
 
     let content = markdown;

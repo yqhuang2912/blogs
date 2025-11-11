@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>为什么轨迹$\tau$是一个随机变量？ | 科学空间</title>
+    <link rel="stylesheet" href="../styles.css">
+
+    <script type="application/json" id="post-metadata">
+        {
+            "id": "11391",
+            "slug": "variable-tau",
+            "title": "为什么轨迹$\\tau$是一个随机变量？",
+            "createdAt": "2025-11-12",
+            "day": "12",
+            "month": "Nov",
+            "categories": [
+                "技术分享"
+            ],
+            "tags": [
+                "数学推导",
+                "强化学习"
+            ],
+            "summary": [],
+            "link": "posts/variable-tau.html"
+        }
+    </script>
+
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$']],
+                displayMath: [['$$', '$$'], ['\[', '\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+</head>
+
+<body>
+    <div class="page-container">
+        <div data-include="../partials/navbar.html"></div>
+
+    <main class="main-content">
+        <div class="wrapper">
+            <article class="post">
+                <div data-component="post-header"
+                     data-day="12"
+                     data-month="Nov"
+                     data-title="为什么轨迹$\tau$是一个随机变量？"
+                     data-link=""
+                     data-meta="&lt;span class=&quot;meta-item meta-date&quot;&gt;2025-11-12&lt;/span&gt;&lt;span class=&quot;meta-divider&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;meta-item meta-categories&quot;&gt;分类：&lt;a href=&quot;#&quot;&gt;技术分享&lt;/a&gt;&lt;/span&gt;&lt;span class=&quot;meta-divider&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;meta-item meta-tags&quot;&gt;标签：&lt;a href=&quot;#&quot;&gt;数学推导&lt;/a&gt;,&lt;a href=&quot;#&quot;&gt;强化学习&lt;/a&gt;&lt;/span&gt;"
+                     data-heading="h1"
+                     data-meta-class="post-meta"
+                     data-title-class="post-title"></div>
+
+                <div class="post-content single-post-content">
+                <p>我们在上一篇文章《从策略梯度到REINFORCE算法》中提到，轨迹$\tau$表示Agent在环境中经历的一系列状态、动作和奖励的序列：
+                $$\tau = \{s_0,a_0,r_0,s_1,a_1,r_1,\cdots,s_T\} \tag 1$$</p>
+                <section class="post-section" id="什么是随机变量？"><h2 data-heading-id="什么是随机变量？">什么是随机变量？</h2>
+                <p>一个随机变量就是：</p>
+                <blockquote>
+                <p>它的取值不是固定的，而是由某个随机过程决定的。</p>
+                </blockquote>
+                <p>例如：</p>
+                <ul>
+                <li>抛硬币：正面朝上是1，反面朝上是0，那么这个随机变量的取值就是0或1，具体取哪个值取决于抛硬币的结果。</li>
+                <li>掷骰子：骰子的点数是1到6中的一个整数，那么这个随机变量的取值就是1、2、3、4、5或6，具体取哪个值取决于掷骰子的结果。</li>
+                <li>抽奖：中奖金额是一个随机变量，可能是0元、10元、100元等，具体取哪个值取决于抽奖的结果。</li>
+                </ul>
+                <p>这些都是随机变量，因为它们的取值依赖于概率分布，而不是确定性的规则。</p>
+                <!-- more -->
+                
+                </section><section class="post-section" id="轨迹math7是一系列随机事件的集合"><h2 data-heading-id="轨迹math7是一系列随机事件的集合">轨迹$\tau$是一系列随机事件的集合</h2>
+                <p>在强化学习中，Agent与环境交互形成了一个过程：
+                $$s_0 \xrightarrow[a_0]{r_0} s_1 \xrightarrow[a_1]{r_1} s_2 \cdots s_T \tag 2$$
+                在这个过程中，每一步都包含了随机性：</p>
+                <ol>
+                <li><strong>初始状态$s_0$</strong>：环境通常会从初始状态分布$\rho(s_0)$中随机选择一个初始状态，Agent无法控制这个选择。</li>
+                <li><strong>动作选择$a_t$</strong>：Agent根据当前状态$s_t$选择动作$a_t$，如果策略是随机的，那么动作选择也是随机的。</li>
+                <li><strong>状态转移$s_{t+1}$</strong>：环境根据当前状态$s_t$和动作$a_t$，随机地转移到下一个状态$s_{t+1}$，这个转移$P(s_{t+1}|s_t,a_t)$通常是概率性的。</li>
+                <li><strong>奖励$r_t$</strong>：环境根据当前状态$s_t$和动作$a_t$，随机地给予奖励$r_t$，这个奖励也是概率性的（例如$R(r_t|s_t,a_t)$有噪声）。</li>
+                </ol>
+                <p>因此，整条交互序列
+                $$\tau = \{s_0,a_0,r_0,s_1,a_1,r_1,\cdots,s_T\}$$
+                的每个元素都是由随机过程决定的，导致轨迹$\tau$本身也是一个随机变量。</p>
+                <p>从形式上看，轨迹$\tau$是定义在一个概率空间上的复合随机变量：
+                $$\tau: \Omega \to \mathcal{T}$$
+                其中:</p>
+                <ul>
+                <li>$\Omega$是所有的随机事件（比如初始状态采样、动作采样、环境状态转移等）的集合。</li>
+                <li>$\mathcal{T}$是所有可能轨迹的集合。</li>
+                </ul>
+                <p>我们定义$P_{\theta}(\tau)$是轨迹$\tau$的概率分布，它表示在策略参数为$\theta$的情况下，Agent执行出轨迹$\tau$的概率。所以我们写成：
+                $$\tau \sim P_{\theta}(\tau) \tag 3$$
+                意思就是，轨迹$\tau$是从概率分布$P_{\theta}(\tau)$中采样得到的一个随机变量。</p>
+                <p>我们把轨迹看作所有随机事件的集合，这样，每执行策略$\pi_{\theta}$一次，就会得到一条新的轨迹$\tau$样本。用随机过程的角度看：
+                $$\tau \sim P_{\theta}(\tau) = \rho(s_0) \prod_{t=0}^{T-1} \pi_{\theta}(a_t|s_t) P(s_{t+1}|s_t,a_t) R(r_t|s_t,a_t)$$</p>
+                <p>这就像：</p>
+                <ul>
+                <li>每次抛硬币，都会得到一个新的结果（0或1）。</li>
+                <li>每次掷骰子，都会得到一个新的点数（1到6）。</li>
+                <li>每次运行Agent，都会得到一条新的轨迹$\tau$。</li>
+                </ul>
+                <p>每条轨迹出现的概率是$P_{\theta}(\tau)$，于是轨迹$\tau$本身就是一个随机变量，其取值空间是所有可能的轨迹集合。
+                <span style="color:#e67e22">文字</span></p></section>
+                </div>
+
+                <div data-component="post-navigation"></div>
+            </article>
+        </div>
+
+        <div data-include="../partials/sidebar-post.html"></div>
+    </main>
+
+    <div data-include="../partials/footer.html"></div>
+    </div><!-- end page-container -->
+
+    <script src="../script.js"></script>
+</body>
+
+</html>
