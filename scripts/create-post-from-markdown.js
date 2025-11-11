@@ -573,7 +573,9 @@ function renderMarkdown(markdown, assetsMap = new Map()) {
         return `<img src="${escapeAttribute(resolvedHref)}" alt="${alt}"${titleAttr}>`;
     };
 
-    return marked.parse(markdown, {
+    const { content: protectedMarkdown, placeholders } = protectMathSegments(markdown);
+
+    const rendered = marked.parse(protectedMarkdown, {
         gfm: true,
         breaks: false,
         smartLists: true,
@@ -582,6 +584,69 @@ function renderMarkdown(markdown, assetsMap = new Map()) {
         headerIds: true,
         mangle: false,
     }).trim();
+
+    const restored = restoreMathSegments(rendered, placeholders);
+    return normalizeMathBlocks(restored);
+}
+
+function protectMathSegments(markdown) {
+    if (typeof markdown !== 'string' || !markdown) {
+        return { content: markdown, placeholders: new Map() };
+    }
+
+    const placeholders = new Map();
+    let counter = 0;
+    const prefix = '@@MATH';
+
+    const replaceWithPlaceholder = (match) => {
+        const key = `${prefix}${counter++}@@`;
+        placeholders.set(key, match);
+        return key;
+    };
+
+    const patterns = [
+        /\\\[[\s\S]+?\\\]/g,
+        /\$\$[\s\S]+?\$\$/g,
+        /\$(?:\\.|[^\$\r\n\\])+/g,
+    ];
+
+    let content = markdown;
+    patterns.forEach((pattern) => {
+        content = content.replace(pattern, replaceWithPlaceholder);
+    });
+
+    return { content, placeholders };
+}
+
+function restoreMathSegments(html, placeholders) {
+    if (typeof html !== 'string' || !placeholders || placeholders.size === 0) {
+        return html;
+    }
+
+    let restored = html;
+    for (const [key, value] of placeholders.entries()) {
+        const pattern = new RegExp(escapeRegExp(key), 'g');
+        restored = restored.replace(pattern, () => value);
+    }
+    return restored;
+}
+
+function normalizeMathBlocks(html) {
+    if (typeof html !== 'string' || !html) {
+        return html;
+    }
+
+    const replaceBlock = (pattern) => (input) => input.replace(pattern, (match, mathContent) => {
+        const trimmed = typeof mathContent === 'string' ? mathContent.trim() : mathContent;
+        return `<div class="math-block">${trimmed}</div>`;
+    });
+
+    const withDisplayBlocks = [
+        /<p>\s*(\$\$[\s\S]+?\$\$)\s*<\/p>/g,
+        /<p>\s*(\\\[[\s\S]+?\\\])\s*<\/p>/g,
+    ].reduce((acc, pattern) => replaceBlock(pattern)(acc), html);
+
+    return withDisplayBlocks;
 }
 
 function buildMetaHtml(createdAt, categories, tags) {
@@ -632,7 +697,7 @@ ${metadataBlock}
     <script>
         MathJax = {
             tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                inlineMath: [['$', '$']],
                 displayMath: [['$$', '$$'], ['\\[', '\\]']],
                 processEscapes: true,
                 processEnvironments: true
@@ -755,6 +820,10 @@ function escapeAttribute(value) {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
+}
+
+function escapeRegExp(value) {
+    return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 function createHeadingSlugger() {

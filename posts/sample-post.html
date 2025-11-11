@@ -29,10 +29,6 @@
                 {
                     "type": "p",
                     "html": "快速记录一次模型训练实验的配置与关键指标。"
-                },
-                {
-                    "type": "p",
-                    "html": "包含训练曲线截图与核心结论。"
                 }
             ],
             "link": "posts/sample-post.html"
@@ -42,7 +38,7 @@
     <script>
         MathJax = {
             tex: {
-                inlineMath: [['$', '$'], ['\(', '\)']],
+                inlineMath: [['$', '$']],
                 displayMath: [['$$', '$$'], ['\[', '\]']],
                 processEscapes: true,
                 processEnvironments: true
@@ -113,9 +109,9 @@
                 <!-- more -->
                 
                 </section><section class="post-section" id="训练过程"><h2 data-heading-id="训练过程">训练过程</h2>
-                <p>$$
-                \mathcal{L}_{\text{GRPO}}=\mathbb{E}_{q\sim P(Q), o \sim \pi_{\theta_{\text{old}}}(O|p)}\left[\frac{1}{|o|}\right]
-                $$</p>
+                <div class="math-block">$$
+                \mathcal{L}\_{\text{GRPO}}=\mathbb{E}\_{q\sim P(Q), o \sim \pi\_{\theta\_{\text{old}}}(O|p)}\left[\frac{1}{|o|}\right]
+                $$</div>
                 <h3 id="训练日志片段">训练日志片段</h3>
                 <pre><code class="language-python">for epoch in range(start_epoch, total_epochs):
     stats = train_one_epoch(model, dataloader=train_loader, optimizer=optim)

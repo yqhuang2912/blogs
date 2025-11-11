@@ -63,7 +63,23 @@ mjx-container[jax="CHTML"]:not([display="true"]) {
 /* 块级数学公式 */
 mjx-container[jax="CHTML"][display="true"] {
     color: blue !important;
-    margin: 16px 0;
+    margin: 16px auto;
+    display: block !important;
+    text-align: center;
+}
+
+.math-block {
+    margin: 16px auto;
+    text-align: center;
+}
+
+.math-block mjx-container {
+    display: inline-block !important;
+}
+
+.post-content mjx-container[jax="CHTML"]:not([display="true"]),
+.single-post-content mjx-container[jax="CHTML"]:not([display="true"]) {
+    display: inline-block;
 }
 
 /* 顶部导航条 */
@@ -833,6 +849,27 @@ mjx-container[jax="CHTML"][display="true"] {
     color: #333;
     margin: 15px 0 10px;
     font-weight: 600;
+}
+
+.post-content ul,
+.single-post-content ul {
+    list-style: disc;
+    margin-left: 20px;
+    list-style-position: outside;
+    margin-bottom: 10px;
+}
+
+.post-content ol,
+.single-post-content ol {
+    list-style: decimal;
+    margin-left: 20px;
+    list-style-position: outside;
+    margin-bottom: 10px;
+}
+
+.post-content li,
+.single-post-content li {
+    margin-bottom: 5px;
 }
 
 .read-more {
