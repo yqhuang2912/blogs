@@ -9,7 +9,7 @@
 
     <script type="application/json" id="post-metadata">
         {
-            "id": "11390",
+            "id": "11392",
             "slug": "policy-gradient",
             "title": "策略梯度",
             "createdAt": "2025-11-11",
@@ -76,7 +76,7 @@
                 <!-- more -->
                 
                 <p>那么你可以通过动态规划（Dynamic Programming）推导出最优状态值函数 $V^*(s)$，再由它推导出最优策略：
-                $$\pi^*(a|s) = \arg\max_a \sum_{s'} P(s'|s,a) [r(s,a) + \gamma V^*(s')]$$</p>
+                $$\pi^*(a|s) = \arg\max_a \sum_{s'} P(s'|s,a) [r(s,a) + \gamma V^*(s')] \tag{2}$$</p>
                 <p>但是这在现实中几乎从不可能做到，因为：</p>
                 <ul>
                 <li>环境模型（状态转移、奖励函数）通常是未知的；</li>
@@ -86,18 +86,18 @@
                 <p>所以我们无法“直接写出”策略的解析形式，只能通过与环境交互、不断更新参数去“学出”一个近似最优的策略。通常我们用$\theta$来表示策略的参数，那么策略就可以写成$\pi_{\theta}(a|s)$。</p>
                 </section><section class="post-section" id="为什么要关注轨迹？"><h2 data-heading-id="为什么要关注轨迹？">为什么要关注轨迹？</h2>
                 <p>因为我们的行为有后果，前面选的动作会影响后面的状态和奖励，所以我们需要关注Agent在环境中运行的一整条轨迹（trajectory）：
-                $$\tau = \{s_0,a_0,r_0,s_1,a_1,r_1,\cdots,s_T\} \tag 2$$
+                $$\tau = \{s_0,a_0,r_0,s_1,a_1,r_1,\cdots,s_T\} \tag 3$$
                 轨迹$\tau$表示Agent从初始状态$s_0$开始，选择动作$a_0$，得到奖励$r_0$，进入状态$s_1$，然后选择动作$a_1$，得到奖励$r_1$，进入状态$s_2$，一直持续到终止状态$s_T$。即：
-                $$s_0 \xrightarrow[a_0]{r_0} s_1 \xrightarrow[a_1]{r_1} s_2 \cdots s_T \tag 3$$</p>
+                $$s_0 \xrightarrow[a_0]{r_0} s_1 \xrightarrow[a_1]{r_1} s_2 \cdots s_T \tag 4$$</p>
                 <p>在Agent执行完一条轨迹$\tau$之后，我们可以计算出这条轨迹的累积回报（cumulative reward）：
-                $$R(\tau) = \sum_{t=0}^{T-1} \gamma^t r_t \tag 4$$
+                $$R(\tau) = \sum_{t=0}^{T-1} \gamma^t r_t \tag 5$$
                 其中，$\gamma \in [0,1]$是折扣因子（discount factor），用于衡量未来奖励的重要性。</p>
                 <p>但是在一个有随机性的世界中，Agent即使使用相同的策略，在最终也可能会执行出不同的轨迹，所以<strong>不能只看一次结果，要看平均表现</strong>。在数学上，随机变量的平均表现可以用期望（Expectation）来表示：
-                $$J(\theta) = \mathbb{E}_{\tau \sim P_{\theta}(\tau)}[R(\tau)] \tag 5$$</p>
+                $$J(\theta) = \mathbb{E}_{\tau \sim P_{\theta}(\tau)}[R(\tau)] \tag 6$$</p>
                 <p>这个式子代表了在这种策略下，平均能拿到多少回报。其中$P_{\theta}(\tau)$是Agent在环境中可能执行出的所有轨迹的分布，它表示在策略参数为$\theta$的情况下，Agent执行出轨迹$\tau$的概率。</p>
                 </section><section class="post-section" id="强化学习的目标"><h2 data-heading-id="强化学习的目标">强化学习的目标</h2>
                 <p>强化学习的目标就是找到一组最优的策略参数$\theta^*$，使得期望回报$J(\theta)$最大化：
-                $$\theta^* = \arg\max_{\theta} J(\theta) \tag 6$$
+                $$\theta^* = \arg\max_{\theta} J(\theta) \tag{7}$$
                 这是一个优化问题，但是$J(\theta)$是一个复杂的函数，因为它包含了：</p>
                 <ul>
                 <li>环境的动态变化</li>
@@ -107,15 +107,15 @@
                 <p>所以我们无法直接求出$J(\theta)$的解析解。但是，我们可以通过计算$J(\theta)$的梯度$\nabla_{\theta} J(\theta)$，然后使用梯度上升法来迭代更新策略参数$\theta$，逐步逼近最优解。这就是策略梯度方法的核心思想。</p>
                 </section><section class="post-section" id="策略梯度"><h2 data-heading-id="策略梯度">策略梯度</h2>
                 <p>使用期望的定义，我们可以将策略梯度写成下面的形式：
-                $$\nabla_{\theta} J(\theta) = \nabla_{\theta} \mathbb{E}_{\tau \sim P_{\theta}(\tau)}[R(\tau)] = \nabla_{\theta} \int P_{\theta}(\tau) R(\tau) d\tau \tag 7$$
-                由于xxx，满足莱布尼兹积分法则（Leibniz integral rule）的条件：</p>
-                <ul>
-                <li>积分区间与参数无关</li>
-                <li>被积函数关于参数的导数连续</li>
-                </ul>
-                <p>所以我们可以将梯度运算符移到积分符号内：
-                $$\nabla_{\theta} J(\theta) = \int \nabla_{\theta} P_{\theta}(\tau) R(\tau) d\tau \tag 8$$
-                为了计算$\nabla_{\theta} P_{\theta}(\tau)$，我们可以使用对数梯度技巧：
+                $$\nabla_{\theta} J(\theta) = \nabla_{\theta} \mathbb{E}_{\tau \sim P_{\theta}(\tau)}[R(\tau)] = \nabla_{\theta} \int P_{\theta}(\tau) R(\tau) d\tau \tag{8}$$
+                根据莱布尼兹积分法则（Leibniz integral rule），我们可以将梯度运算符移到积分符号内：
+                $$\nabla_{\theta} J(\theta) = \int \nabla_{\theta} P_{\theta}(\tau) R(\tau) d\tau \tag 9$$</p>
+                <blockquote>
+                <p><strong>莱布尼兹积分法则</strong>又称为积分符号下求导法则，描述的是当一个积分的积分上下限和/或被积函数都依赖于某个参数的时候，如何对这个参数进行求导。它的形式是：
+                $$\frac{d}{d \theta} \int_{a(\theta)}^{b{\theta}} f(x, \theta) dx = f(b(\theta),\theta) \frac{db(\theta)}{d\theta} - f(a(\theta),\theta) \frac{da(\theta)}{d\theta} + \int_{a(\theta)}^{b(\theta)} \frac{\partial f(x, \theta)}{\partial \theta} dx$$
+                因为在式(8)中，积分的的区间是“轨迹空间”，上限和下限与$\theta$无关，唯一依赖$\theta$的是被积函数$P_{\theta}(\tau)R(\tau)$，因此可以直接将梯度移到积分符号内，得到式(9)。</p>
+                </blockquote>
+                <p>为了计算$\nabla_{\theta} P_{\theta}(\tau)$，我们可以使用<strong>对数梯度技巧</strong>：
                 $$
                 \begin{aligned}
                 \nabla log f(x) &amp;= \frac{1}{f(x)} \nabla_{\theta} f(x) \\
@@ -123,21 +123,21 @@
                 \end{aligned}
                 $$
                 应用到$P_{\theta}(\tau)$上，我们有：
-                $$\nabla_{\theta} P_{\theta}(\tau) = P_{\theta}(\tau) \nabla_{\theta} \log P_{\theta}(\tau) \tag 9$$
-                将式(9)代入式(8)中，我们得到：
+                $$\nabla_{\theta} P_{\theta}(\tau) = P_{\theta}(\tau) \nabla_{\theta} \log P_{\theta}(\tau) \tag{10}$$
+                将式(10)代入式(9)中，我们得到：
                 $$\begin{aligned}
                 \nabla_{\theta} J(\theta) &amp;= \int P_{\theta}(\tau) \nabla_{\theta} \log P_{\theta}(\tau) R(\tau) d\tau \\
                 &amp;= \mathbb{E}_{\tau \sim P_{\theta}(\tau)}[\nabla_{\theta} \log P_{\theta}(\tau) R(\tau)]
-                \end{aligned} \tag{10}$$
-                接下来，我们需要计算$\log P_{\theta}(\tau)$。根据轨迹的定义(式2)，轨迹的概率可以分解为初始状态分布、策略选择动作的概率和状态转移概率的乘积：
-                $$P_{\theta}(\tau) = P(s_0) \prod_{t=0}^{T-1} \pi_{\theta}(a_t|s_t) P(s_{t+1}|s_t,a_t) \tag{11}$$
+                \end{aligned} \tag{11}$$
+                接下来，我们需要计算$\log P_{\theta}(\tau)$。根据轨迹的定义(式3)，轨迹的概率可以分解为初始状态分布、策略选择动作的概率和状态转移概率的乘积：
+                $$P_{\theta}(\tau) = \rho(s_0) \prod_{t=0}^{T-1} \pi_{\theta}(a_t|s_t) P(s_{t+1}|s_t,a_t) \tag{12}$$
                 取对数后，我们得到：
-                $$\log P_{\theta}(\tau) = \log P(s_0) + \sum_{t=0}^{T-1} \log \pi_{\theta}(a_t|s_t) + \sum_{t=0}^{T-1} \log P(s_{t+1}|s_t,a_t) \tag{12}$$
-                注意到初始状态分布$P(s_0)$和状态转移概率$P(s_{t+1}|s_t,a_t)$与策略参数$\theta$无关，所以它们的梯度为零。因此，我们有：
-                $$\nabla_{\theta} \log P_{\theta}(\tau) = \sum_{t=0}^{T-1} \nabla_{\theta} \log \pi_{\theta}(a_t|s_t) \tag{13}$$
-                将式(13)代入式(10)中，我们最终得到策略梯度的表达式：
-                $$\nabla_{\theta} J(\theta) = \mathbb{E}_{\tau \sim P_{\theta}(\tau)}\left[ \left( \sum_{t=0}^{T-1} \nabla_{\theta} \log \pi_{\theta}(a_t|s_t) \right) R(\tau) \right] \tag{14}$$
-                这个公式告诉我们，策略梯度可以通过采样轨迹，计算每个时间步的动作选择概率的对数梯度，并乘以整个轨迹的累积回报来估计.</p></section>
+                $$\log P_{\theta}(\tau) = \log \rho(s_0) + \sum_{t=0}^{T-1} \log \pi_{\theta}(a_t|s_t) + \sum_{t=0}^{T-1} \log P(s_{t+1}|s_t,a_t) \tag{13}$$
+                注意到初始状态分布$\rho(s_0)$和状态转移概率$P(s_{t+1}|s_t,a_t)$与策略参数$\theta$无关，所以它们的梯度为零。因此，我们有：
+                $$\nabla_{\theta} \log P_{\theta}(\tau) = \sum_{t=0}^{T-1} \nabla_{\theta} \log \pi_{\theta}(a_t|s_t) \tag{14}$$
+                将式(14)代入式(11)中，我们最终得到策略梯度的表达式：
+                $$\nabla_{\theta} J(\theta) = \mathbb{E}_{\tau \sim P_{\theta}(\tau)}\left[ \left( \sum_{t=0}^{T-1} \nabla_{\theta} \log \pi_{\theta}(a_t|s_t) \right) R(\tau) \right] \tag{15}$$
+                这个公式告诉我们，策略梯度可以通过采样轨迹，计算每个时间步的动作选择概率的对数梯度，并乘以整个轨迹的累积回报来估计。</p></section>
                 </div>
 
                 <div data-component="post-navigation"></div>

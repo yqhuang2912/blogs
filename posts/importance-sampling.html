@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>重要性采样在AI中的应用 | 科学空间</title>
+    <link rel="stylesheet" href="../styles.css">
+
+    <script type="application/json" id="post-metadata">
+        {
+            "id": "11393",
+            "slug": "importance-sampling",
+            "title": "重要性采样在AI中的应用",
+            "createdAt": "2025-11-13",
+            "day": "13",
+            "month": "Nov",
+            "categories": [
+                "技术分享"
+            ],
+            "tags": [
+                "数学推导"
+            ],
+            "summary": [],
+            "link": "posts/importance-sampling.html"
+        }
+    </script>
+
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$']],
+                displayMath: [['$$', '$$'], ['\[', '\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+</head>
+
+<body>
+    <div class="page-container">
+        <div data-include="../partials/navbar.html"></div>
+
+    <main class="main-content">
+        <div class="wrapper">
+            <article class="post">
+                <div data-component="post-header"
+                     data-day="13"
+                     data-month="Nov"
+                     data-title="重要性采样在AI中的应用"
+                     data-link=""
+                     data-meta="&lt;span class=&quot;meta-item meta-date&quot;&gt;2025-11-13&lt;/span&gt;&lt;span class=&quot;meta-divider&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;meta-item meta-categories&quot;&gt;分类：&lt;a href=&quot;#&quot;&gt;技术分享&lt;/a&gt;&lt;/span&gt;&lt;span class=&quot;meta-divider&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;meta-item meta-tags&quot;&gt;标签：&lt;a href=&quot;#&quot;&gt;数学推导&lt;/a&gt;&lt;/span&gt;"
+                     data-heading="h1"
+                     data-meta-class="post-meta"
+                     data-title-class="post-title"></div>
+
+                <div class="post-content single-post-content">
+                <p>重要性采样是一种<strong>分布转换</strong>技术，核心的目标是：</p>
+                <blockquote>
+                <p>使用一个容易采样的分布$q(x)$来估计另一个难以采样的分布$p(x)$。</p>
+                </blockquote>
+                <p>具体来说，重要性采样通过引入一个<strong>重要性权重</strong>来调整从$q(x)$中采样得到的样本，使其能够反映$p(x)$的特征。这个重要性权重通常定义为：
+                $$w(x) = \frac{p(x)}{q(x)}$$
+                其中$p(x)$是目标分布，$q(x)$是提议分布。</p>
+                <p>通过对样本加权，重要性采样能够有效地估计目标分布下的期望值：
+                $$\mathbb{E}_{p(x)}[f(x)] \approx \frac{1}{N} \sum_{i=1}^{N} w(x_i) f(x_i)$$
+                其中$x_i \sim q(x)$，$N$是样本数量。</p>
+                <p>重要性采样在AI中的应用非常广泛，尤其是在强化学习和生成模型中。通过有效地利用已有的样本，重要性采样能够提高学习效率和模型性能。</p>
+                <!-- more -->
+                </div>
+
+                <div data-component="post-navigation"></div>
+            </article>
+        </div>
+
+        <div data-include="../partials/sidebar-post.html"></div>
+    </main>
+
+    <div data-include="../partials/footer.html"></div>
+    </div><!-- end page-container -->
+
+    <script src="../script.js"></script>
+</body>
+
+</html>
