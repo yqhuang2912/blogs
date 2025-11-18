@@ -1,7 +1,77 @@
 {
-  "generatedAt": "2025-11-13T14:23:46.836Z",
+  "generatedAt": "2025-11-18T16:04:39.129Z",
   "postCount": 8,
   "posts": [
+    {
+      "id": "11395",
+      "slug": "ct-window",
+      "title": "CT图像窗宽与窗位",
+      "createdAt": "2025-11-18",
+      "day": "18",
+      "month": "Nov",
+      "categories": [
+        "医学图像"
+      ],
+      "tags": [
+        "图像处理"
+      ],
+      "summary": [
+        {
+          "type": "p",
+          "html": "在医学CT图像处理中，窗宽（Window Width, WW）和窗位（Window Level, WL）是两个非常重要的参数，用于调整图像的对比度和亮度，从而更好地显示不同组织结构的细节。"
+        },
+        {
+          "type": "h2",
+          "html": "窗宽与窗位的定义"
+        },
+        {
+          "type": "ul",
+          "html": "<ul><li>窗宽（WW）：表示CT图像中灰度级别的范围。较大的窗宽可以显示更多的灰度级别，适用于显示密度差异较大的组织（如肺部）；较小的窗宽则适用于显示密度差异较小的组织（如脑组织）。</li>\n                <li>窗位（WL）：表示CT图像灰度级别的中心值。通过调整窗位，可以改变图像的亮度，使得特定密度范围内的组织更加清晰可见。</li></ul>"
+        },
+        {
+          "type": "figure",
+          "html": "<figure><img src=\"../assets/11395/ct_window.png\" alt=\"CT图像窗宽与窗位示意图\" ,=\"\" width=\"360\">\n                  <figcaption>CT图像窗宽与窗位示意图</figcaption></figure>"
+        }
+      ],
+      "link": "posts/ct-window.html",
+      "metaText": "2025-11-18 | 分类：医学图像 | 标签：图像处理"
+    },
+    {
+      "id": "11394",
+      "slug": "dicom-image",
+      "title": "DICOM图像处理",
+      "createdAt": "2025-11-18",
+      "day": "18",
+      "month": "Nov",
+      "categories": [
+        "医学图像",
+        "动手实践"
+      ],
+      "tags": [
+        "DICOM",
+        "图像处理"
+      ],
+      "summary": [
+        {
+          "type": "p",
+          "html": "DICOM（<u>D</u>igital <u>I</u>maging and <u>CO</u>mmunications in <u>M</u>edicine）是一种用于存储和传输医学影像的标准格式。DICOM文件由图像数据和头文件组成，图像数据是二维或三维的像素矩阵，头文件包含丰富的元数据信息，比如患者信息、扫描设备的信息，扫描参数等。下面以Mayo2016数据集中的DICOM图像为例，介绍如何进行基本的DICOM图像处理。"
+        },
+        {
+          "type": "h2",
+          "html": "读取DICOM图像"
+        },
+        {
+          "type": "p",
+          "html": "我们可以使用Python的pydicom库来读取DICOM文件。以下是一个简单的示例代码："
+        },
+        {
+          "type": "pre",
+          "html": "<pre><code class=\"language-python\">import pydicom\nimport numpy as np\nimport matplotlib.pyplot as plt\n# 读取DICOM文件\nds = pydicom.dcmread('/path/to/dicom/file.dcm')\n# 显示图像\nimage = ds.pixel_array\nplt.imshow(image, cmap='gray')\nplt.axis('off')\nplt.show()</code></pre>"
+        }
+      ],
+      "link": "posts/dicom-image.html",
+      "metaText": "2025-11-18 | 分类：医学图像,动手实践 | 标签：DICOM,图像处理"
+    },
     {
       "id": "11393",
       "slug": "importance-sampling",
@@ -161,7 +231,7 @@
       "day": "7",
       "month": "Nov",
       "categories": [
-        "CT重建"
+        "医学图像"
       ],
       "tags": [
         "技术分享"
@@ -181,30 +251,7 @@
         }
       ],
       "link": "posts/ct-recon-basic.html",
-      "metaText": "2025-11-07 | 分类：CT重建 | 标签：技术分享"
-    },
-    {
-      "id": "11387",
-      "slug": "lora",
-      "title": "LoRA技术原理",
-      "createdAt": "2025-11-07",
-      "day": "7",
-      "month": "Nov",
-      "categories": [
-        "大模型"
-      ],
-      "tags": [
-        "模型微调",
-        "技术分享"
-      ],
-      "summary": [
-        {
-          "type": "p",
-          "html": "LoRA技术原理"
-        }
-      ],
-      "link": "posts/lora.html",
-      "metaText": "2025-11-07 | 分类：大模型 | 标签：模型微调,技术分享"
+      "metaText": "2025-11-07 | 分类：医学图像 | 标签：技术分享"
     },
     {
       "id": "11386",
@@ -214,11 +261,11 @@
       "day": "7",
       "month": "Nov",
       "categories": [
-        "大模型"
+        "动手实践",
+        "AI大模型"
       ],
       "tags": [
-        "模型微调",
-        "动手实践"
+        "模型微调"
       ],
       "summary": [
         {
@@ -227,57 +274,7 @@
         }
       ],
       "link": "posts/sft-finetune-qwen2_5vl-7b.html",
-      "metaText": "2025-11-07 | 分类：大模型 | 标签：模型微调,动手实践"
-    },
-    {
-      "id": "11385",
-      "slug": "sample-post",
-      "title": "一次实验记录：自定义模型的损失分析",
-      "createdAt": "2025-11-06",
-      "day": "6",
-      "month": "Nov",
-      "categories": [
-        "数据实践",
-        "工程实践"
-      ],
-      "tags": [
-        "训练",
-        "日志",
-        "可视化",
-        "测试"
-      ],
-      "summary": [
-        {
-          "type": "p",
-          "html": "在这篇短文里，我们记录一次图像分类模型的训练过程。实验运行在单张 RTX 4090 上，总耗时 12 小时。"
-        },
-        {
-          "type": "h2",
-          "html": "数据集准备"
-        },
-        {
-          "type": "p",
-          "html": "原始数据集包含 12 个类别，共 18,240 张样本。我们应用了随机裁剪、颜色抖动与 Mixup 增广。配合 224x224 的输入尺寸，总体扩增倍率约为 2.8 倍。<img src=\"../assets/11385/chart.png\" alt=\"训练损失曲线\" title=\"训练阶段的损失曲线\">"
-        },
-        {
-          "type": "blockquote",
-          "html": "<blockquote><p>训练前 20 个 epoch 使用余弦退火的 warmup 学习率调度，基础学习率设置为 3e-4。</p></blockquote>"
-        },
-        {
-          "type": "h2",
-          "html": "指标汇总"
-        },
-        {
-          "type": "table",
-          "html": "<table><caption>表 1. 指标汇总</caption>\r\n                    <thead>\r\n                        <tr>\r\n                            <th>指标</th>\r\n                            <th>数值</th>\r\n                        </tr>\r\n                    </thead>\r\n                    <tbody>\r\n                        <tr>\r\n                            <td>Top-1 Accuracy</td>\r\n                            <td>87.4%</td>\r\n                        </tr>\r\n                        <tr>\r\n                            <td>Top-5 Accuracy</td>\r\n                            <td>96.1%</td>\r\n                        </tr>\r\n                        <tr>\r\n                            <td>F1 Score</td>\r\n                            <td>0.881</td>\r\n                        </tr>\r\n                    </tbody></table>"
-        },
-        {
-          "type": "figure",
-          "html": "<figure><img src=\"../assets/11385/cat.png\" alt=\"训练阶段的损失曲线\" ,=\"\" width=\"360\">\r\n                  <figcaption>图 1. 训练阶段的损失曲线</figcaption></figure>"
-        }
-      ],
-      "link": "posts/sample-post.html",
-      "metaText": "2025-11-06 | 分类：数据实践,工程实践 | 标签：训练,日志,可视化,测试"
+      "metaText": "2025-11-07 | 分类：动手实践,AI大模型 | 标签：模型微调"
     }
   ]
 }
