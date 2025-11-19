@@ -1,7 +1,71 @@
 {
-  "generatedAt": "2025-11-18T16:04:39.129Z",
-  "postCount": 8,
+  "generatedAt": "2025-11-19T09:04:34.762Z",
+  "postCount": 10,
   "posts": [
+    {
+      "id": "11397",
+      "slug": "low-dose-simulation",
+      "title": "低剂量CT图像的噪声模拟",
+      "createdAt": "2025-11-20",
+      "day": "20",
+      "month": "Nov",
+      "categories": [
+        "医学图像",
+        "动手实践"
+      ],
+      "tags": [
+        "CT成像",
+        "泊松噪声"
+      ],
+      "summary": [
+        {
+          "type": "p",
+          "html": "在医学成像中，低剂量CT（Computed Tomography）扫描是一种常用的技术，旨在减少患者接受的辐射剂量。然而，降低辐射剂量通常会导致图像质量下降，主要表现为噪声增加。为了研究和改进低剂量CT图像的处理方法，我们需要模拟低剂量CT图像中的噪声特性。从上一篇文章《<a href=\"./posts/ct-proj-and-poisson.html\">CT投影和泊松噪声的关系</a>》中，我们知道，在正常剂量下，探测器接收到的光子数量服从泊松分布：\n                $$I \\sim \\text{Poisson}(I_0 \\cdot e^{-p_{\\text{ICT}}}) \\tag{1}$$\n                其中，$I_0$是入射光子的强度，$p_{\\text{ICT}}$是理想CT图像的投影值。"
+        },
+        {
+          "type": "p",
+          "html": "而在低剂量CT扫描中，入射光子的强度会降低，假设降低的比例为$\\alpha$（$0 &lt; \\alpha &lt; 1$），即$I_0^{'} = \\alpha I_0$，那么低剂量CT下探测器接收到的光子数量可以表示为：\n                $$I_{\\text{LDCT}} \\sim \\text{Poisson}(\\alpha I_0 \\cdot e^{-p_{\\text{ICT}}}) \\tag{2}$$"
+        }
+      ],
+      "link": "posts/low-dose-simulation.html",
+      "metaText": "2025-11-20 | 分类：医学图像,动手实践 | 标签：CT成像,泊松噪声"
+    },
+    {
+      "id": "11396",
+      "slug": "ct-proj-and-poisson",
+      "title": "CT投影和泊松噪声的关系",
+      "createdAt": "2025-11-19",
+      "day": "19",
+      "month": "Nov",
+      "categories": [
+        "医学图像",
+        "技术分享"
+      ],
+      "tags": [
+        "CT成像",
+        "泊松噪声"
+      ],
+      "summary": [
+        {
+          "type": "h2",
+          "html": "理想CT图像的投影"
+        },
+        {
+          "type": "p",
+          "html": "CT的成像是通过探测X射线在人体内的衰减来实现的。因为人体的不同组织对X射线的衰减系数不同，所以如果我们能够测量出不同组织对X射线的衰减系数，也就相当于得到了人体内部的结构信息。"
+        },
+        {
+          "type": "p",
+          "html": "如图1所示，我们假设入射光的强度为$I_0$，经过一个均匀分布的测量物体后探测到的光强为$I$，那么根据<a href=\"https://zh.wikipedia.org/wiki/%E6%AF%94%E5%B0%94-%E6%9C%97%E4%BC%AF%E5%AE%9A%E5%BE%8B\">Beer-Lambert定律</a>，X射线衰减后所具有的光强可以表示为：\n                $$I = I_0 \\cdot e^{-\\mu l} \\tag{1}$$\n                其中，$\\mu$是物体的线性衰减系数，$l$表示射线穿过物体的直线长度。"
+        },
+        {
+          "type": "figure",
+          "html": "<figure><img src=\"../assets/11396/beer_lambert.png\" alt=\"X 射线穿过单个均匀介质示意图\" ,=\"\" width=\"200\">\n                  <figcaption>图1 X 射线穿过单个均匀介质示意图</figcaption></figure>"
+        }
+      ],
+      "link": "posts/ct-proj-and-poisson.html",
+      "metaText": "2025-11-19 | 分类：医学图像,技术分享 | 标签：CT成像,泊松噪声"
+    },
     {
       "id": "11395",
       "slug": "ct-window",
@@ -26,11 +90,11 @@
         },
         {
           "type": "ul",
-          "html": "<ul><li>窗宽（WW）：表示CT图像中灰度级别的范围。较大的窗宽可以显示更多的灰度级别，适用于显示密度差异较大的组织（如肺部）；较小的窗宽则适用于显示密度差异较小的组织（如脑组织）。</li>\n                <li>窗位（WL）：表示CT图像灰度级别的中心值。通过调整窗位，可以改变图像的亮度，使得特定密度范围内的组织更加清晰可见。</li></ul>"
+          "html": "<ul><li>窗宽（WW）：表示CT图像中灰度级别的范围。较大的窗宽可以显示更多的灰度级别，适用于显示密度差异较大的组织（如肺部）；较小的窗宽则适用于显示密度差异较小的组织（如脑组织）。</li>\r\n                <li>窗位（WL）：表示CT图像灰度级别的中心值。通过调整窗位，可以改变图像的亮度，使得特定密度范围内的组织更加清晰可见。</li></ul>"
         },
         {
           "type": "figure",
-          "html": "<figure><img src=\"../assets/11395/ct_window.png\" alt=\"CT图像窗宽与窗位示意图\" ,=\"\" width=\"360\">\n                  <figcaption>CT图像窗宽与窗位示意图</figcaption></figure>"
+          "html": "<figure><img src=\"../assets/11395/ct_window.png\" alt=\"CT图像窗宽与窗位示意图\" ,=\"\" width=\"360\">\r\n                  <figcaption>CT图像窗宽与窗位示意图</figcaption></figure>"
         }
       ],
       "link": "posts/ct-window.html",
@@ -66,7 +130,7 @@
         },
         {
           "type": "pre",
-          "html": "<pre><code class=\"language-python\">import pydicom\nimport numpy as np\nimport matplotlib.pyplot as plt\n# 读取DICOM文件\nds = pydicom.dcmread('/path/to/dicom/file.dcm')\n# 显示图像\nimage = ds.pixel_array\nplt.imshow(image, cmap='gray')\nplt.axis('off')\nplt.show()</code></pre>"
+          "html": "<pre><code class=\"language-python\">import pydicom\r\nimport numpy as np\r\nimport matplotlib.pyplot as plt\r\n# 读取DICOM文件\r\nds = pydicom.dcmread('/path/to/dicom/file.dcm')\r\n# 显示图像\r\nimage = ds.pixel_array\r\nplt.imshow(image, cmap='gray')\r\nplt.axis('off')\r\nplt.show()</code></pre>"
         }
       ],
       "link": "posts/dicom-image.html",
@@ -96,11 +160,11 @@
         },
         {
           "type": "p",
-          "html": "具体来说，重要性采样通过引入一个<strong>重要性权重</strong>来调整从$q(x)$中采样得到的样本，使其能够反映$p(x)$的特征。这个重要性权重通常定义为：\n                $$w(x) = \\frac{p(x)}{q(x)}$$\n                其中$p(x)$是目标分布，$q(x)$是提议分布。"
+          "html": "具体来说，重要性采样通过引入一个<strong>重要性权重</strong>来调整从$q(x)$中采样得到的样本，使其能够反映$p(x)$的特征。这个重要性权重通常定义为：\r\n                $$w(x) = \\frac{p(x)}{q(x)}$$\r\n                其中$p(x)$是目标分布，$q(x)$是提议分布。"
         },
         {
           "type": "p",
-          "html": "通过对样本加权，重要性采样能够有效地估计目标分布下的期望值：\n                $$\\mathbb{E}_{p(x)}[f(x)] \\approx \\frac{1}{N} \\sum_{i=1}^{N} w(x_i) f(x_i)$$\n                其中$x_i \\sim q(x)$，$N$是样本数量。"
+          "html": "通过对样本加权，重要性采样能够有效地估计目标分布下的期望值：\r\n                $$\\mathbb{E}_{p(x)}[f(x)] \\approx \\frac{1}{N} \\sum_{i=1}^{N} w(x_i) f(x_i)$$\r\n                其中$x_i \\sim q(x)$，$N$是样本数量。"
         },
         {
           "type": "p",
@@ -127,7 +191,7 @@
       "summary": [
         {
           "type": "p",
-          "html": "我们在上一篇文章<a href=\"policy-gradient.html\">策略梯度</a>中提到，轨迹$\\tau$表示Agent在环境中经历的一系列状态、动作和奖励的序列，它是一个随机变量：\n                $$\\tau = \\{s_0,a_0,r_0,s_1,a_1,r_1,\\cdots,s_T\\} \\tag 1$$"
+          "html": "我们在上一篇文章<a href=\"policy-gradient.html\">策略梯度</a>中提到，轨迹$\\tau$表示Agent在环境中经历的一系列状态、动作和奖励的序列，它是一个随机变量：\r\n                $$\\tau = \\{s_0,a_0,r_0,s_1,a_1,r_1,\\cdots,s_T\\} \\tag 1$$"
         },
         {
           "type": "h2",
@@ -147,7 +211,7 @@
         },
         {
           "type": "ul",
-          "html": "<ul><li><strong>抛硬币</strong>：正面朝上是1，反面朝上是0，那么这个随机变量的取值就是0或1，具体取哪个值取决于抛硬币的结果。</li>\n                <li><strong>掷骰子</strong>：骰子的点数是1到6中的一个整数，那么这个随机变量的取值就是1、2、3、4、5或6，具体取哪个值取决于掷骰子的结果。</li>\n                <li><strong>抽奖</strong>：中奖金额是一个随机变量，可能是0元、10元、100元等，具体取哪个值取决于抽奖的结果。</li></ul>"
+          "html": "<ul><li><strong>抛硬币</strong>：正面朝上是1，反面朝上是0，那么这个随机变量的取值就是0或1，具体取哪个值取决于抛硬币的结果。</li>\r\n                <li><strong>掷骰子</strong>：骰子的点数是1到6中的一个整数，那么这个随机变量的取值就是1、2、3、4、5或6，具体取哪个值取决于掷骰子的结果。</li>\r\n                <li><strong>抽奖</strong>：中奖金额是一个随机变量，可能是0元、10元、100元等，具体取哪个值取决于抽奖的结果。</li></ul>"
         },
         {
           "type": "p",
@@ -186,7 +250,7 @@
         },
         {
           "type": "p",
-          "html": "最一般的情况，Agent不一定每次都要做出同样的动作，因为有时候探索是必要的。形式上，策略是从状态空间到动作概率分布的映射：\n                $$\\pi(a|s) = P(A_t=a|S_t=s) \\tag 1$$\n                上面的公式表示，在状态$s$下，Agent选择动作$a$的概率是多少。"
+          "html": "最一般的情况，Agent不一定每次都要做出同样的动作，因为有时候探索是必要的。形式上，策略是从状态空间到动作概率分布的映射：\r\n                $$\\pi(a|s) = P(A_t=a|S_t=s) \\tag 1$$\r\n                上面的公式表示，在状态$s$下，Agent选择动作$a$的概率是多少。"
         },
         {
           "type": "p",
@@ -194,7 +258,7 @@
         },
         {
           "type": "ul",
-          "html": "<ul><li>环境的全部状态转移概率 $P(s'|s,a)$；</li>\n                <li>即时奖励函数 $r(s,a)$；</li>\n                <li>折扣因子 $\\gamma$；</li></ul>"
+          "html": "<ul><li>环境的全部状态转移概率 $P(s'|s,a)$；</li>\r\n                <li>即时奖励函数 $r(s,a)$；</li>\r\n                <li>折扣因子 $\\gamma$；</li></ul>"
         }
       ],
       "link": "posts/policy-gradient.html",
@@ -243,7 +307,7 @@
         },
         {
           "type": "figure",
-          "html": "<figure><img src=\"../assets/11388/ct-device.png\" alt=\"CT设备\">\n                  <figcaption>CT设备</figcaption></figure>"
+          "html": "<figure><img src=\"../assets/11388/ct-device.png\" alt=\"CT设备\">\r\n                  <figcaption>CT设备</figcaption></figure>"
         },
         {
           "type": "p",
