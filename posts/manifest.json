@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2025-11-19T09:04:34.762Z",
+  "generatedAt": "2025-11-20T13:06:29.277Z",
   "postCount": 10,
   "posts": [
     {
@@ -20,11 +20,15 @@
       "summary": [
         {
           "type": "p",
-          "html": "在医学成像中，低剂量CT（Computed Tomography）扫描是一种常用的技术，旨在减少患者接受的辐射剂量。然而，降低辐射剂量通常会导致图像质量下降，主要表现为噪声增加。为了研究和改进低剂量CT图像的处理方法，我们需要模拟低剂量CT图像中的噪声特性。从上一篇文章《<a href=\"./posts/ct-proj-and-poisson.html\">CT投影和泊松噪声的关系</a>》中，我们知道，在正常剂量下，探测器接收到的光子数量服从泊松分布：\n                $$I \\sim \\text{Poisson}(I_0 \\cdot e^{-p_{\\text{ICT}}}) \\tag{1}$$\n                其中，$I_0$是入射光子的强度，$p_{\\text{ICT}}$是理想CT图像的投影值。"
+          "html": "在医学成像中，低剂量CT（Computed Tomography）扫描是一种常用的技术，旨在减少患者接受的辐射剂量。然而，降低辐射剂量通常会导致图像质量下降，主要表现为噪声增加。为了研究和改进低剂量CT图像的处理方法，我们需要模拟低剂量CT图像中的噪声特性。从上一篇文章《<a href=\"./posts/ct-proj-and-poisson.html\">CT投影和泊松噪声的关系</a>》中，我们知道，在理想的、无噪声的世界里，X 射线穿过物体遵循 Beer-Lambert 定律:\n                $$N = N_0 \\cdot e^{-\\mu l} = N_0 \\cdot e^{-p_{\\text{ICT}}} \\tag{1}$$\n                其中，$N_0$是入射到物体上的 X 射线光子数，$N$是穿过物体后到达探测器的 X 射线光子数，$\\mu$是物体的线性衰减系数，$l$是射线穿过物体的路径长度，$p_{\\text{ICT}}$是<strong>理想线积分值</strong>(True Line Integral)，也即CT的投影值，这是我们想要测量的物理量，则:\n                $$p_{\\text{ICT}} = -\\ln\\left(\\frac{N}{N_0}\\right) \\tag{2}$$"
         },
         {
           "type": "p",
-          "html": "而在低剂量CT扫描中，入射光子的强度会降低，假设降低的比例为$\\alpha$（$0 &lt; \\alpha &lt; 1$），即$I_0^{'} = \\alpha I_0$，那么低剂量CT下探测器接收到的光子数量可以表示为：\n                $$I_{\\text{LDCT}} \\sim \\text{Poisson}(\\alpha I_0 \\cdot e^{-p_{\\text{ICT}}}) \\tag{2}$$"
+          "html": "在现实世界中，光子的发射和探测是一个随机过程。即$N$不再是一个确定值，而是一个服从泊松分布的随机变量:\n                $$N \\sim \\text{Poisson}(N_0 \\cdot e^{-p_{\\text{ICT}}}) \\tag{3}$$"
+        },
+        {
+          "type": "p",
+          "html": "在低剂量CT扫描中，入射光子的强度会降低，假设降低的比例为$\\alpha$（$0 &lt; \\alpha &lt; 1$），即$N_0^{'} = \\alpha N_0$，那么低剂量CT下探测器接收到的光子数量可以表示为：\n                $$N_{\\text{LDCT}} \\sim \\text{Poisson}(\\alpha N_0 \\cdot e^{-p_{\\text{ICT}}}) \\tag{4}$$"
         }
       ],
       "link": "posts/low-dose-simulation.html",
@@ -130,7 +134,7 @@
         },
         {
           "type": "pre",
-          "html": "<pre><code class=\"language-python\">import pydicom\r\nimport numpy as np\r\nimport matplotlib.pyplot as plt\r\n# 读取DICOM文件\r\nds = pydicom.dcmread('/path/to/dicom/file.dcm')\r\n# 显示图像\r\nimage = ds.pixel_array\r\nplt.imshow(image, cmap='gray')\r\nplt.axis('off')\r\nplt.show()</code></pre>"
+          "html": "<pre><code class=\"language-python\">import pydicom\nimport numpy as np\nimport matplotlib.pyplot as plt\n# 读取DICOM文件\nds = pydicom.dcmread('/path/to/dicom/file.dcm')\n# 显示图像\nimage = ds.pixel_array\nplt.imshow(image, cmap='gray')\nplt.axis('off')\nplt.show()</code></pre>"
         }
       ],
       "link": "posts/dicom-image.html",

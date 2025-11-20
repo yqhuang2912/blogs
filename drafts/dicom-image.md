@@ -34,7 +34,7 @@ plt.show()
   <figcaption>读取并显示DICOM图像示例</figcaption>
 </figure>
 CT值的单位是Hounsfield Unit (HU)，其计算公式为：
-$$HU = 1000 \times \frac{\mu - \mu_{water}}{\mu_{water}}$$
+$$HU = 1000 \times \frac{\mu - \mu_{water}}{\mu_{water}-\mu_{air}}$$
 其中，$\mu$是组织的线性衰减系数。
 
 - 水的线性衰减系数$\mu_{water}=0.195cm^{-1}$；
@@ -42,9 +42,9 @@ $$HU = 1000 \times \frac{\mu - \mu_{water}}{\mu_{water}}$$
 - 骨头的线性衰减系数$\mu_{bone}=0.78cm^{-1}$.
 
 所以我们可以计算出不同组织的典型HU值：
-$$HU_{water} = 1000 \times \frac{\mu_{water} - \mu_{water}}{\mu_{water}}=0$$
-$$HU_{air} = 1000 \times \frac{\mu_{air} - \mu_{water}}{\mu_{water}}=-1000$$
-$$HU_{bone} = 1000 \times \frac{0.78 - 0.195}{0.195} = 3000$$
+$$HU_{water} = 1000 \times \frac{\mu_{water} - \mu_{water}}{\mu_{water} - \mu_{air}}=0$$
+$$HU_{air} = 1000 \times \frac{\mu_{air} - \mu_{water}}{\mu_{water} - \mu_{air}}=-1000$$
+$$HU_{bone} = 1000 \times \frac{0.78 - 0.195}{0.195 - 0} = 3000$$
 因此，HU值的范围通常在-1000（空气）到+3000（骨骼）之间。
 
 从上图可以看到，不做任何处理的DICOM图像对比度较低，细节不清晰。这是因为我们读取的DICOM图像的像素值有可能不是-1000到3000这个范围，通常是0~4096，这是我们常见到的像素值或者灰度值，我们需要将图像的像素值转换为HU值，才能更好地反映组织的密度信息。此外，还需要进行窗宽窗位调整，以增强图像的对比度。为此，我们需要从DICOM头文件中获取重缩放参数和窗宽窗位参数。
