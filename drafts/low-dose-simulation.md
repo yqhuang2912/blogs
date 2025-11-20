@@ -9,7 +9,10 @@ tags:
   - 泊松噪声
 ---
 
-在医学成像中，低剂量CT（Computed Tomography）扫描是一种常用的技术，旨在减少患者接受的辐射剂量。然而，降低辐射剂量通常会导致图像质量下降，主要表现为噪声增加。为了研究和改进低剂量CT图像的处理方法，我们需要模拟低剂量CT图像中的噪声特性。从上一篇文章《[CT投影和泊松噪声的关系](./posts/ct-proj-and-poisson.html)》中，我们知道，在理想的、无噪声的世界里，X 射线穿过物体遵循 Beer-Lambert 定律:
+在医学成像中，低剂量CT（Computed Tomography）扫描是一种常用的技术，旨在减少患者接受的辐射剂量。然而，降低辐射剂量通常会导致图像质量下降，主要表现为噪声增加。为了研究和改进低剂量CT图像的处理方法，我们需要模拟低剂量CT图像中的噪声特性。
+
+## 光子计数的泊松分布模拟
+从上一篇文章《[CT投影和泊松噪声的关系](./posts/ct-proj-and-poisson.html)》中，我们知道，在理想的、无噪声的世界里，X 射线穿过物体遵循 Beer-Lambert 定律:
 $$N = N_0 \cdot e^{-\mu l} = N_0 \cdot e^{-p_{\text{ICT}}} \tag{1}$$
 其中，$N_0$是入射到物体上的 X 射线光子数，$N$是穿过物体后到达探测器的 X 射线光子数，$\mu$是物体的线性衰减系数，$l$是射线穿过物体的路径长度，$p_{\text{ICT}}$是**理想线积分值**(True Line Integral)，也即CT的投影值，这是我们想要测量的物理量，则:
 $$p_{\text{ICT}} = -\ln\left(\frac{N}{N_0}\right) \tag{2}$$
@@ -58,3 +61,31 @@ $$p_{\text{measured}} = -\ln\left(\frac{N}{N_0}\right) \tag{6}$$
 
 也就是说，当入射光子数$N_0$较大时，其概率密度函数会趋近于一个高斯分布，其高阶矩（如偏度、峰度）可以忽略不计，这是中心极限定理的预期结果。而且论文中还给出了结论：**当检测到的光子数$N > 20$时，泊松分布与高斯分布的差异已经非常小，高斯近似是足够精确的。**
 
+由于我们已知光子计数$N$服从泊松分布，其均值和方差均为$\lambda = N_0 e^{-p_{\text{ICT}}}$（泊松分布的均值和方差相等）。所以当$N$较大时，我们可以近似地认为$N$服从高斯分布：$N \sim \mathcal{N}(\mu, \sigma^2)$，其中均值$\mu=\lambda=N_0 e^{-p_{\text{ICT}}}$，方差$\sigma^2=\lambda=N_0 e^{-p_{\text{ICT}}}$。
+
+而我们要计算的投影数据$p_{\text{measured}}$是$N$的对数变换，因此我们可以使用**Delta方法**来近似计算$p_{\text{measured}}$的均值和方差。
+> Delta方法指出，如果$X$是一个随机变量，$g(X)$是一个可微函数，那么当$X$的方差较小时，$g(X)$的方差可以近似表示为：
+$$\text{Var}(g(X)) \approx [g'(\mu)]^2 \cdot \text{Var}(X)$$
+在这里：
+- $X$是光子计数$N$；
+- $g(N) = -\ln\left(\frac{N}{N_0}\right)$；
+- $g^{'}(N)=-\frac{1}{N}$.
+
+因此，投影数据$p_{\text{measured}}$的均值和方差可以近似表示为：
+$$\mathbb{E}[p_{\text{measured}}] = -\ln\left(\frac{\mu}{N_0}\right) = -\ln\left(\frac{N_0 e^{-p_{\text{ICT}}}}{N_0}\right) = p_{\text{ICT}} \tag{7}$$
+$$\text{Var}(p_{\text{measured}}) \approx \left(-\frac{1}{\mu}\right)^2 \cdot \sigma^2 = \frac{1}{\mu^2} \cdot \mu = \frac{1}{\mu} = \frac{e^{p_{\text{ICT}}}}{N_0} \tag{8}$$
+即可以得到$p_{\text{measured}}$服从均值为$p_{\text{ICT}}$,方差为$\frac{e^{p_{\text{ICT}}}}{N_0}$的高斯分布：
+$$p_{\text{measured}}\sim \mathcal{N} \left( p_{\text{ICT}}, \frac{e^{p_{\text{ICT}}}}{N_0}\right)$$
+现在，我们将上述通用模型应用到具体的全剂量和低剂量场景。
+
+### 全剂量CT投影噪声模型
+对于全剂量CT扫描，入射光子数为$N_0$，因此全剂量CT投影数据$p_{\text{FDCT}}$的统计模型为：
+$$p_{\text{FDCT}}=p_{\text{ICT}} + \sqrt{\frac{e^{p_{\text{ICT}}}}{N_0}} \cdot x,\quad x\sim \mathcal{N}(0,1) \tag{9}$$
+
+### 低剂量CT投影噪声模型
+同理，低剂量CT扫描中，入射光子数为$N_0^{'}=\alpha N_0$，因此低剂量CT投影数据$p_{\text{LDCT}}$的统计模型为：
+$$p_{\text{LDCT}}=p_{\text{ICT}} + \sqrt{\frac{e^{p_{\text{ICT}}}}{\alpha N_0}} \cdot x,\quad x\sim \mathcal{N}(0,1) \tag{10}$$
+
+注意：这里我们假设$p_{\text{FDCT}}$和$p_{\text{LDCT}}$是对同一个理想值$p_{\text{ICT}}$的两次独立测量，因此它们共享同一个随机变量$x$（或至少是同分布的）。
+
+我们现在面临一个实际问题：我们只有$p_{\text{FDCT}}$，没有$p_{\text{ICT}}$。我们如何从$p_{\text{FDCT}}$合成$p_{\text{LDCT}}$？
