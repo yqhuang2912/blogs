@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DICOM图像处理 | 科学空间</title>
+    <title>DICOM图像处理 | 慢变量</title>
     <link rel="stylesheet" href="../styles.css">
+    <link rel="icon" href="../icons/deceleration.png" type="image/png">
 
     <script type="application/json" id="post-metadata">
         {
@@ -47,24 +48,21 @@
     <div class="page-container">
         <div data-include="../partials/navbar.html"></div>
 
-    <main class="main-content">
-        <div class="wrapper">
-            <article class="post">
-                <div data-component="post-header"
-                     data-day="18"
-                     data-month="Nov"
-                     data-title="DICOM图像处理"
-                     data-link=""
-                     data-meta="&lt;span class=&quot;meta-item meta-date&quot;&gt;2025-11-18&lt;/span&gt;&lt;span class=&quot;meta-divider&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;meta-item meta-categories&quot;&gt;分类：&lt;a href=&quot;#&quot;&gt;计算成像&lt;/a&gt;&lt;/span&gt;&lt;span class=&quot;meta-divider&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;meta-item meta-tags&quot;&gt;标签：&lt;a href=&quot;#&quot;&gt;DICOM&lt;/a&gt;,&lt;a href=&quot;#&quot;&gt;图像处理&lt;/a&gt;&lt;/span&gt;"
-                     data-heading="h1"
-                     data-meta-class="post-meta"
-                     data-title-class="post-title"></div>
+        <main class="main-content">
+            <div class="wrapper">
+                <article class="post">
+                    <div data-component="post-header" data-day="18" data-month="Nov" data-title="DICOM图像处理" data-link=""
+                        data-meta="&lt;span class=&quot;meta-item meta-categories&quot;&gt;分类：&lt;a href=&quot;#&quot;&gt;计算成像&lt;/a&gt;&lt;/span&gt;&lt;span class=&quot;meta-divider&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;meta-item meta-tags&quot;&gt;标签：&lt;a href=&quot;#&quot;&gt;DICOM&lt;/a&gt;,&lt;a href=&quot;#&quot;&gt;图像处理&lt;/a&gt;&lt;/span&gt;"
+                        data-heading="h1" data-meta-class="post-meta" data-title-class="post-title"></div>
 
-                <div class="post-content single-post-content">
-                <p>DICOM（<u>D</u>igital <u>I</u>maging and <u>CO</u>mmunications in <u>M</u>edicine）是一种用于存储和传输医学影像的标准格式。DICOM文件由图像数据和头文件组成，图像数据是二维或三维的像素矩阵，头文件包含丰富的元数据信息，比如患者信息、扫描设备的信息，扫描参数等。下面以Mayo2016数据集中的DICOM图像为例，介绍如何进行基本的DICOM图像处理。</p>
-                <section class="post-section" id="读取dicom图像"><h2 data-heading-id="读取dicom图像">读取DICOM图像</h2>
-                <p>我们可以使用Python的pydicom库来读取DICOM文件。以下是一个简单的示例代码：</p>
-                <pre><code class="language-python">import pydicom
+                    <div class="post-content single-post-content">
+                        <p>DICOM（<u>D</u>igital <u>I</u>maging and <u>CO</u>mmunications in
+                            <u>M</u>edicine）是一种用于存储和传输医学影像的标准格式。DICOM文件由图像数据和头文件组成，图像数据是二维或三维的像素矩阵，头文件包含丰富的元数据信息，比如患者信息、扫描设备的信息，扫描参数等。下面以Mayo2016数据集中的DICOM图像为例，介绍如何进行基本的DICOM图像处理。
+                        </p>
+                        <section class="post-section" id="读取dicom图像">
+                            <h2 data-heading-id="读取dicom图像">读取DICOM图像</h2>
+                            <p>我们可以使用Python的pydicom库来读取DICOM文件。以下是一个简单的示例代码：</p>
+                            <pre><code class="language-python">import pydicom
 import numpy as np
 import matplotlib.pyplot as plt
 # 读取DICOM文件
@@ -74,34 +72,37 @@ image = ds.pixel_array
 plt.imshow(image, cmap='gray')
 plt.axis('off')
 plt.show()</code></pre>
-                <!-- more -->
-                
-                <p>显示结果如下：</p>
-                <figure>
-                  <img src="../assets/11394/mayo_raw.png" alt="读取并显示DICOM图像示例" ,="" width="240">
-                  <figcaption>读取并显示DICOM图像示例</figcaption>
-                </figure>
-                CT值的单位是Hounsfield Unit (HU)，其计算公式为：
-                $$HU = 1000 \times \frac{\mu - \mu_{water}}{\mu_{water}-\mu_{air}}$$
-                其中，$\mu$是组织的线性衰减系数。
-                
-                <ul>
-                <li>水的线性衰减系数$\mu_{water}=0.195cm^{-1}$；</li>
-                <li>空气的线性衰减系数$\mu_{air}=0$；</li>
-                <li>骨头的线性衰减系数$\mu_{bone}=0.78cm^{-1}$.</li>
-                </ul>
-                <p>所以我们可以计算出不同组织的典型HU值：
-                $$HU_{water} = 1000 \times \frac{\mu_{water} - \mu_{water}}{\mu_{water} - \mu_{air}}=0$$
-                $$HU_{air} = 1000 \times \frac{\mu_{air} - \mu_{water}}{\mu_{water} - \mu_{air}}=-1000$$
-                $$HU_{bone} = 1000 \times \frac{0.78 - 0.195}{0.195 - 0} = 3000$$
-                因此，HU值的范围通常在-1000（空气）到+3000（骨骼）之间。</p>
-                <p>从上图可以看到，不做任何处理的DICOM图像对比度较低，细节不清晰。这是因为我们读取的DICOM图像的像素值有可能不是-1000到3000这个范围，通常是0~4096，这是我们常见到的像素值或者灰度值，我们需要将图像的像素值转换为HU值，才能更好地反映组织的密度信息。此外，还需要进行窗宽窗位调整，以增强图像的对比度。为此，我们需要从DICOM头文件中获取重缩放参数和窗宽窗位参数。</p>
-                </section><section class="post-section" id="读取头文件信息"><h2 data-heading-id="读取头文件信息">读取头文件信息</h2>
-                <p>DICOM头文件中包含了丰富的元数据信息。我们可以通过pydicom库轻松访问这些信息。例如：</p>
-                <pre><code class="language-python">ds = pydicom.dcmread('/path/to/dicom/file.dcm')
+                            <!-- more -->
+
+                            <p>显示结果如下：</p>
+                            <figure>
+                                <img src="../assets/11394/mayo_raw.png" alt="读取并显示DICOM图像示例" ,="" width="240">
+                                <figcaption>读取并显示DICOM图像示例</figcaption>
+                            </figure>
+                            CT值的单位是Hounsfield Unit (HU)，其计算公式为：
+                            $$HU = 1000 \times \frac{\mu - \mu_{water}}{\mu_{water}-\mu_{air}}$$
+                            其中，$\mu$是组织的线性衰减系数。
+
+                            <ul>
+                                <li>水的线性衰减系数$\mu_{water}=0.195cm^{-1}$；</li>
+                                <li>空气的线性衰减系数$\mu_{air}=0$；</li>
+                                <li>骨头的线性衰减系数$\mu_{bone}=0.78cm^{-1}$.</li>
+                            </ul>
+                            <p>所以我们可以计算出不同组织的典型HU值：
+                                $$HU_{water} = 1000 \times \frac{\mu_{water} - \mu_{water}}{\mu_{water} - \mu_{air}}=0$$
+                                $$HU_{air} = 1000 \times \frac{\mu_{air} - \mu_{water}}{\mu_{water} - \mu_{air}}=-1000$$
+                                $$HU_{bone} = 1000 \times \frac{0.78 - 0.195}{0.195 - 0} = 3000$$
+                                因此，HU值的范围通常在-1000（空气）到+3000（骨骼）之间。</p>
+                            <p>从上图可以看到，不做任何处理的DICOM图像对比度较低，细节不清晰。这是因为我们读取的DICOM图像的像素值有可能不是-1000到3000这个范围，通常是0~4096，这是我们常见到的像素值或者灰度值，我们需要将图像的像素值转换为HU值，才能更好地反映组织的密度信息。此外，还需要进行窗宽窗位调整，以增强图像的对比度。为此，我们需要从DICOM头文件中获取重缩放参数和窗宽窗位参数。
+                            </p>
+                        </section>
+                        <section class="post-section" id="读取头文件信息">
+                            <h2 data-heading-id="读取头文件信息">读取头文件信息</h2>
+                            <p>DICOM头文件中包含了丰富的元数据信息。我们可以通过pydicom库轻松访问这些信息。例如：</p>
+                            <pre><code class="language-python">ds = pydicom.dcmread('/path/to/dicom/file.dcm')
 print("ds", ds)</code></pre>
-                <p>输出结果包含了大量的头文件信息，我们这里挑选一些常用的字段进行展示：</p>
-                <pre><code># 文件元信息（0002组）
+                            <p>输出结果包含了大量的头文件信息，我们这里挑选一些常用的字段进行展示：</p>
+                            <pre><code># 文件元信息（0002组）
 (0002,0000) File Meta Information Group Length  UL: 200
 (0002,0001) File Meta Information Version      OB: b'\x00\x01'
 ...
@@ -140,8 +141,8 @@ print("ds", ds)</code></pre>
 ...
 # 像素数据（7FE0组）
 (7FE0,0010) Pixel Data                          OW: Array of 524288 elements</code></pre>
-                <p>下面对这些常用字段进行简单介绍：</p>
-                <pre><code># 文件元信息（0002组）
+                            <p>下面对这些常用字段进行简单介绍：</p>
+                            <pre><code># 文件元信息（0002组）
 (0002,0000) 文件元信息组长度 (UL)：文件元信息头的长度，通常为固定值，表示文件元信息的大小。
 (0002,0001) 文件元信息版本 (OB)：文件元信息的版本，通常为'00 01'，表示当前版本。
 ...
@@ -180,9 +181,11 @@ print("ds", ds)</code></pre>
 ...
 # 像素数据（7FE0组）
 (7FE0,0010) 像素数据 (OW)：像素数据数组，例如包含524288个元素。</code></pre>
-                </section><section class="post-section" id="图像处理"><h2 data-heading-id="图像处理">图像处理</h2>
-                <p>DICOM图像通常需要进行一些处理才能更好地显示和分析。常见的处理步骤包括重缩放和窗宽窗位调整。下面是一个简单的图像处理示例代码：</p>
-                <pre><code class="language-python">import pydicom
+                        </section>
+                        <section class="post-section" id="图像处理">
+                            <h2 data-heading-id="图像处理">图像处理</h2>
+                            <p>DICOM图像通常需要进行一些处理才能更好地显示和分析。常见的处理步骤包括重缩放和窗宽窗位调整。下面是一个简单的图像处理示例代码：</p>
+                            <pre><code class="language-python">import pydicom
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -209,23 +212,24 @@ image = image.astype(np.uint8)
 plt.imshow(image, cmap='gray')
 plt.axis('off')
 plt.show()</code></pre>
-                <p>处理后的图像显示效果如下：</p>
-                <figure>
-                  <img src="../assets/11394/mayo_processed.png" alt="处理后的DICOM图像示例" width="240">
-                  <figcaption>处理后的DICOM图像示例</figcaption>
-                </figure>
-                
-                <p>通过上述步骤，我们可以读取DICOM图像及其头文件信息，并对图像进行基本的处理，以便更好地显示和分析医学影像数据。</p></section>
-                </div>
+                            <p>处理后的图像显示效果如下：</p>
+                            <figure>
+                                <img src="../assets/11394/mayo_processed.png" alt="处理后的DICOM图像示例" width="240">
+                                <figcaption>处理后的DICOM图像示例</figcaption>
+                            </figure>
 
-                <div data-component="post-navigation"></div>
-            </article>
-        </div>
+                            <p>通过上述步骤，我们可以读取DICOM图像及其头文件信息，并对图像进行基本的处理，以便更好地显示和分析医学影像数据。</p>
+                        </section>
+                    </div>
 
-        <div data-include="../partials/sidebar-post.html"></div>
-    </main>
+                    <div data-component="post-navigation"></div>
+                </article>
+            </div>
 
-    <div data-include="../partials/footer.html"></div>
+            <div data-include="../partials/sidebar-post.html"></div>
+        </main>
+
+        <div data-include="../partials/footer.html"></div>
     </div><!-- end page-container -->
 
     <script src="../script.js"></script>

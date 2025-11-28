@@ -122,7 +122,7 @@ async function buildComponentMarkup(templateString, data, bodyContent, rootPrefi
     let markup = templateString;
     const includePattern = /\{\{INCLUDE:([a-zA-Z0-9_-]+)\}\}/g;
     const includeMatches = [...templateString.matchAll(includePattern)];
-    
+
     for (const match of includeMatches) {
         const componentName = match[1];
         try {
@@ -380,36 +380,32 @@ function createPostArticle(post, rootPrefix) {
 }
 
 function buildPostMetaHtml(post, rootPrefix) {
-    const segments = [];
-
-    const createdAt = post && post.createdAt ? escapeHtml(post.createdAt) : '';
-    if (createdAt) {
-        segments.push(`<span class="meta-item meta-date">${createdAt}</span>`);
-    }
-
     const categories = Array.isArray(post && post.categories) ? post.categories : [];
-        const categoryHtml = categories.length
-            ? categories
-                .map((category) => {
-                    const href = buildCategoryHref(rootPrefix, category);
-                    return `<a href="${href}">${escapeHtml(category)}</a>`;
-                })
-                .join(',')
-            : '<span class="post-taxonomy-empty">未分类</span>';
-    segments.push(`<span class="meta-item meta-categories">分类：${categoryHtml}</span>`);
+    const categoryHtml = categories.length
+        ? categories
+            .map((category) => {
+                const href = buildCategoryHref(rootPrefix, category);
+                return `<a href="${href}">${escapeHtml(category)}</a>`;
+            })
+            .join(',')
+        : '<span class="post-taxonomy-empty">未分类</span>';
+    const catSpan = `<span class="meta-item meta-categories">分类：${categoryHtml}</span>`;
 
     const tags = Array.isArray(post && post.tags) ? post.tags : [];
-        const tagHtml = tags.length
-            ? tags
-                .map((tag) => {
-                    const href = buildTagHref(rootPrefix, tag);
-                    return `<a href="${href}">${escapeHtml(tag)}</a>`;
-                })
-                .join(',')
-            : '<span class="post-taxonomy-empty">暂无标签</span>';
-    segments.push(`<span class="meta-item meta-tags">标签：${tagHtml}</span>`);
+    const tagHtml = tags.length
+        ? tags
+            .map((tag) => {
+                const href = buildTagHref(rootPrefix, tag);
+                return `<a href="${href}">${escapeHtml(tag)}</a>`;
+            })
+            .join(',')
+        : '<span class="post-taxonomy-empty">暂无标签</span>';
+    const tagSpan = `<span class="meta-item meta-tags">标签：${tagHtml}</span>`;
 
-    return segments.join('<span class="meta-divider">|</span>');
+    if (categories.length && tags.length) {
+        return `${catSpan} <span class="meta-divider">|</span> ${tagSpan}`;
+    }
+    return `${catSpan} ${tagSpan}`;
 }
 
 function buildSummaryHtml(summary) {
@@ -759,6 +755,20 @@ function resolveCategoryDisplayName(posts, rawCategory) {
     return rawCategory || '';
 }
 
+const CATEGORY_ICON_SRC_MAP = {
+    '计算成像': 'ct-scan.png',
+    '人工智能': 'technology.png',
+    '工程实践': 'implementation.png',
+    '数学研究': 'algorithm.png',
+    all: 'all.png',
+};
+
+function getCategoryIconSrc(name, rootPrefix, isAll = false) {
+    const key = isAll ? 'all' : normalizeCategoryValue(name);
+    const file = CATEGORY_ICON_SRC_MAP[key] || 'math.png';
+    return `${rootPrefix}icons/${file}`;
+}
+
 function filterPostsByCategory(posts, category) {
     const target = normalizeCategoryValue(category);
     if (!target) {
@@ -1086,8 +1096,10 @@ async function initCategoryNav(rootPrefix, postsArg, activeCategory) {
         link.href = buildCategoryHref(rootPrefix, value);
 
         const displayMeta = getCategoryDisplayMeta(isAll ? '全部文章' : value, count, isAll);
+        const iconSrc = getCategoryIconSrc(isAll ? 'all' : value, rootPrefix, isAll);
         const safeLabel = escapeHtml(displayMeta.label);
-        link.innerHTML = safeLabel;
+        const fallbackSrc = `${rootPrefix}icons/math.png`;
+        link.innerHTML = `<img class="icon-img" src="${iconSrc}" alt="${safeLabel}" onerror="this.onerror=null;this.src='${fallbackSrc}'"><span class="label">${safeLabel}</span>`;
 
         if (isAll) {
             link.dataset.category = 'all';
@@ -1369,10 +1381,10 @@ async function initPostNavigation(rootPrefix) {
     const nextPost = currentIndex < sortedPosts.length - 1 ? sortedPosts[currentIndex + 1] : null;
 
     // Generate HTML for navigation links
-    const prevLink = prevPost 
+    const prevLink = prevPost
         ? `<span class="prev-post">‹ 上一篇：<a href="${resolveComponentLink(prevPost.link, rootPrefix)}">${prevPost.title}</a></span>`
         : '';
-    
+
     const nextLink = nextPost
         ? `<span class="next-post">下一篇：<a href="${resolveComponentLink(nextPost.link, rootPrefix)}">${nextPost.title}</a></span>`
         : '';
@@ -1785,37 +1797,37 @@ document.addEventListener('DOMContentLoaded', async () => {
     const initialCategory = getCategoryFilter();
     const initialTag = getTagFilter();
     await injectPartials(rootPrefix);
-    
+
     // For non-index pages, prepare post navigation data before rendering components
     const listContainer = document.querySelector('[data-post-list]');
     if (!listContainer) {
         // Not on index page, initialize post navigation data first
         await initPostNavigation(rootPrefix);
     }
-    
+
     await renderComponents(rootPrefix);
     fixPostMetaLinks(rootPrefix);
-    
+
     // Initialize category nav and tag cloud (will be called again in initIndexPage if on index page)
     await initCategoryNav(rootPrefix, undefined, initialCategory);
     await initTagCloud(rootPrefix, undefined, initialTag);
-    
+
     initSidebarSearch(rootPrefix);
     await initIndexPage(rootPrefix); // This handles random posts for index page
-    
+
     // For non-index pages (like single post pages), initialize sidebar posts here
     if (!listContainer) {
         // Not on index page, so show recent posts in sidebar
         await initRecentPosts(rootPrefix);
     }
-    
+
     const postList = document.querySelector('[data-post-list]');
     await typesetMath(postList || document.body);
     enhanceCodeBlocks(document.body);
     await highlightCodeBlocks(document.body);
     initSmoothScroll();
     initBackToTop();
-    console.log('科学空间博客已加载完成！');
+    console.log('慢变量博客已加载完成！');
 });
 
 document.addEventListener('click', (event) => {

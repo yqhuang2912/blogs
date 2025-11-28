@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>策略梯度 | 科学空间</title>
+    <title>策略梯度 | 慢变量</title>
     <link rel="stylesheet" href="../styles.css">
+    <link rel="icon" href="../icons/deceleration.png" type="image/png">
 
     <script type="application/json" id="post-metadata">
         {
@@ -48,107 +49,127 @@
     <div class="page-container">
         <div data-include="../partials/navbar.html"></div>
 
-    <main class="main-content">
-        <div class="wrapper">
-            <article class="post">
-                <div data-component="post-header"
-                     data-day="11"
-                     data-month="Nov"
-                     data-title="策略梯度"
-                     data-link=""
-                     data-meta="&lt;span class=&quot;meta-item meta-date&quot;&gt;2025-11-11&lt;/span&gt;&lt;span class=&quot;meta-divider&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;meta-item meta-categories&quot;&gt;分类：&lt;a href=&quot;#&quot;&gt;人工智能&lt;/a&gt;,&lt;a href=&quot;#&quot;&gt;数学研究&lt;/a&gt;&lt;/span&gt;&lt;span class=&quot;meta-divider&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;meta-item meta-tags&quot;&gt;标签：&lt;a href=&quot;#&quot;&gt;数学推导&lt;/a&gt;,&lt;a href=&quot;#&quot;&gt;强化学习&lt;/a&gt;&lt;/span&gt;"
-                     data-heading="h1"
-                     data-meta-class="post-meta"
-                     data-title-class="post-title"></div>
+        <main class="main-content">
+            <div class="wrapper">
+                <article class="post">
+                    <div data-component="post-header" data-day="11" data-month="Nov" data-title="策略梯度" data-link=""
+                        data-meta="&lt;span class=&quot;meta-item meta-categories&quot;&gt;分类：&lt;a href=&quot;#&quot;&gt;人工智能&lt;/a&gt;,&lt;a href=&quot;#&quot;&gt;数学研究&lt;/a&gt;&lt;/span&gt;&lt;span class=&quot;meta-divider&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;meta-item meta-tags&quot;&gt;标签：&lt;a href=&quot;#&quot;&gt;数学推导&lt;/a&gt;,&lt;a href=&quot;#&quot;&gt;强化学习&lt;/a&gt;&lt;/span&gt;"
+                        data-heading="h1" data-meta-class="post-meta" data-title-class="post-title"></div>
 
-                <div class="post-content single-post-content">
-                <p>基于策略的强化学习算法的核心本质是在一个不确定的环境中，学习出一种行为方式（策略），使得Agent按照这种行为方式和环境交互的时候可以得到环境给予的最大回报。</p>
-                <section class="post-section" id="策略到底是个啥？"><h2 data-heading-id="策略到底是个啥？">策略到底是个啥？</h2>
-                <p>策略就是Agent的行为规律，当Agent的处在一个确定的状态$s$的时候，需要决定执行什么动作$a$，选择的依据就是策略。</p>
-                <p>最一般的情况，Agent不一定每次都要做出同样的动作，因为有时候探索是必要的。形式上，策略是从状态空间到动作概率分布的映射：
-                $$\pi(a|s) = P(A_t=a|S_t=s) \tag 1$$
-                上面的公式表示，在状态$s$下，Agent选择动作$a$的概率是多少。</p>
-                <p>在理论上，如果你知道：</p>
-                <ul>
-                <li>环境的全部状态转移概率 $P(s'|s,a)$；</li>
-                <li>即时奖励函数 $r(s,a)$；</li>
-                <li>折扣因子 $\gamma$；</li>
-                </ul>
-                <!-- more -->
-                
-                <p>那么你可以通过动态规划（Dynamic Programming）推导出最优状态值函数 $V^*(s)$，再由它推导出最优策略：
-                $$\pi^*(a|s) = \arg\max_a \sum_{s'} P(s'|s,a) [r(s,a) + \gamma V^*(s')] \tag{2}$$</p>
-                <p>但是这在现实中几乎从不可能做到，因为：</p>
-                <ul>
-                <li>环境模型（状态转移、奖励函数）通常是未知的；</li>
-                <li>状态空间和动作空间往往是连续的或高维的，根本无法枚举；</li>
-                <li>奖励往往是延迟的（delayed reward），无法局部推断出正确动作。</li>
-                </ul>
-                <p>所以我们无法“直接写出”策略的解析形式，只能通过与环境交互、不断更新参数去“学出”一个近似最优的策略。通常我们用$\theta$来表示策略的参数，那么策略就可以写成$\pi_{\theta}(a|s)$。</p>
-                </section><section class="post-section" id="为什么要关注轨迹？"><h2 data-heading-id="为什么要关注轨迹？">为什么要关注轨迹？</h2>
-                <p>因为我们的行为有后果，前面选的动作会影响后面的状态和奖励，所以我们需要关注Agent在环境中运行的一整条轨迹（trajectory）：
-                $$\tau = \{s_0,a_0,r_0,s_1,a_1,r_1,\cdots,s_T\} \tag 3$$
-                轨迹$\tau$表示Agent从初始状态$s_0$开始，选择动作$a_0$，得到奖励$r_0$，进入状态$s_1$，然后选择动作$a_1$，得到奖励$r_1$，进入状态$s_2$，一直持续到终止状态$s_T$。即：
-                $$s_0 \xrightarrow[a_0]{r_0} s_1 \xrightarrow[a_1]{r_1} s_2 \cdots s_T \tag 4$$</p>
-                <p>在Agent执行完一条轨迹$\tau$之后，我们可以计算出这条轨迹的累积回报（cumulative reward）：
-                $$R(\tau) = \sum_{t=0}^{T-1} \gamma^t r_t \tag 5$$
-                其中，$\gamma \in [0,1]$是折扣因子（discount factor），用于衡量未来奖励的重要性。</p>
-                <p>但是在一个有随机性的世界中，Agent即使使用相同的策略，在最终也可能会执行出不同的轨迹，所以<strong>不能只看一次结果，要看平均表现</strong>。在数学上，随机变量的平均表现可以用期望（Expectation）来表示：
-                $$J(\theta) = \mathbb{E}_{\tau \sim P_{\theta}(\tau)}[R(\tau)] \tag 6$$</p>
-                <p>这个式子代表了在这种策略下，平均能拿到多少回报。其中$P_{\theta}(\tau)$是Agent在环境中可能执行出的所有轨迹的分布，它表示在策略参数为$\theta$的情况下，Agent执行出轨迹$\tau$的概率。</p>
-                </section><section class="post-section" id="强化学习的目标"><h2 data-heading-id="强化学习的目标">强化学习的目标</h2>
-                <p>强化学习的目标就是找到一组最优的策略参数$\theta^*$，使得期望回报$J(\theta)$最大化：
-                $$\theta^* = \arg\max_{\theta} J(\theta) \tag{7}$$
-                这是一个优化问题，但是$J(\theta)$是一个复杂的函数，因为它包含了：</p>
-                <ul>
-                <li>环境的动态变化</li>
-                <li>策略的随机性</li>
-                <li>状态转移的级联影响</li>
-                </ul>
-                <p>所以我们无法直接求出$J(\theta)$的解析解。但是，我们可以通过计算$J(\theta)$的梯度$\nabla_{\theta} J(\theta)$，然后使用梯度上升法来迭代更新策略参数$\theta$，逐步逼近最优解。这就是策略梯度方法的核心思想。</p>
-                </section><section class="post-section" id="策略梯度"><h2 data-heading-id="策略梯度">策略梯度</h2>
-                <p>使用期望的定义，我们可以将策略梯度写成下面的形式：
-                $$\nabla_{\theta} J(\theta) = \nabla_{\theta} \mathbb{E}_{\tau \sim P_{\theta}(\tau)}[R(\tau)] = \nabla_{\theta} \int P_{\theta}(\tau) R(\tau) d\tau \tag{8}$$
-                根据莱布尼兹积分法则（Leibniz integral rule），我们可以将梯度运算符移到积分符号内：
-                $$\nabla_{\theta} J(\theta) = \int \nabla_{\theta} P_{\theta}(\tau) R(\tau) d\tau \tag 9$$</p>
-                <blockquote>
-                <p><strong>莱布尼兹积分法则</strong>又称为积分符号下求导法则，描述的是当一个积分的积分上下限和/或被积函数都依赖于某个参数的时候，如何对这个参数进行求导。它的形式是：
-                $$\frac{d}{d \theta} \int_{a(\theta)}^{b{\theta}} f(x, \theta) dx = f(b(\theta),\theta) \frac{db(\theta)}{d\theta} - f(a(\theta),\theta) \frac{da(\theta)}{d\theta} + \int_{a(\theta)}^{b(\theta)} \frac{\partial f(x, \theta)}{\partial \theta} dx$$
-                因为在式(8)中，积分的的区间是“轨迹空间”，上限和下限与$\theta$无关，唯一依赖$\theta$的是被积函数$P_{\theta}(\tau)R(\tau)$，因此可以直接将梯度移到积分符号内，得到式(9)。</p>
-                </blockquote>
-                <p>为了计算$\nabla_{\theta} P_{\theta}(\tau)$，我们可以使用<strong>对数梯度技巧</strong>：
-                $$
-                \begin{aligned}
-                \nabla log f(x) &amp;= \frac{1}{f(x)} \nabla_{\theta} f(x) \\
-                \Rightarrow \nabla_{\theta} f(x) &amp;= f(x) \nabla log f(x)
-                \end{aligned}
-                $$
-                应用到$P_{\theta}(\tau)$上，我们有：
-                $$\nabla_{\theta} P_{\theta}(\tau) = P_{\theta}(\tau) \nabla_{\theta} \log P_{\theta}(\tau) \tag{10}$$
-                将式(10)代入式(9)中，我们得到：
-                $$\begin{aligned}
-                \nabla_{\theta} J(\theta) &amp;= \int P_{\theta}(\tau) \nabla_{\theta} \log P_{\theta}(\tau) R(\tau) d\tau \\
-                &amp;= \mathbb{E}_{\tau \sim P_{\theta}(\tau)}[\nabla_{\theta} \log P_{\theta}(\tau) R(\tau)]
-                \end{aligned} \tag{11}$$
-                接下来，我们需要计算$\log P_{\theta}(\tau)$。根据轨迹的定义(式3)，轨迹的概率可以分解为初始状态分布、策略选择动作的概率和状态转移概率的乘积：
-                $$P_{\theta}(\tau) = \rho(s_0) \prod_{t=0}^{T-1} \pi_{\theta}(a_t|s_t) P(s_{t+1}|s_t,a_t) \tag{12}$$
-                取对数后，我们得到：
-                $$\log P_{\theta}(\tau) = \log \rho(s_0) + \sum_{t=0}^{T-1} \log \pi_{\theta}(a_t|s_t) + \sum_{t=0}^{T-1} \log P(s_{t+1}|s_t,a_t) \tag{13}$$
-                注意到初始状态分布$\rho(s_0)$和状态转移概率$P(s_{t+1}|s_t,a_t)$与策略参数$\theta$无关，所以它们的梯度为零。因此，我们有：
-                $$\nabla_{\theta} \log P_{\theta}(\tau) = \sum_{t=0}^{T-1} \nabla_{\theta} \log \pi_{\theta}(a_t|s_t) \tag{14}$$
-                将式(14)代入式(11)中，我们最终得到策略梯度的表达式：
-                $$\nabla_{\theta} J(\theta) = \mathbb{E}_{\tau \sim P_{\theta}(\tau)}\left[ \left( \sum_{t=0}^{T-1} \nabla_{\theta} \log \pi_{\theta}(a_t|s_t) \right) R(\tau) \right] \tag{15}$$
-                这个公式告诉我们，策略梯度可以通过采样轨迹，计算每个时间步的动作选择概率的对数梯度，并乘以整个轨迹的累积回报来估计。</p></section>
-                </div>
+                    <div class="post-content single-post-content">
+                        <p>基于策略的强化学习算法的核心本质是在一个不确定的环境中，学习出一种行为方式（策略），使得Agent按照这种行为方式和环境交互的时候可以得到环境给予的最大回报。</p>
+                        <section class="post-section" id="策略到底是个啥？">
+                            <h2 data-heading-id="策略到底是个啥？">策略到底是个啥？</h2>
+                            <p>策略就是Agent的行为规律，当Agent的处在一个确定的状态$s$的时候，需要决定执行什么动作$a$，选择的依据就是策略。</p>
+                            <p>最一般的情况，Agent不一定每次都要做出同样的动作，因为有时候探索是必要的。形式上，策略是从状态空间到动作概率分布的映射：
+                                $$\pi(a|s) = P(A_t=a|S_t=s) \tag 1$$
+                                上面的公式表示，在状态$s$下，Agent选择动作$a$的概率是多少。</p>
+                            <p>在理论上，如果你知道：</p>
+                            <ul>
+                                <li>环境的全部状态转移概率 $P(s'|s,a)$；</li>
+                                <li>即时奖励函数 $r(s,a)$；</li>
+                                <li>折扣因子 $\gamma$；</li>
+                            </ul>
+                            <!-- more -->
 
-                <div data-component="post-navigation"></div>
-            </article>
-        </div>
+                            <p>那么你可以通过动态规划（Dynamic Programming）推导出最优状态值函数 $V^*(s)$，再由它推导出最优策略：
+                                $$\pi^*(a|s) = \arg\max_a \sum_{s'} P(s'|s,a) [r(s,a) + \gamma V^*(s')] \tag{2}$$</p>
+                            <p>但是这在现实中几乎从不可能做到，因为：</p>
+                            <ul>
+                                <li>环境模型（状态转移、奖励函数）通常是未知的；</li>
+                                <li>状态空间和动作空间往往是连续的或高维的，根本无法枚举；</li>
+                                <li>奖励往往是延迟的（delayed reward），无法局部推断出正确动作。</li>
+                            </ul>
+                            <p>所以我们无法“直接写出”策略的解析形式，只能通过与环境交互、不断更新参数去“学出”一个近似最优的策略。通常我们用$\theta$来表示策略的参数，那么策略就可以写成$\pi_{\theta}(a|s)$。
+                            </p>
+                        </section>
+                        <section class="post-section" id="为什么要关注轨迹？">
+                            <h2 data-heading-id="为什么要关注轨迹？">为什么要关注轨迹？</h2>
+                            <p>因为我们的行为有后果，前面选的动作会影响后面的状态和奖励，所以我们需要关注Agent在环境中运行的一整条轨迹（trajectory）：
+                                $$\tau = \{s_0,a_0,r_0,s_1,a_1,r_1,\cdots,s_T\} \tag 3$$
+                                轨迹$\tau$表示Agent从初始状态$s_0$开始，选择动作$a_0$，得到奖励$r_0$，进入状态$s_1$，然后选择动作$a_1$，得到奖励$r_1$，进入状态$s_2$，一直持续到终止状态$s_T$。即：
+                                $$s_0 \xrightarrow[a_0]{r_0} s_1 \xrightarrow[a_1]{r_1} s_2 \cdots s_T \tag 4$$</p>
+                            <p>在Agent执行完一条轨迹$\tau$之后，我们可以计算出这条轨迹的累积回报（cumulative reward）：
+                                $$R(\tau) = \sum_{t=0}^{T-1} \gamma^t r_t \tag 5$$
+                                其中，$\gamma \in [0,1]$是折扣因子（discount factor），用于衡量未来奖励的重要性。</p>
+                            <p>但是在一个有随机性的世界中，Agent即使使用相同的策略，在最终也可能会执行出不同的轨迹，所以<strong>不能只看一次结果，要看平均表现</strong>。在数学上，随机变量的平均表现可以用期望（Expectation）来表示：
+                                $$J(\theta) = \mathbb{E}_{\tau \sim P_{\theta}(\tau)}[R(\tau)] \tag 6$$</p>
+                            <p>这个式子代表了在这种策略下，平均能拿到多少回报。其中$P_{\theta}(\tau)$是Agent在环境中可能执行出的所有轨迹的分布，它表示在策略参数为$\theta$的情况下，Agent执行出轨迹$\tau$的概率。
+                            </p>
+                        </section>
+                        <section class="post-section" id="强化学习的目标">
+                            <h2 data-heading-id="强化学习的目标">强化学习的目标</h2>
+                            <p>强化学习的目标就是找到一组最优的策略参数$\theta^*$，使得期望回报$J(\theta)$最大化：
+                                $$\theta^* = \arg\max_{\theta} J(\theta) \tag{7}$$
+                                这是一个优化问题，但是$J(\theta)$是一个复杂的函数，因为它包含了：</p>
+                            <ul>
+                                <li>环境的动态变化</li>
+                                <li>策略的随机性</li>
+                                <li>状态转移的级联影响</li>
+                            </ul>
+                            <p>所以我们无法直接求出$J(\theta)$的解析解。但是，我们可以通过计算$J(\theta)$的梯度$\nabla_{\theta}
+                                J(\theta)$，然后使用梯度上升法来迭代更新策略参数$\theta$，逐步逼近最优解。这就是策略梯度方法的核心思想。</p>
+                        </section>
+                        <section class="post-section" id="策略梯度">
+                            <h2 data-heading-id="策略梯度">策略梯度</h2>
+                            <p>使用期望的定义，我们可以将策略梯度写成下面的形式：
+                                $$\nabla_{\theta} J(\theta) = \nabla_{\theta} \mathbb{E}_{\tau \sim
+                                P_{\theta}(\tau)}[R(\tau)] = \nabla_{\theta} \int P_{\theta}(\tau) R(\tau) d\tau
+                                \tag{8}$$
+                                根据莱布尼兹积分法则（Leibniz integral rule），我们可以将梯度运算符移到积分符号内：
+                                $$\nabla_{\theta} J(\theta) = \int \nabla_{\theta} P_{\theta}(\tau) R(\tau) d\tau \tag
+                                9$$</p>
+                            <blockquote>
+                                <p><strong>莱布尼兹积分法则</strong>又称为积分符号下求导法则，描述的是当一个积分的积分上下限和/或被积函数都依赖于某个参数的时候，如何对这个参数进行求导。它的形式是：
+                                    $$\frac{d}{d \theta} \int_{a(\theta)}^{b{\theta}} f(x, \theta) dx =
+                                    f(b(\theta),\theta) \frac{db(\theta)}{d\theta} - f(a(\theta),\theta)
+                                    \frac{da(\theta)}{d\theta} + \int_{a(\theta)}^{b(\theta)} \frac{\partial f(x,
+                                    \theta)}{\partial \theta} dx$$
+                                    因为在式(8)中，积分的的区间是“轨迹空间”，上限和下限与$\theta$无关，唯一依赖$\theta$的是被积函数$P_{\theta}(\tau)R(\tau)$，因此可以直接将梯度移到积分符号内，得到式(9)。
+                                </p>
+                            </blockquote>
+                            <p>为了计算$\nabla_{\theta} P_{\theta}(\tau)$，我们可以使用<strong>对数梯度技巧</strong>：
+                                $$
+                                \begin{aligned}
+                                \nabla log f(x) &amp;= \frac{1}{f(x)} \nabla_{\theta} f(x) \\
+                                \Rightarrow \nabla_{\theta} f(x) &amp;= f(x) \nabla log f(x)
+                                \end{aligned}
+                                $$
+                                应用到$P_{\theta}(\tau)$上，我们有：
+                                $$\nabla_{\theta} P_{\theta}(\tau) = P_{\theta}(\tau) \nabla_{\theta} \log
+                                P_{\theta}(\tau) \tag{10}$$
+                                将式(10)代入式(9)中，我们得到：
+                                $$\begin{aligned}
+                                \nabla_{\theta} J(\theta) &amp;= \int P_{\theta}(\tau) \nabla_{\theta} \log
+                                P_{\theta}(\tau) R(\tau) d\tau \\
+                                &amp;= \mathbb{E}_{\tau \sim P_{\theta}(\tau)}[\nabla_{\theta} \log P_{\theta}(\tau)
+                                R(\tau)]
+                                \end{aligned} \tag{11}$$
+                                接下来，我们需要计算$\log P_{\theta}(\tau)$。根据轨迹的定义(式3)，轨迹的概率可以分解为初始状态分布、策略选择动作的概率和状态转移概率的乘积：
+                                $$P_{\theta}(\tau) = \rho(s_0) \prod_{t=0}^{T-1} \pi_{\theta}(a_t|s_t)
+                                P(s_{t+1}|s_t,a_t) \tag{12}$$
+                                取对数后，我们得到：
+                                $$\log P_{\theta}(\tau) = \log \rho(s_0) + \sum_{t=0}^{T-1} \log \pi_{\theta}(a_t|s_t) +
+                                \sum_{t=0}^{T-1} \log P(s_{t+1}|s_t,a_t) \tag{13}$$
+                                注意到初始状态分布$\rho(s_0)$和状态转移概率$P(s_{t+1}|s_t,a_t)$与策略参数$\theta$无关，所以它们的梯度为零。因此，我们有：
+                                $$\nabla_{\theta} \log P_{\theta}(\tau) = \sum_{t=0}^{T-1} \nabla_{\theta} \log
+                                \pi_{\theta}(a_t|s_t) \tag{14}$$
+                                将式(14)代入式(11)中，我们最终得到策略梯度的表达式：
+                                $$\nabla_{\theta} J(\theta) = \mathbb{E}_{\tau \sim P_{\theta}(\tau)}\left[ \left(
+                                \sum_{t=0}^{T-1} \nabla_{\theta} \log \pi_{\theta}(a_t|s_t) \right) R(\tau) \right]
+                                \tag{15}$$
+                                这个公式告诉我们，策略梯度可以通过采样轨迹，计算每个时间步的动作选择概率的对数梯度，并乘以整个轨迹的累积回报来估计。</p>
+                        </section>
+                    </div>
 
-        <div data-include="../partials/sidebar-post.html"></div>
-    </main>
+                    <div data-component="post-navigation"></div>
+                </article>
+            </div>
 
-    <div data-include="../partials/footer.html"></div>
+            <div data-include="../partials/sidebar-post.html"></div>
+        </main>
+
+        <div data-include="../partials/footer.html"></div>
     </div><!-- end page-container -->
 
     <script src="../script.js"></script>

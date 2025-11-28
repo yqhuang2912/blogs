@@ -1,7 +1,35 @@
 {
-  "generatedAt": "2025-11-28T08:17:16.811Z",
-  "postCount": 10,
+  "generatedAt": "2025-11-28T15:10:50.682Z",
+  "postCount": 11,
   "posts": [
+    {
+      "id": "11398",
+      "slug": "generative_model_vae",
+      "title": "生成模型系列（一）：从 VAE 出发",
+      "createdAt": "2025-11-23",
+      "day": "23",
+      "month": "Nov",
+      "categories": [
+        "人工智能"
+      ],
+      "tags": [
+        "生成模型",
+        "概率图模型",
+        "VAE"
+      ],
+      "summary": [
+        {
+          "type": "h2",
+          "html": "判别模型 vs 生成模型：我们到底想学什么？"
+        },
+        {
+          "type": "p",
+          "html": "在监督学习里，我们最熟的是<strong>判别模型（discriminative model）</strong>，比如："
+        }
+      ],
+      "link": "posts/generative_model_vae.html",
+      "metaText": "2025-11-23 | 分类：人工智能 | 标签：生成模型,概率图模型,VAE"
+    },
     {
       "id": "11397",
       "slug": "low-dose-simulation",
@@ -19,7 +47,7 @@
       "summary": [
         {
           "type": "p",
-          "html": "在医学成像中，低剂量CT（Computed Tomography）扫描是一种常用的技术，旨在减少患者接受的辐射剂量。然而，降低辐射剂量通常会导致图像质量下降，主要表现为噪声增加。为了研究和改进低剂量CT图像的处理方法，我们需要模拟低剂量CT图像中的噪声特性。"
+          "html": "在医学成像中，低剂量CT（Computed\n                            Tomography）扫描是一种常用的技术，旨在减少患者接受的辐射剂量。然而，降低辐射剂量通常会导致图像质量下降，主要表现为噪声增加。为了研究和改进低剂量CT图像的处理方法，我们需要模拟低剂量CT图像中的噪声特性。"
         },
         {
           "type": "h2",
@@ -27,11 +55,11 @@
         },
         {
           "type": "p",
-          "html": "从上一篇文章《<a href=\"./posts/ct-proj-and-poisson.html\">CT投影和泊松噪声的关系</a>》中，我们知道，在理想的、无噪声的世界里，X 射线穿过物体遵循 Beer-Lambert 定律:\n                $$N = N_0 \\cdot e^{-\\mu l} = N_0 \\cdot e^{-p_{\\text{ICT}}} \\tag{1}$$\n                其中，$N_0$是入射到物体上的 X 射线光子数，$N$是穿过物体后到达探测器的 X 射线光子数，$\\mu$是物体的线性衰减系数，$l$是射线穿过物体的路径长度，$p_{\\text{ICT}}$是<strong>理想线积分值</strong>(True Line Integral)，也即CT的投影值，这是我们想要测量的物理量，则:\n                $$p_{\\text{ICT}} = -\\ln\\left(\\frac{N}{N_0}\\right) \\tag{2}$$"
+          "html": "从上一篇文章《<a href=\"./posts/ct-proj-and-poisson.html\">CT投影和泊松噪声的关系</a>》中，我们知道，在理想的、无噪声的世界里，X\n                                射线穿过物体遵循 Beer-Lambert 定律:\n                                $$N = N_0 \\cdot e^{-\\mu l} = N_0 \\cdot e^{-p_{\\text{ICT}}} \\tag{1}$$\n                                其中，$N_0$是入射到物体上的 X 射线光子数，$N$是穿过物体后到达探测器的 X\n                                射线光子数，$\\mu$是物体的线性衰减系数，$l$是射线穿过物体的路径长度，$p_{\\text{ICT}}$是<strong>理想线积分值</strong>(True Line\n                                Integral)，也即CT的投影值，这是我们想要测量的物理量，则:\n                                $$p_{\\text{ICT}} = -\\ln\\left(\\frac{N}{N_0}\\right) \\tag{2}$$"
         },
         {
           "type": "p",
-          "html": "在现实世界中，光子的发射和探测是一个随机过程。即$N$不再是一个确定值，而是一个服从泊松分布的随机变量:\n                $$N \\sim \\text{Poisson}(N_0 \\cdot e^{-p_{\\text{ICT}}}) \\tag{3}$$"
+          "html": "在现实世界中，光子的发射和探测是一个随机过程。即$N$不再是一个确定值，而是一个服从泊松分布的随机变量:\n                                $$N \\sim \\text{Poisson}(N_0 \\cdot e^{-p_{\\text{ICT}}}) \\tag{3}$$"
         }
       ],
       "link": "posts/low-dose-simulation.html",
@@ -88,7 +116,7 @@
       "summary": [
         {
           "type": "p",
-          "html": "在医学CT图像处理中，窗宽（Window Width, WW）和窗位（Window Level, WL）是两个非常重要的参数，用于调整图像的对比度和亮度，从而更好地显示不同组织结构的细节。"
+          "html": "在医学CT图像处理中，窗宽（Window Width, WW）和窗位（Window Level,\n                            WL）是两个非常重要的参数，用于调整图像的对比度和亮度，从而更好地显示不同组织结构的细节。"
         },
         {
           "type": "h2",
@@ -96,11 +124,11 @@
         },
         {
           "type": "ul",
-          "html": "<ul><li>窗宽（WW）：表示CT图像中灰度级别的范围。较大的窗宽可以显示更多的灰度级别，适用于显示密度差异较大的组织（如肺部）；较小的窗宽则适用于显示密度差异较小的组织（如脑组织）。</li>\r\n                <li>窗位（WL）：表示CT图像灰度级别的中心值。通过调整窗位，可以改变图像的亮度，使得特定密度范围内的组织更加清晰可见。</li></ul>"
+          "html": "<ul><li>窗宽（WW）：表示CT图像中灰度级别的范围。较大的窗宽可以显示更多的灰度级别，适用于显示密度差异较大的组织（如肺部）；较小的窗宽则适用于显示密度差异较小的组织（如脑组织）。\n                                </li>\n                                <li>窗位（WL）：表示CT图像灰度级别的中心值。通过调整窗位，可以改变图像的亮度，使得特定密度范围内的组织更加清晰可见。</li></ul>"
         },
         {
           "type": "figure",
-          "html": "<figure><img src=\"../assets/11395/ct_window.png\" alt=\"CT图像窗宽与窗位示意图\" ,=\"\" width=\"360\">\r\n                  <figcaption>CT图像窗宽与窗位示意图</figcaption></figure>"
+          "html": "<figure><img src=\"../assets/11395/ct_window.png\" alt=\"CT图像窗宽与窗位示意图\" ,=\"\" width=\"360\">\n                                <figcaption>CT图像窗宽与窗位示意图</figcaption></figure>"
         }
       ],
       "link": "posts/ct-window.html",
@@ -123,7 +151,7 @@
       "summary": [
         {
           "type": "p",
-          "html": "DICOM（<u>D</u>igital <u>I</u>maging and <u>CO</u>mmunications in <u>M</u>edicine）是一种用于存储和传输医学影像的标准格式。DICOM文件由图像数据和头文件组成，图像数据是二维或三维的像素矩阵，头文件包含丰富的元数据信息，比如患者信息、扫描设备的信息，扫描参数等。下面以Mayo2016数据集中的DICOM图像为例，介绍如何进行基本的DICOM图像处理。"
+          "html": "DICOM（<u>D</u>igital <u>I</u>maging and <u>CO</u>mmunications in\n                            <u>M</u>edicine）是一种用于存储和传输医学影像的标准格式。DICOM文件由图像数据和头文件组成，图像数据是二维或三维的像素矩阵，头文件包含丰富的元数据信息，比如患者信息、扫描设备的信息，扫描参数等。下面以Mayo2016数据集中的DICOM图像为例，介绍如何进行基本的DICOM图像处理。"
         },
         {
           "type": "h2",
@@ -164,15 +192,15 @@
         },
         {
           "type": "p",
-          "html": "<strong>重要性采样（Importance Sampling, IS）</strong> 是一种经典的<strong>蒙特卡洛方法</strong>，主要用于在无法直接从目标分布采样，或者直接采样效率低下的情况下，<strong>估计</strong>某个函数在目标分布下的<strong>期望值</strong>。"
+          "html": "<strong>重要性采样（Importance Sampling, IS）</strong>\n                                是一种经典的<strong>蒙特卡洛方法</strong>，主要用于在无法直接从目标分布采样，或者直接采样效率低下的情况下，<strong>估计</strong>某个函数在目标分布下的<strong>期望值</strong>。"
         },
         {
           "type": "p",
-          "html": "它的核心思想非常直观：当我们想计算函数$f(x)$在目标分布$p(x)$下的期望$E_{x\\sim p(x)}[f(x)]$时，如果直接从$p(x)$采样很困难（例如$p(x)$形式复杂），或者$f(x)$的高值区域在$p(x)$中出现的概率极低（即「稀有事件」），我们可以转而从另一个更容易采样、或更能「聚焦」于重要区域的<strong>辅助分布</strong>$q(x)$中抽取样本。"
+          "html": "它的核心思想非常直观：当我们想计算函数$f(x)$在目标分布$p(x)$下的期望$E_{x\\sim\n                                p(x)}[f(x)]$时，如果直接从$p(x)$采样很困难（例如$p(x)$形式复杂），或者$f(x)$的高值区域在$p(x)$中出现的概率极低（即「稀有事件」），我们可以转而从另一个更容易采样、或更能「聚焦」于重要区域的<strong>辅助分布</strong>$q(x)$中抽取样本。"
         },
         {
           "type": "p",
-          "html": "为了弥补从$q(x)$而非$p(x)$采样所带来的偏差，我们需要对每个样本进行「加权修正」。这个权重被称为<strong>重要性权重（Importance Weight）</strong>:\r\n                $$\r\n                w(x) = \\frac{p(x)}{q(x)} \\tag{1}\r\n                $$\r\n                它反映了：<strong>在原分布$p(x)$下这个样本「应该有多重要」，与在$q(x)$下它的「被采到的概率」之间的比例关系。</strong>"
+          "html": "为了弥补从$q(x)$而非$p(x)$采样所带来的偏差，我们需要对每个样本进行「加权修正」。这个权重被称为<strong>重要性权重（Importance\n                                    Weight）</strong>:\n                                $$\n                                w(x) = \\frac{p(x)}{q(x)} \\tag{1}\n                                $$\n                                它反映了：<strong>在原分布$p(x)$下这个样本「应该有多重要」，与在$q(x)$下它的「被采到的概率」之间的比例关系。</strong>"
         }
       ],
       "link": "posts/importance-sampling.html",
@@ -196,7 +224,7 @@
       "summary": [
         {
           "type": "p",
-          "html": "我们在上一篇文章<a href=\"policy-gradient.html\">策略梯度</a>中提到，轨迹$\\tau$表示Agent在环境中经历的一系列状态、动作和奖励的序列，它是一个随机变量：\r\n                $$\\tau = \\{s_0,a_0,r_0,s_1,a_1,r_1,\\cdots,s_T\\} \\tag 1$$"
+          "html": "我们在上一篇文章<a\n                                href=\"policy-gradient.html\">策略梯度</a>中提到，轨迹$\\tau$表示Agent在环境中经历的一系列状态、动作和奖励的序列，它是一个随机变量：\n                            $$\\tau = \\{s_0,a_0,r_0,s_1,a_1,r_1,\\cdots,s_T\\} \\tag 1$$"
         },
         {
           "type": "h2",
@@ -216,7 +244,7 @@
         },
         {
           "type": "ul",
-          "html": "<ul><li><strong>抛硬币</strong>：正面朝上是1，反面朝上是0，那么这个随机变量的取值就是0或1，具体取哪个值取决于抛硬币的结果。</li>\r\n                <li><strong>掷骰子</strong>：骰子的点数是1到6中的一个整数，那么这个随机变量的取值就是1、2、3、4、5或6，具体取哪个值取决于掷骰子的结果。</li>\r\n                <li><strong>抽奖</strong>：中奖金额是一个随机变量，可能是0元、10元、100元等，具体取哪个值取决于抽奖的结果。</li></ul>"
+          "html": "<ul><li><strong>抛硬币</strong>：正面朝上是1，反面朝上是0，那么这个随机变量的取值就是0或1，具体取哪个值取决于抛硬币的结果。</li>\n                                <li><strong>掷骰子</strong>：骰子的点数是1到6中的一个整数，那么这个随机变量的取值就是1、2、3、4、5或6，具体取哪个值取决于掷骰子的结果。</li>\n                                <li><strong>抽奖</strong>：中奖金额是一个随机变量，可能是0元、10元、100元等，具体取哪个值取决于抽奖的结果。</li></ul>"
         },
         {
           "type": "p",
@@ -256,7 +284,7 @@
         },
         {
           "type": "p",
-          "html": "最一般的情况，Agent不一定每次都要做出同样的动作，因为有时候探索是必要的。形式上，策略是从状态空间到动作概率分布的映射：\r\n                $$\\pi(a|s) = P(A_t=a|S_t=s) \\tag 1$$\r\n                上面的公式表示，在状态$s$下，Agent选择动作$a$的概率是多少。"
+          "html": "最一般的情况，Agent不一定每次都要做出同样的动作，因为有时候探索是必要的。形式上，策略是从状态空间到动作概率分布的映射：\n                                $$\\pi(a|s) = P(A_t=a|S_t=s) \\tag 1$$\n                                上面的公式表示，在状态$s$下，Agent选择动作$a$的概率是多少。"
         },
         {
           "type": "p",
@@ -264,7 +292,7 @@
         },
         {
           "type": "ul",
-          "html": "<ul><li>环境的全部状态转移概率 $P(s'|s,a)$；</li>\r\n                <li>即时奖励函数 $r(s,a)$；</li>\r\n                <li>折扣因子 $\\gamma$；</li></ul>"
+          "html": "<ul><li>环境的全部状态转移概率 $P(s'|s,a)$；</li>\n                                <li>即时奖励函数 $r(s,a)$；</li>\n                                <li>折扣因子 $\\gamma$；</li></ul>"
         }
       ],
       "link": "posts/policy-gradient.html",
@@ -314,7 +342,7 @@
         },
         {
           "type": "figure",
-          "html": "<figure><img src=\"../assets/11388/ct-device.png\" alt=\"CT设备\">\r\n                  <figcaption>CT设备</figcaption></figure>"
+          "html": "<figure><img src=\"../assets/11388/ct-device.png\" alt=\"CT设备\">\n                            <figcaption>CT设备</figcaption></figure>"
         },
         {
           "type": "p",

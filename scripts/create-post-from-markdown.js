@@ -663,11 +663,10 @@ function normalizeMathBlocks(html) {
     return withDisplayBlocks;
 }
 
-function buildMetaHtml(createdAt, categories, tags) {
+function buildMetaHtml(_createdAt, categories, tags) {
     const segments = [];
-    segments.push(`<span class="meta-item meta-date">${escapeHtml(createdAt)}</span>`);
-    segments.push('<span class="meta-divider">|</span>');
 
+    // Categories
     if (categories.length) {
         const categoryHtml = categories
             .map((category) => `<a href="#">${escapeHtml(category)}</a>`)
@@ -677,8 +676,11 @@ function buildMetaHtml(createdAt, categories, tags) {
         segments.push('<span class="meta-item meta-categories">分类：<span class="post-taxonomy-empty">未分类</span></span>');
     }
 
-    segments.push('<span class="meta-divider">|</span>');
+    if (categories.length && tags.length) {
+        segments.push('<span class="meta-divider">|</span>');
+    }
 
+    // Tags
     if (tags.length) {
         const tagHtml = tags
             .map((tag) => `<a href="#">${escapeHtml(tag)}</a>`)
@@ -701,8 +703,9 @@ function buildPageHtml({ title, metadataJson, bodyHtml, day, month, metaHtml }) 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${escapeHtml(title)} | 科学空间</title>
+    <title>${escapeHtml(title)} | 慢变量</title>
     <link rel="stylesheet" href="../styles.css">
+    <link rel="icon" href="../icons/deceleration.png" type="image/png">
 
     <script type="application/json" id="post-metadata">
 ${metadataBlock}
