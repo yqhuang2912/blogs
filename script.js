@@ -708,24 +708,30 @@ function normalizeTagValue(value) {
     return String(value ?? '').trim().toLowerCase();
 }
 
+const TAG_ALIASES = {};
+
+function canonicalizeTagLabel(value) {
+    const raw = String(value ?? '').trim();
+    const key = normalizeTagValue(raw);
+    const mapped = TAG_ALIASES[key];
+    if (mapped) {
+        return mapped;
+    }
+    if (raw === '计算成像' || raw === '人工智能' || raw === '工程实践' || raw === '数学研究') {
+        return raw;
+    }
+    return raw;
+}
+
+function normalizeCanonicalTagValue(value) {
+    return normalizeTagValue(canonicalizeTagLabel(value));
+}
+
 const CATEGORY_CONFIG = [
-    { key: '数学研究', label: '数学研究' },
-    { key: '机器学习', label: '机器学习' },
-    { key: '数据实践', label: '数据实践' },
-    { key: '信息时代', label: '信息时代' },
+    { key: '计算成像', label: '计算成像' },
+    { key: '人工智能', label: '人工智能' },
     { key: '工程实践', label: '工程实践' },
-    { key: '工具评测', label: '工具评测' },
-    { key: '基础理论', label: '基础理论' },
-    { key: '优化算法', label: '优化算法' },
-    { key: '随笔评论', label: '随笔评论' },
-    { key: '天文物理', label: '天文物理' },
-    { key: '物理化学', label: '物理化学' },
-    { key: '生物自然', label: '生物自然' },
-    { key: '千奇百怪', label: '千奇百怪' },
-    { key: '图片摄影', label: '图片摄影' },
-    { key: '问题百科', label: '问题百科' },
-    { key: '生活/情感', label: '生活/情感' },
-    { key: '资源共享', label: '资源共享' },
+    { key: '数学研究', label: '数学研究' },
 ];
 
 const CATEGORY_DISPLAY_OVERRIDES = CATEGORY_CONFIG.reduce((acc, item) => {
@@ -766,31 +772,19 @@ function filterPostsByCategory(posts, category) {
 }
 
 function resolveTagDisplayName(posts, rawTag) {
-    const target = normalizeTagValue(rawTag);
-    if (!target) {
-        return '';
-    }
-
-    for (const post of posts || []) {
-        const tags = Array.isArray(post?.tags) ? post.tags : [];
-        const match = tags.find((tag) => normalizeTagValue(tag) === target);
-        if (match) {
-            return match;
-        }
-    }
-
-    return rawTag || '';
+    const label = canonicalizeTagLabel(rawTag);
+    return label || '';
 }
 
 function filterPostsByTag(posts, tag) {
-    const target = normalizeTagValue(tag);
+    const target = normalizeCanonicalTagValue(tag);
     if (!target) {
         return Array.isArray(posts) ? posts.slice() : [];
     }
 
     return (posts || []).filter((post) => {
         const tags = Array.isArray(post?.tags) ? post.tags : [];
-        return tags.some((item) => normalizeTagValue(item) === target);
+        return tags.some((item) => normalizeCanonicalTagValue(item) === target);
     });
 }
 
@@ -908,7 +902,7 @@ function getTagFilter() {
     }
     const params = new URLSearchParams(window.location.search);
     const value = params.get('tag');
-    return value ? value.trim() : '';
+    return value ? canonicalizeTagLabel(value.trim()) : '';
 }
 
 function updateSearchQueryParam(query) {
@@ -950,7 +944,7 @@ function updateTagQueryParam(tag) {
     if (!tag) {
         url.searchParams.delete('tag');
     } else {
-        url.searchParams.set('tag', tag);
+        url.searchParams.set('tag', canonicalizeTagLabel(tag));
         url.searchParams.delete('search');
     }
     url.searchParams.delete('page');
@@ -975,7 +969,8 @@ function buildTagHref(rootPrefix, tag) {
     if (!tag) {
         return base;
     }
-    return `${base}?tag=${encodeURIComponent(tag)}`;
+    const label = canonicalizeTagLabel(tag);
+    return `${base}?tag=${encodeURIComponent(label)}`;
 }
 
 async function renderSearchResults(listContainer, paginationContainer, posts, query, rootPrefix) {
@@ -1167,15 +1162,16 @@ async function initTagCloud(rootPrefix, postsArg, activeTag) {
             if (!displayName) {
                 return;
             }
-            const key = normalizeTagValue(displayName);
+            const label = canonicalizeTagLabel(displayName);
+            const key = normalizeTagValue(label);
             if (!tagMap.has(key)) {
-                tagMap.set(key, { name: displayName, count: 0 });
+                tagMap.set(key, { name: label, count: 0 });
             }
             tagMap.get(key).count += 1;
         });
     });
 
-    let activeNormalized = normalizeTagValue(activeTag);
+    let activeNormalized = normalizeCanonicalTagValue(activeTag);
     if (activeNormalized && !tagMap.has(activeNormalized)) {
         activeNormalized = '';
     }
@@ -1817,7 +1813,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     await typesetMath(postList || document.body);
     enhanceCodeBlocks(document.body);
     await highlightCodeBlocks(document.body);
-    initContentOverview();
     initSmoothScroll();
     initBackToTop();
     console.log('科学空间博客已加载完成！');

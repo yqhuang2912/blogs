@@ -6,8 +6,8 @@
 }
 
 :root {
-    --layout-max-width: 960px;
-    --layout-h-padding: 10px;
+    --layout-max-width: 768px;
+    --layout-h-padding: 6px;
 }
 
 @font-face {
@@ -37,31 +37,14 @@ body {
 }
 
 a {
-    border: 0;
+    color: #4183c4;
     text-decoration: none;
     transition: color 0.2s ease;
 }
 
-a:link {
-    color: #056905;
-}
-
-a:visited {
-    color: #690;
-}
-
 a:hover {
-    color: #cc3000;
-    text-decoration: none;
-}
-
-a:active {
-    color: #375719;
+    color: #1e70bf;
     text-decoration: underline;
-}
-
-a:focus {
-    outline: none;
 }
 
 /* MathJax 数学公式样式 */
@@ -128,7 +111,6 @@ mjx-container[jax="CHTML"][display="true"] {
 .top-nav {
     display: flex;
     gap: 15px;
-    flex-wrap: wrap;
 }
 
 .top-nav a {
@@ -190,14 +172,6 @@ mjx-container[jax="CHTML"][display="true"] {
     flex: 1;
 }
 
-.header-cat-nav {
-    display: flex;
-    gap: 8px;
-    flex: 1;
-    flex-wrap: wrap;
-    align-items: center;
-}
-
 .icon-link {
     display: flex;
     flex-direction: column;
@@ -236,34 +210,28 @@ mjx-container[jax="CHTML"][display="true"] {
 
 /* 分类导航 */
 .category-nav {
-    margin: 10px var(--layout-h-padding) 12px var(--layout-h-padding);
-    padding: 10px 18px;
+    margin: 6px var(--layout-h-padding);
+    padding: 6px 6px;
     box-sizing: border-box;
     background: linear-gradient(180deg, #4c5259 0%, #3c4148 100%);
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
     border-radius: 6px;
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.16);
 }
 
 .cat-item {
     padding: 6px 12px 5px;
-    color: #fff;
+    color: #e8ecef;
     font-size: 11px;
     text-align: center;
     line-height: 1.2;
-    font-weight: 600;
-    transition: color 0.2s, background-color 0.2s, transform 0.1s;
-    border-radius: 16px;
-    background-color: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-.cat-item:link,
-.cat-item:visited {
-    color: #fff;
+    transition: color 0.2s;
+    border-radius: 3px;
+    background-color: transparent;
+    border: none;
 }
 
 .cat-item span {
@@ -275,50 +243,24 @@ mjx-container[jax="CHTML"][display="true"] {
 
 .cat-item:hover {
     text-decoration: none;
-    color: #cc3000;
-    background-color: rgba(255, 255, 255, 0.16);
-    transform: translateY(-0.5px);
-}
-
-.cat-item:active {
-    color: #cc3000;
-    text-decoration: underline;
+    color: #97bf0d;
 }
 
 .cat-item:hover span {
-    color: #eaeef2;
+    color: #e3efc5;
 }
 
 .cat-item.active {
     color: #e8ecef;
     text-decoration: none;
-    background-color: rgba(255, 255, 255, 0.16);
-    border-color: rgba(255, 255, 255, 0.24);
 }
 
 .cat-item.active span {
     color: #ccd2d8;
 }
 
-.cat-item:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 2px #cc3000;
-}
-
 .cat-item.active span {
     color: #fff;
-}
-
-.post-meta .meta-categories a:link,
-.post-meta .meta-categories a:visited,
-.post-meta .meta-tags a:link,
-.post-meta .meta-tags a:visited {
-    color: #058c05;
-}
-
-.post-meta .meta-categories a:hover,
-.post-meta .meta-tags a:hover {
-    color: #cc3000;
 }
 
 /* 通知横幅 */
@@ -471,46 +413,50 @@ mjx-container[jax="CHTML"][display="true"] {
     display: flex;
     align-items: flex-start;
     gap: 8px;
-    margin: 0 0 12px 0;
+    margin-bottom: 12px;
     padding: 10px;
     border: 1px solid #e8e8e8;
     border-radius: 4px;
     background-color: #fafafa;
-    --badge-height: 40px;
 }
 
 .post-date-badge {
     width: 40px;
-    height: var(--badge-height);
+    height: 40px;
     border-radius: 4px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
-    background: none;
 }
 
 .badge-day {
     background-color: #489620;
     color: #fff;
-    font-family: Georgia, "Times New Roman", Times, sans-serif;
+    font-family: GeorgiaDigits;
     font-size: 16px;
     font-weight: bold;
-    line-height: 21px;
+    line-height: 1;
     text-align: center;
-    height: 21px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .badge-month {
     background-color: #BED53D;
     color: #fff;
-    font-family: Georgia, "Times New Roman", Times, sans-serif;
-    font-size: 11px;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 12px;
     font-weight: bold;
     text-transform: uppercase;
     text-align: center;
-    line-height: 19px;
-    height: 19px;
+    line-height: 1;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* 标题和元信息容器 */
@@ -519,29 +465,21 @@ mjx-container[jax="CHTML"][display="true"] {
     min-width: 0;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    height: var(--badge-height);
+    justify-content: center;
 }
 
 .post-title {
     font-size: 16px;
-    margin: 0;
-    line-height: 21px;
-    font-weight: bold;
-    color: #c33;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    margin: 0 0 4px 0;
+    line-height: 1.3;
+    font-weight: 600;
 }
 
 .post-title a {
     color: #c33;
-    font-weight: bold;
-    text-decoration: none;
+    font-weight: 600;
 }
-.post-title a:visited {
-    color: #c33;
-}
+
 .post-title a:hover {
     color: #a00;
     text-decoration: underline;
@@ -549,9 +487,9 @@ mjx-container[jax="CHTML"][display="true"] {
 
 .post-meta {
     color: #999;
-    font-size: 12px;
+    font-size: 11px;
     margin: 0;
-    line-height: 19px;
+    line-height: 1.4;
 }
 
 .kimi-link {
@@ -565,11 +503,11 @@ mjx-container[jax="CHTML"][display="true"] {
 
 /* 首页卡片中的标题样式 - 确保不会比 post-title 大 */
 .post-content-wrapper .post-body h2 {
-    font-size: 18px;
-    color: inherit;
-    margin: 20px 0 5px 0;
-    line-height: 21px;
-    font-weight: 700;
+    font-size: 14px;
+    color: #3c5f28;
+    margin: 12px 0 8px 0;
+    line-height: 1.4;
+    font-weight: 600;
 }
 
 /* 隐藏首页卡片中的锚点符号 */
@@ -578,70 +516,21 @@ mjx-container[jax="CHTML"][display="true"] {
 }
 
 .post-content-wrapper .post-body h3 {
-    font-size: 16px;
-    color: inherit;
-    margin: 20px 0 5px 0;
-    line-height: 1.35;
-    font-weight: 700;
+    font-size: 13px;
+    color: #555;
+    margin: 10px 0 6px 0;
+    line-height: 1.4;
+    font-weight: 600;
 }
 
-.post-content-wrapper .post-body h4 {
-    font-size: 15px;
-    color: inherit;
-    margin: 20px 0 5px 0;
-    line-height: 1.35;
-    font-weight: 700;
-}
+.post-content-wrapper .post-body h4,
 .post-content-wrapper .post-body h5 {
-    font-size: 14px;
-    color: inherit;
-    margin: 20px 0 5px 0;
-    line-height: 1.35;
-    font-weight: 700;
+    font-size: 12px;
+    color: #666;
+    margin: 8px 0 4px 0;
+    line-height: 1.4;
+    font-weight: 600;
 }
-
-.single-post-content h2 {
-    font-size: 18px;
-    line-height: 21px;
-    margin: 20px 0 5px 0;
-    font-weight: 700;
-}
-.single-post-content h3 {
-    font-size: 16px;
-    line-height: 1.35;
-    margin: 20px 0 5px 0;
-    font-weight: 700;
-}
-.single-post-content h4 {
-    font-size: 15px;
-    line-height: 1.35;
-    margin: 20px 0 5px 0;
-    font-weight: 700;
-}
-.single-post-content h5 {
-    font-size: 14px;
-    line-height: 1.35;
-    margin: 20px 0 5px 0;
-    font-weight: 700;
-}
-
-.post-content-wrapper .post-body .heading-size-xs,
-.single-post-content .heading-size-xs { font-size: 100%; }
-.post-content-wrapper .post-body .heading-size-sm,
-.single-post-content .heading-size-sm { font-size: 110%; }
-.post-content-wrapper .post-body .heading-size-md,
-.single-post-content .heading-size-md { font-size: 120%; }
-.post-content-wrapper .post-body .heading-size-lg,
-.single-post-content .heading-size-lg { font-size: 140%; }
-.post-content-wrapper .post-body .heading-size-xl,
-.single-post-content .heading-size-xl { font-size: 160%; }
-
-.post-content-wrapper .post-body .heading-space-tight,
-.single-post-content .heading-space-tight { margin: 8px 0 4px 0; }
-.post-content-wrapper .post-body .heading-space-normal,
-.single-post-content .heading-space-normal { margin: 12px 0 8px 0; }
-.post-content-wrapper .post-body .heading-space-loose,
-.single-post-content .heading-space-loose { margin: 16px 0 12px 0; }
 
 .post-content-wrapper {
     overflow: visible;
@@ -658,25 +547,13 @@ mjx-container[jax="CHTML"][display="true"] {
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.88);
     overflow-x: auto;
     line-height: 1.82;
-    font-size: 14px;
+    font-size: 13px;
     color: #2f2f2f;
     font-family: "Microsoft YaHei Mono", "Courier New", monospace;
 }
 
-.post-content a:link,
-.post-content a:visited,
-.single-post-content a:link,
-.single-post-content a:visited {
-    color: #058c05;
-}
-
-.post-content a:hover,
-.single-post-content a:hover {
-    color: #F60;
-}
-
 .code-block {
-    --code-font-size: 13.6px;
+    --code-font-size: 12.6px;
     --code-line-height: 1.58;
     position: relative;
     margin: 18px 0;
@@ -842,7 +719,7 @@ mjx-container[jax="CHTML"][display="true"] {
 .single-post-content code,
 .post code {
     font-family: Consolas, "Liberation Mono", "Courier New", monospace;
-    font-size: 14px;
+    font-size: 12px;
     background-color: #f2f4f7;
     padding: 1px 4px;
     border-radius: 3px;
@@ -863,7 +740,7 @@ mjx-container[jax="CHTML"][display="true"] {
     border-left: 0;
     border-right: 0;
     background: transparent;
-    font-size: 14px;
+    font-size: 12px;
     line-height: 1.3;
     color: blue;
     text-align: center;
@@ -916,7 +793,7 @@ mjx-container[jax="CHTML"][display="true"] {
     border-right: 0;
     background: transparent;
     color: blue;
-    font-size: 14px;
+    font-size: 12px;
     text-align: center;
 }
 
@@ -959,7 +836,7 @@ mjx-container[jax="CHTML"][display="true"] {
 .post-content {
     clear: both;
     color: #555;
-    font-size: 14px;
+    font-size: 12px;
     line-height: 1.75;
     margin-bottom: 8px;
     text-align: justify;
@@ -974,57 +851,18 @@ mjx-container[jax="CHTML"][display="true"] {
 
 .post-content blockquote,
 .single-post-content blockquote {
-    background: #f2f2f2;
-    color: #333;
-    font-size: 14px;
-    border: 1px solid #ddd;
-    margin: 0.5em 0 1em 0;
-    padding: 10px 15px;
-    line-height: 1.8;
-    font-style: normal;
-    border-radius: 0;
+    border-left: 4px solid #4183c4;
+    padding: 10px 16px;
+    margin: 16px 0;
+    background-color: #f5f9fc;
+    color: #555;
+    font-style: italic;
+    border-radius: 0 4px 4px 0;
 }
 
 .post-content blockquote p,
 .single-post-content blockquote p {
-    margin: 4px 0 10px;
-}
-
-/* 引用（cite）样式，参考 reference_css.css 的格式 */
-.post-content blockquote.cite,
-.single-post-content blockquote.cite {
-    font-size: 15px;
-    color: #999;
-    padding: 18px;
-    border: none;
-    position: relative;
-    background-color: #fff;
-}
-
-.post-content blockquote.cite:before,
-.single-post-content blockquote.cite:before {
-    content: "\201C";
-    position: absolute;
-    top: 1px;
-    left: 1px;
-    width: 18px;
-    height: 18px;
-    font-size: 18px;
-    line-height: 18px;
-    color: #ccc;
-}
-
-.post-content blockquote.cite:after,
-.single-post-content blockquote.cite:after {
-    content: "\201D";
-    position: absolute;
-    bottom: 1px;
-    right: 1px;
-    width: 18px;
-    height: 18px;
-    font-size: 18px;
-    line-height: 18px;
-    color: #ccc;
+    margin: 0;
 }
 
 .post-content p {
@@ -1032,11 +870,10 @@ mjx-container[jax="CHTML"][display="true"] {
 }
 
 .post-content h3 {
-    font-size: 16px;
-    color: inherit;
-    margin: 20px 0 5px 0;
-    line-height: 1.35;
-    font-weight: 700;
+    font-size: 13px;
+    color: #333;
+    margin: 15px 0 10px;
+    font-weight: 600;
 }
 
 .post-content ul,
@@ -1183,7 +1020,7 @@ mjx-container[jax="CHTML"][display="true"] {
 }
 
 .single-post-content {
-    font-size: 14px;
+    font-size: 12px;
     color: #555;
     line-height: 1.85;
 }
@@ -1198,34 +1035,12 @@ mjx-container[jax="CHTML"][display="true"] {
 }
 
 .post-section h2 {
-    font-size: 18px;
-    color: inherit;
-    margin: 20px 0 5px 0;
-    line-height: 21px;
-    font-weight: 700;
-}
-
-.post-content-wrapper .post-body h2::before,
-.post-content-wrapper .post-body h3::before,
-.post-content-wrapper .post-body h4::before,
-.post-content-wrapper .post-body h5::before,
-.single-post-content h2::before,
-.single-post-content h3::before,
-.single-post-content h4::before,
-.single-post-content h5::before,
-.post-content h3::before {
-    content: "#";
-    display: inline-block;
-    color: #a0a0a0;
-    margin-right: 6px;
-}
-
-/* 单页内容中的所有小标题统一使用黑色文本 */
-.single-post-content h2,
-.single-post-content h3,
-.single-post-content h4,
-.single-post-content h5 {
-    color: inherit;
+    font-size: 16px;
+    color: #3c5f28;
+    border-left: 3px solid #97bf0d;
+    padding-left: 8px;
+    margin-bottom: 12px;
+    line-height: 1.3;
 }
 
 .section-anchor {
@@ -1453,13 +1268,12 @@ mjx-container[jax="CHTML"][display="true"] {
 }
 
 .single-sidebar {
-    width: 33.333%;
-    flex: 0 0 33.333%;
+    flex-shrink: 0;
 }
 
 .toc .toc-list {
     list-style: none;
-    font-size: 12px;
+    font-size: 11px;
     line-height: 1.7;
 }
 
@@ -1503,11 +1317,8 @@ mjx-container[jax="CHTML"][display="true"] {
 
 /* 侧边�?*/
 .sidebar {
-    width: 33.333%;
-    flex: 0 0 33.333%;
+    width: 220px;
     flex-shrink: 0;
-    font-family: Georgia,"Times New Roman",Times,sans-serif;
-    font-size: 14px;
 }
 
 .sidebar-section {
@@ -1520,7 +1331,7 @@ mjx-container[jax="CHTML"][display="true"] {
 }
 
 .sidebar-section h3 {
-    font-size: 14px;
+    font-size: 12px;
     color: #333;
     margin-bottom: 10px;
     padding-bottom: 6px;
@@ -1554,7 +1365,7 @@ mjx-container[jax="CHTML"][display="true"] {
 }
 
 .author-info {
-    font-size: 12px;
+    font-size: 10px;
     color: #555;
     line-height: 1.7;
     margin-bottom: 8px;
@@ -1563,7 +1374,7 @@ mjx-container[jax="CHTML"][display="true"] {
 
 .author-links {
     list-style: none;
-    font-size: 12px;
+    font-size: 10px;
     line-height: 1.7;
 }
 
@@ -1584,7 +1395,7 @@ mjx-container[jax="CHTML"][display="true"] {
 
 .author-links a {
     color: #d9534f;
-    font-size: 12px;
+    font-size: 10px;
     transition: color 0.2s;
 }
 
@@ -1608,7 +1419,7 @@ mjx-container[jax="CHTML"][display="true"] {
     padding: 5px 10px;
     border: 1px solid #d9d9d9;
     border-radius: 2px 0 0 2px;
-    font-size: 12px;
+    font-size: 11px;
     outline: none;
     transition: border-color 0.2s;
 }
@@ -1625,7 +1436,7 @@ mjx-container[jax="CHTML"][display="true"] {
     border: none;
     border-radius: 0 2px 2px 0;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 11px;
     transition: all 0.2s;
 }
 
@@ -1634,20 +1445,20 @@ mjx-container[jax="CHTML"][display="true"] {
 }
 
 .search-tip {
-    font-size: 12px;
+    font-size: 10px;
     color: #777;
     line-height: 1.6;
 }
 
 .search-status {
     margin-top: 8px;
-    font-size: 12px;
+    font-size: 10px;
     color: #5b6b85;
     line-height: 1.6;
 }
 
 .search-results-heading {
-    font-size: 14px;
+    font-size: 12px;
     color: #2f4f87;
     margin-bottom: 12px;
     background: #eaf1ff;
@@ -1676,21 +1487,17 @@ mjx-container[jax="CHTML"][display="true"] {
 
 .tag-cloud a {
     display: inline-block;
-    font-size: 12px;
+    font-size: 11px;
+    color: #4a5c7a;
     line-height: 1.8;
     padding: 0 2px;
     text-decoration: none;
     transition: color 0.2s ease;
 }
 
-.tag-cloud a:link,
-.tag-cloud a:visited {
-    color: #4a5c7a;
-}
-
 .tag-cloud a:hover,
 .tag-cloud a.active {
-    color: #cc3000;
+    color: #97bf0d;
 }
 
 /* 最新文�?*/
@@ -1721,12 +1528,12 @@ mjx-container[jax="CHTML"][display="true"] {
     position: absolute;
     left: 0;
     color: #97bf0d;
-    font-size: 12px;
+    font-size: 11px;
     top: 5px;
 }
 
 .recent-posts a {
-    font-size: 12px;
+    font-size: 10px;
     color: #4183c4;
     display: block;
     transition: all 0.2s;
@@ -1781,9 +1588,6 @@ mjx-container[jax="CHTML"][display="true"] {
 }
 
 @media (max-width: 768px) {
-    .post-header {
-        --badge-height: 50px;
-    }
     .top-bar-container {
         flex-direction: column;
         gap: 10px;
@@ -1820,18 +1624,13 @@ mjx-container[jax="CHTML"][display="true"] {
         width: 100%;
     }
 
-    .single-sidebar {
-        width: 100%;
-        flex: 0 0 100%;
-    }
-
     .post {
         padding-left: 65px;
     }
 
     .post-date-badge {
         width: 50px;
-        height: var(--badge-height);
+        height: 50px;
         font-size: 17px;
     }
 

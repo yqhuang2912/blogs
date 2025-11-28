@@ -2,7 +2,7 @@
 title: "CT重建基础原理"
 createdAt: 2025-11-07
 categories:
-  - 医学图像
+  - 计算成像
 tags:
   - 技术分享
 summary:

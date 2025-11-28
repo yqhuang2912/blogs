@@ -2,7 +2,8 @@
 title: 为什么轨迹$\tau$是一个随机变量？
 createdAt: 2025-11-12
 categories:
-  - 技术分享
+  - 数学研究
+  - 人工智能
 tags:
   - 数学推导
   - 强化学习

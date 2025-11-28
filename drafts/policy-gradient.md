@@ -2,7 +2,8 @@
 title: "策略梯度"
 createdAt: 2025-11-11
 categories:
-  - 技术分享
+  - 人工智能
+  - 数学研究
 tags:
   - 数学推导
   - 强化学习

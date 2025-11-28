@@ -2,7 +2,7 @@
 title: "CT图像窗宽与窗位"
 createdAt: 2025-11-18
 categories:
-  - 医学图像
+  - 计算成像
 tags:
   - 图像处理
 ---

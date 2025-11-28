@@ -2,8 +2,7 @@
 title: "DICOM图像处理"
 createdAt: 2025-11-18
 categories:
-  - 医学图像
-  - 动手实践
+  - 计算成像
 tags:
   - DICOM
   - 图像处理

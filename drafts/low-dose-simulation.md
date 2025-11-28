@@ -2,8 +2,7 @@
 title: "低剂量CT图像的噪声模拟"
 createdAt: 2025-11-20
 categories:
-  - 医学图像
-  - 动手实践
+  - 计算成像
 tags:
   - CT成像
   - 泊松噪声

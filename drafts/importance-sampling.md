@@ -2,7 +2,8 @@
 title: "重要性采样与Off-Policy强化学习"
 createdAt: 2025-11-13
 categories:
-  - 技术分享
+  - 数学研究
+  - 人工智能
 tags:
   - 数学推导
   - 强化学习

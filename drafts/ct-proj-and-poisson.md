@@ -2,8 +2,7 @@
 title: "CT投影和泊松噪声的关系"
 createdAt: 2025-11-19
 categories:
-  - 医学图像
-  - 技术分享
+  - 计算成像
 tags:
   - CT成像
   - 泊松噪声
