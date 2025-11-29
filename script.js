@@ -205,7 +205,7 @@ const SUMMARY_ALLOWED_TAGS = new Set([
     'figure',
 ]);
 let mathJaxReadyPromise;
-const HIGHLIGHT_CSS_URL = 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/github.css';
+const HIGHLIGHT_CSS_URL = 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/atom-one-light.min.css';
 const HIGHLIGHT_JS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js';
 let highlightReadyPromise;
 let highlightConfigured = false;
@@ -1264,8 +1264,8 @@ async function initTagCloud(rootPrefix, postsArg, activeTag) {
 }
 
 async function initRecentPosts(rootPrefix, postsArg) {
-    const container = document.querySelector('[data-recent-posts]');
-    if (!container) {
+    const containers = Array.from(document.querySelectorAll('[data-recent-posts]'));
+    if (!containers.length) {
         return;
     }
 
@@ -1275,17 +1275,16 @@ async function initRecentPosts(rootPrefix, postsArg) {
             posts = await loadAndCachePosts(rootPrefix);
         } catch (error) {
             console.error('加载最新文章失败', error);
-            container.innerHTML = '<li><a href="#">加载失败</a></li>';
+            containers.forEach((c) => { c.innerHTML = '<li><a href="#">加载失败</a></li>'; });
             return;
         }
     }
 
     if (!posts || !posts.length) {
-        container.innerHTML = '<li><a href="#">暂无文章</a></li>';
+        containers.forEach((c) => { c.innerHTML = '<li><a href="#">暂无文章</a></li>'; });
         return;
     }
 
-    // Sort by date and get the latest 5 posts
     const sortedPosts = posts
         .slice()
         .sort((a, b) => {
@@ -1295,14 +1294,16 @@ async function initRecentPosts(rootPrefix, postsArg) {
         })
         .slice(0, 5);
 
-    container.innerHTML = '';
-    sortedPosts.forEach((post) => {
-        const li = document.createElement('li');
-        const link = document.createElement('a');
-        link.href = resolveComponentLink(post.link, rootPrefix);
-        link.textContent = post.title || '未命名文章';
-        li.appendChild(link);
-        container.appendChild(li);
+    containers.forEach((container) => {
+        container.innerHTML = '';
+        sortedPosts.forEach((post) => {
+            const li = document.createElement('li');
+            const link = document.createElement('a');
+            link.href = resolveComponentLink(post.link, rootPrefix);
+            link.textContent = post.title || '未命名文章';
+            li.appendChild(link);
+            container.appendChild(li);
+        });
     });
 }
 
