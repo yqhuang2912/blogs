@@ -205,6 +205,18 @@ mjx-container[jax="CHTML"][display="true"] {
     justify-content: center;
 }
 
+.mobile-menu-btn {
+    display: none;
+    border: 1px solid #d0d0d0;
+    background-color: #4c5259;
+    color: #fff;
+    width: 36px;
+    height: 32px;
+    border-radius: 4px;
+    position: relative;
+    z-index: 1001;
+}
+
 /* 移除未使用的导航扩展样式 */
 
 /* 分类导航 */
@@ -1389,18 +1401,43 @@ mjx-container[jax="CHTML"][display="true"] {
 @media (max-width: 1024px) {}
 
 @media (max-width: 768px) {
+    .main-header {
+        padding: 12px 6px 10px;
+    }
+
+    .main-content {
+        flex-direction: column;
+        padding: 12px;
+        gap: 12px;
+    }
+
+    .wrapper {
+        padding: 0;
+        border-right: none;
+    }
+
+    .sidebar {
+        width: 100%;
+        flex: 0 0 100%;
+    }
+
     .post-header {
-        --badge-height: 50px;
+        --badge-height: 44px;
+        padding: 8px;
     }
 
     .top-bar-container {
         flex-direction: column;
         gap: 10px;
+        align-items: flex-start;
+        justify-content: flex-start;
     }
 
     .header-container {
-        flex-direction: column;
+        flex-direction: row;
         gap: 15px;
+        align-items: center;
+        justify-content: space-between;
     }
 
     .category-nav {
@@ -1420,32 +1457,59 @@ mjx-container[jax="CHTML"][display="true"] {
         flex: 1;
     }
 
-    .wrapper {
-        flex-direction: column;
-        padding: 0 15px;
-    }
-
-    .sidebar {
-        width: 100%;
-    }
-
     .single-sidebar {
         width: 100%;
         flex: 0 0 100%;
     }
 
     .post {
-        padding-left: 65px;
+        padding-left: 0;
     }
 
     .post-date-badge {
-        width: 50px;
+        width: 36px;
         height: var(--badge-height);
         font-size: 17px;
     }
 
     .post-title {
         font-size: 15px;
+        white-space: normal;
+    }
+
+    .post-header-content {
+        height: auto;
+    }
+
+    .logo-img {
+        width: 200px;
+    }
+
+    .pagination {
+        padding: 20px 0;
+        margin: 18px 0;
+    }
+
+    .page-num {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+    .single-post-content pre,
+    .post pre {
+        font-size: 13px;
+        padding: 14px 16px;
+    }
+
+    .code-block {
+        margin: 12px 0;
+    }
+
+    .single-post-content table,
+    .post-content table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
     }
 }
 
@@ -1516,39 +1580,193 @@ code {
 
 /* 响应式图片调�?*/
 @media (max-width: 768px) {
-
-    .single-post-content figure,
-    .post-content figure {
-        max-width: 100%;
-        padding: 3px;
+    .top-nav {
+        display: none;
     }
 
-    .single-post-content img,
-    .post-content img {
-        max-width: 100%;
+    .mobile-menu-btn {
+        display: inline-block;
+        margin-left: auto;
     }
 
-    .image-lightbox-overlay img {
-        max-width: 95%;
-        max-height: 95%;
+    .header-cat-nav {
+        display: none;
     }
+}
 
-    .image-lightbox-close {
-        top: 10px;
-        right: 15px;
-        font-size: 30px;
-    }
+.single-post-content figure,
+.post-content figure {
+    max-width: 100%;
+    padding: 3px;
+}
 
-    .single-post-content figcaption,
-    .post-content figcaption {
-        font-size: 11px;
-        margin-top: 3px;
-        padding-top: 3px;
-    }
+.single-post-content img,
+.post-content img {
+    max-width: 100%;
+}
+
+.image-lightbox-overlay img {
+    max-width: 95%;
+    max-height: 95%;
+}
+
+.image-lightbox-close {
+    top: 10px;
+    right: 15px;
+    font-size: 30px;
+}
+
+.single-post-content figcaption,
+.post-content figcaption {
+    font-size: 11px;
+    margin-top: 3px;
+    padding-top: 3px;
 }
 
 /* 选中文本样式 */
 ::selection {
     background-color: #b3d4fc;
     color: #000;
+}
+
+/* 移动抽屉 */
+.mobile-drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 998;
+}
+
+.mobile-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 86vw;
+    max-width: 380px;
+    height: 100vh;
+    background: linear-gradient(180deg, #3c4148 0%, #2f343a 100%);
+    color: #f0f2f5;
+    box-shadow: -6px 0 12px rgba(0, 0, 0, 0.28);
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+    z-index: 999;
+}
+
+.mobile-drawer.open {
+    transform: translateX(0);
+}
+
+.mobile-drawer.open~.mobile-drawer-backdrop {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.drawer-title {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.drawer-close {
+    background: transparent;
+    border: none;
+    color: #f0f2f5;
+    font-size: 22px;
+    line-height: 1;
+}
+
+.drawer-content {
+    padding: 10px;
+    overflow-y: auto;
+    height: calc(100vh - 49px);
+}
+
+.drawer-section {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.drawer-section h3 {
+    font-size: 13px;
+    color: #f0f2f5;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+}
+
+.drawer-menu {
+    list-style: none;
+}
+
+.drawer-menu li {
+    margin-bottom: 6px;
+}
+
+.drawer-menu a {
+    color: #e5e8ec;
+    font-size: 13px;
+}
+
+.drawer-menu a:hover {
+    color: #97bf0d;
+}
+
+.drawer-list {
+    list-style: none;
+}
+
+.drawer-list li {
+    margin-bottom: 6px;
+    padding-left: 12px;
+    position: relative;
+}
+
+.drawer-list li::before {
+    content: "›";
+    position: absolute;
+    left: 0;
+    color: #97bf0d;
+    font-size: 12px;
+    top: 1px;
+}
+
+.drawer-list a {
+    color: #e5e8ec;
+    font-size: 13px;
+}
+
+.drawer-list a:hover {
+    color: #cc3000;
+}
+
+.mobile-drawer .search-box input {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.mobile-drawer .search-box button {
+    background: linear-gradient(to bottom, #97bf0d 0%, #829c0c 100%);
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+
+    .single-sidebar {
+        display: none;
+    }
 }

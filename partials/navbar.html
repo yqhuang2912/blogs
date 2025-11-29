@@ -19,5 +19,44 @@
             <a href="#" class="cat-item" data-category-placeholder><img class="icon-img" src="{{ROOT}}icons/all.png"
                     alt="加载分类"><span class="label">加载分类...</span></a>
         </nav>
+        <button type="button" class="mobile-menu-btn" data-mobile-menu>☰</button>
     </div>
 </header>
+
+<div class="mobile-drawer" id="mobile-drawer" hidden>
+    <div class="drawer-header">
+        <div class="drawer-title">慢变量</div>
+        <button type="button" class="drawer-close" data-drawer-close>×</button>
+    </div>
+    <div class="drawer-content">
+        <div class="drawer-section search" data-search-section>
+            <h3>搜索</h3>
+            <div class="search-box">
+                <input type="text" placeholder="请输入关键词" data-search-input>
+                <button type="button" data-search-button>🔍</button>
+            </div>
+        </div>
+
+        <div class="drawer-section menu">
+            <h3>菜单</h3>
+            <ul class="drawer-menu">
+                <li><a href="{{ROOT}}index.html">首页</a></li>
+                <li><a href="https://scholar.google.com/citations?user=VmxnkI8AAAAJ&hl">Google Scholar</a></li>
+                <li><a href="https://github.com/yqhuang2912">GitHub</a></li>
+            </ul>
+        </div>
+
+        <div class="drawer-section categories">
+            <h3>分类</h3>
+            <ul class="drawer-list" data-category-list></ul>
+        </div>
+
+        <div class="drawer-section recent">
+            <h3>最新文章</h3>
+            <ul class="recent-posts" data-recent-posts>
+                <li><a href="#">加载中...</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="mobile-drawer-backdrop" id="mobile-drawer-backdrop" hidden></div>

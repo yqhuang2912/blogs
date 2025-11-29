@@ -1811,6 +1811,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const initialCategory = getCategoryFilter();
     const initialTag = getTagFilter();
     await injectPartials(rootPrefix);
+    initMobileDrawer(rootPrefix);
 
     // For non-index pages, prepare post navigation data before rendering components
     const listContainer = document.querySelector('[data-post-list]');
@@ -1847,3 +1848,120 @@ document.addEventListener('DOMContentLoaded', async () => {
 document.addEventListener('click', (event) => {
     handleCodeCopyClick(event);
 });
+
+async function initCategoryList(rootPrefix, postsArg) {
+    const list = document.querySelector('[data-category-list]');
+    if (!list) {
+        return;
+    }
+
+    let posts = postsArg;
+    if (!Array.isArray(posts)) {
+        try {
+            posts = await loadAndCachePosts(rootPrefix);
+        } catch (error) {
+            list.innerHTML = '';
+            return;
+        }
+    }
+
+    const counts = new Map();
+    (posts || []).forEach((post) => {
+        const categories = Array.isArray(post?.categories) ? post.categories : [];
+        categories.forEach((category) => {
+            const displayName = String(category || '').trim();
+            if (!displayName) {
+                return;
+            }
+            const key = normalizeCategoryValue(displayName);
+            if (!counts.has(key)) {
+                counts.set(key, { name: displayName, count: 0 });
+            }
+            counts.get(key).count += 1;
+        });
+    });
+
+    const entries = Array.from(counts.values()).sort((a, b) => {
+        if (b.count !== a.count) {
+            return b.count - a.count;
+        }
+        return a.name.localeCompare(b.name, 'zh-Hans');
+    });
+
+    list.innerHTML = '';
+
+    const appendItem = (label, value) => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = buildCategoryHref(rootPrefix, value);
+        a.textContent = label;
+        a.addEventListener('click', async (event) => {
+            event.preventDefault();
+            const targetUrl = buildCategoryHref(rootPrefix, value);
+            const listContainer = document.querySelector('[data-post-list]');
+            if (listContainer) {
+                updateCategoryQueryParam(value);
+                updateSearchQueryParam('');
+                await initIndexPage(rootPrefix);
+                closeMobileDrawer();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                window.location.href = targetUrl;
+            }
+        });
+        li.appendChild(a);
+        list.appendChild(li);
+    };
+
+    appendItem('全部文章', '');
+    entries.forEach(({ name }) => appendItem(name, name));
+}
+
+function initMobileDrawer(rootPrefix) {
+    const drawer = document.getElementById('mobile-drawer');
+    const backdrop = document.getElementById('mobile-drawer-backdrop');
+    const btn = document.querySelector('[data-mobile-menu]');
+    const closeBtn = document.querySelector('[data-drawer-close]');
+    if (!drawer || !backdrop || !btn || !closeBtn) {
+        return;
+    }
+
+    const open = () => {
+        drawer.classList.add('open');
+        drawer.removeAttribute('hidden');
+        backdrop.removeAttribute('hidden');
+        document.body.style.overflow = 'hidden';
+    };
+
+    const close = () => {
+        drawer.classList.remove('open');
+        drawer.setAttribute('hidden', '');
+        backdrop.setAttribute('hidden', '');
+        document.body.style.overflow = '';
+    };
+
+    btn.addEventListener('click', () => {
+        open();
+    });
+    closeBtn.addEventListener('click', () => {
+        close();
+    });
+    backdrop.addEventListener('click', () => {
+        close();
+    });
+
+    initCategoryList(rootPrefix);
+    initRecentPosts(rootPrefix);
+}
+
+function closeMobileDrawer() {
+    const drawer = document.getElementById('mobile-drawer');
+    const backdrop = document.getElementById('mobile-drawer-backdrop');
+    if (!drawer || !backdrop) {
+        return;
+    }
+    drawer.classList.remove('open');
+    drawer.setAttribute('hidden', '');
+    backdrop.setAttribute('hidden', '');
+    document.body.style.overflow = '';
+}
