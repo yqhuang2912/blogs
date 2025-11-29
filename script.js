@@ -365,7 +365,7 @@ function createPostArticle(post, rootPrefix) {
     card.setAttribute('data-link', post.link || '');
     card.setAttribute('data-meta', buildPostMetaHtml(post, rootPrefix));
 
-    const summaryHtml = buildSummaryHtml(post.summary);
+    const summaryHtml = buildSummaryHtml(post.summary, rootPrefix);
     const readMoreHref = resolveComponentLink(post.link, rootPrefix) || '#';
 
     card.innerHTML = `
@@ -408,12 +408,12 @@ function buildPostMetaHtml(post, rootPrefix) {
     return `${catSpan} ${tagSpan}`;
 }
 
-function buildSummaryHtml(summary) {
+function buildSummaryHtml(summary, rootPrefix) {
     if (!Array.isArray(summary) || !summary.length) {
         return '<p>暂无摘要。</p>';
     }
 
-    return summary
+    const combined = summary
         .map((item) => {
             if (!item || typeof item.html !== 'string') {
                 return '';
@@ -432,6 +432,8 @@ function buildSummaryHtml(summary) {
             return `<${tag}>${normalizedHtml}</${tag}>`;
         })
         .join('\n');
+
+    return rewriteSummaryAssetPaths(combined, rootPrefix);
 }
 
 function normalizeLatexEscapes(html) {
@@ -439,6 +441,18 @@ function normalizeLatexEscapes(html) {
         return html;
     }
     return html.replace(/\\\\(?=\S)/g, '\\');
+}
+
+function rewriteSummaryAssetPaths(html, rootPrefix) {
+    if (typeof html !== 'string' || !html.length) {
+        return html;
+    }
+    if (rootPrefix === '') {
+        return html
+            .replace(/(\bsrc\s*=\s*["'])\.\.\/assets\//gi, '$1assets/')
+            .replace(/(\bsrcset\s*=\s*["'][^"']*)\.\.\/assets\//gi, (m) => m.replace(/\.\.\/assets\//gi, 'assets/'));
+    }
+    return html;
 }
 
 function enhanceCodeBlocks(root) {
