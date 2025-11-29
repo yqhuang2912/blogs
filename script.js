@@ -639,7 +639,7 @@ function initFooterYear() {
     if (!el) {
         return;
     }
-    const startYear = 2025;
+    const startYear = 2009;
     const currentYear = new Date().getFullYear();
     el.textContent = currentYear > startYear ? `${startYear}-${currentYear}` : `${startYear}`;
 }
