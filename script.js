@@ -205,7 +205,7 @@ const SUMMARY_ALLOWED_TAGS = new Set([
     'figure',
 ]);
 let mathJaxReadyPromise;
-const HIGHLIGHT_CSS_URL = 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/atom-one-light.min.css';
+const HIGHLIGHT_CSS_URL = 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/github.css';
 const HIGHLIGHT_JS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js';
 let highlightReadyPromise;
 let highlightConfigured = false;
@@ -632,6 +632,16 @@ async function handleCodeCopyClick(event) {
         setButtonLabel(originalLabel);
         button.disabled = false;
     }, 2000);
+}
+
+function initFooterYear() {
+    const el = document.querySelector('.footer [data-year-range]');
+    if (!el) {
+        return;
+    }
+    const startYear = 2025;
+    const currentYear = new Date().getFullYear();
+    el.textContent = currentYear > startYear ? `${startYear}-${currentYear}` : `${startYear}`;
 }
 
 async function writeClipboard(text) {
@@ -1812,6 +1822,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const initialCategory = getCategoryFilter();
     const initialTag = getTagFilter();
     await injectPartials(rootPrefix);
+    initFooterYear();
     initMobileDrawer(rootPrefix);
 
     // For non-index pages, prepare post navigation data before rendering components
