@@ -1397,7 +1397,7 @@ async function initPostNavigation(rootPrefix) {
 
     // Generate HTML for navigation links
     const prevLink = prevPost
-        ? `<span class="prev-post">‹ 上一篇：<a href="${resolveComponentLink(prevPost.link, rootPrefix)}">${prevPost.title}</a></span>`
+        ? `<span class="prev-post">上一篇：<a href="${resolveComponentLink(prevPost.link, rootPrefix)}">${prevPost.title}</a></span>`
         : '';
 
     const nextLink = nextPost

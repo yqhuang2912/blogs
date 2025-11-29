@@ -1090,6 +1090,35 @@ mjx-container[jax="CHTML"][display="true"] {
     color: #666;
 }
 
+.post-nav .prev-post::after {
+    content: " \2039";
+    /* ‹ */
+    color: #a0a0a0;
+}
+
+.post-nav .next-post::after {
+    content: " \203A";
+    /* › */
+    color: #a0a0a0;
+}
+
+@media (max-width: 768px) {
+    .post-nav {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .post-nav .prev-post,
+    .post-nav .next-post {
+        display: block;
+    }
+
+    .post-nav .next-post:only-child {
+        margin-left: 0;
+    }
+}
+
 /* 移除未使用的相关文章/引用/打赏样式 */
 
 /* 移除未使用的评论样式 */
