@@ -640,7 +640,7 @@ function restoreMathSegments(html, placeholders) {
     let restored = html;
     for (const [key, value] of placeholders.entries()) {
         const pattern = new RegExp(escapeRegExp(key), 'g');
-        restored = restored.replace(pattern, () => value);
+        restored = restored.replace(pattern, () => String(value).replace(/</g, '&lt;').replace(/>/g, '&gt;'));
     }
     return restored;
 }

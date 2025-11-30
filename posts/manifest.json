@@ -1,34 +1,41 @@
 {
-  "generatedAt": "2025-11-29T14:05:06.863Z",
+  "generatedAt": "2025-11-30T14:22:29.891Z",
   "postCount": 11,
   "posts": [
     {
       "id": "11398",
-      "slug": "generative_model_vae",
-      "title": "生成模型系列（一）：从 VAE 出发",
-      "createdAt": "2025-11-23",
-      "day": "23",
+      "slug": "llm-temperature-topp",
+      "title": "大模型中随机性和多样性",
+      "createdAt": "2025-11-30",
+      "day": "30",
       "month": "Nov",
       "categories": [
         "人工智能"
       ],
       "tags": [
-        "生成模型",
-        "概率图模型",
-        "VAE"
+        "大模型",
+        "技术分享"
       ],
       "summary": [
         {
+          "type": "p",
+          "html": "我们在调用大模型时，通常会设置两个参数：Temperature和Top-p。我们上网一查，都会说这两个参数可以控制大模型输出的随机性和多样性。但是，关于这两个参数的细节一直没有去了解，今天看了一个<a href=\"https://www.bilibili.com/video/BV1taSFBNEG4/?spm_id_from=333.337.search-card.all.click&amp;vd_source=af1e89d4624a6f02ed73e2312d492273\">视频</a>，才对这两个参数为什么会影响大模型输出的随机性和多样性有了比较详细的了解，这里记录一下。"
+        },
+        {
           "type": "h2",
-          "html": "判别模型 vs 生成模型：我们到底想学什么？"
+          "html": "大模型是怎么输出的？"
         },
         {
           "type": "p",
-          "html": "在监督学习里，我们最熟的是<strong>判别模型（discriminative model）</strong>，比如："
+          "html": "目前主流的大模型都是使用Next-Token-Prediction (NTP)这种范式，其本质上是给定前面的tokens，预测下一个token的条件概率分布：\n                $$\n                P(t_i|t_{&lt;i})=\\text{softmax}(\\mathbf{z}_i) \\tag{1}\n                $$\n                其中，$\\mathbf{z}_i=\\text{LLM}_{\\theta}(t_{&lt;i}) \\in \\mathbb{R}^{|V|}$是第$i$步输出的logits，$t_{&lt;i}$是前面的tokens，$P(t_i|t_{&lt;i})$是$t_i$给定$t_{&lt;i}$的条件概率，$\\theta$是模型的参数，$|V|$是词表的大小。"
+        },
+        {
+          "type": "p",
+          "html": "这其实是一个分类问题，我们假设整个Vocabulary（即所有可能的token）是$V$，那么大模型在第$i$步做的事情就是依据前面的$i-1$个token，从$V$中选择一个token作为第$i$个token的预测。"
         }
       ],
-      "link": "posts/generative_model_vae.html",
-      "metaText": "2025-11-23 | 分类：人工智能 | 标签：生成模型,概率图模型,VAE"
+      "link": "posts/llm-temperature-topp.html",
+      "metaText": "2025-11-30 | 分类：人工智能 | 标签：大模型,技术分享"
     },
     {
       "id": "11397",
