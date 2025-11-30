@@ -112,18 +112,18 @@
                 </section><section class="post-section" id="选择哪一个token作为第math39个token的预测结果？"><h2 data-heading-id="选择哪一个token作为第math39个token的预测结果？">选择哪一个token作为第$i$个token的预测结果？</h2>
                 <p>按照我们之前做分类任务的经验，我们会选择概率最大的类别作为预测结果。在上面的例子中会选择<span style="color:red;">"物理学家"</span>作为第$i$个token的预测结果，因为$P(物理学家|牛顿是一个)$最高。如果我们每一步都取最大概率token：
                 $$
-                t_i = \arg\max_{k \in V} P(t_i=v_k|t_{&lt;i}) = \arg\max_{k \in V} \text{softmax}(\mathbf{z}_i)[k] = v_{argmax} \tag{8}
+                t_i = \arg\max_{k \in V} P(t_i=v_k|t_{&lt;i}) = \arg\max_{k \in V} \text{softmax}(\mathbf{z}_i)[k] = v_{argmax} \tag{6}
                 $$
                 其中，$v_{argmax}$是使$P(t_i=v_{argmax}|t_{&lt;i})$最大的$v_k$，这叫<strong>贪心解码（greedy decoding）</strong>。但是，常识告诉我们，<span style="color:red;">"数学家"</span>也是一个正确的结果，因为牛顿同样是一个数学家。如果只选择概率最高的类别作为预测结果，模型每次都只会选择<span style="color:red;">"物理学家"</span>，而抛弃了<span style="color:red;">"数学家"</span>这个同样合理且正确的结果。也就是说，只选择概率最高的类别作为预测结果，会降低模型输出的多样性（同样prompt基本永远得到同样结果）。</p>
                 <p>那我们如何增加模型输出的多样性呢？这个问题的本质就是从词表$V$中选择第$i$个token时不再只选择概率最高的类别，而是让其他的token也有机会被选择。有随机性的选择，用数学的语言来表达就是从某个分布中采样一个token作为第$i$个token的预测结果：
                 $$
-                t_i \sim p(\cdot) \tag{6}
+                t_i \sim p(\cdot) \tag{7}
                 $$
                 其中，$t_i$是第$i$个token的采样结果，$\sim$表示采样，$p(\cdot)$是第$i$个token的概率分布。这样一来，即使模型的输出logits不变，但是由于采样的随机性，在做第$i$步的预测时，也有可能选择到非概率最高的token。所以，<strong>多样性来自于采样的随机性</strong>。</p>
                 <h3 id="多项式采样">多项式采样</h3>
                 <p>那么，该从什么分布中采样呢？一个最直观的想法是直接将Softmax输出的概率看成一个多项式分布（Categorical Distribution），然后从这个分布中采样一个token作为第$i$个token的预测结果：
                 $$
-                t^i \sim \text{Cat}(\text{softmax}(\mathbf{z}_i)) \tag{7}
+                t^i \sim \text{Cat}(\text{softmax}(\mathbf{z}_i)) \tag{8}
                 $$
                 其中，$\text{Cat}(\text{softmax}(\mathbf{z}_i))$表示一个多项式分布，其参数为$\text{softmax}(\mathbf{z}_i)$，即第$i$个token的概率分布。
                 代码实现如下：</p>
@@ -139,16 +139,16 @@ token = torch.multinomial(probs, num_samples=1)</code></pre>
                 </section><section class="post-section" id="temperature"><h2 data-heading-id="temperature">Temperature</h2>
                 <p>Temperature的做法是对模型输出的logits进行缩放：
                 $$
-                \mathbf{z}^{'}_i = \frac{\mathbf{z}_i}{\tau}, \quad \tau &gt; 0 \tag{10}
+                \mathbf{z}^{'}_i = \frac{\mathbf{z}_i}{\tau}, \quad \tau &gt; 0 \tag{9}
                 $$
                 然后再进行Softmax：
                 $$
-                p(t_i=v_k|t_{&lt;i}) = \text{softmax}(\mathbf{z}^{'}_i)[k] = \frac{\exp(\mathbf{z}^{k}_i/\tau)}{\sum_{j=0}^{|V|-1} \exp(\mathbf{z}^{j}_i/\tau)} \tag{11}
+                p(t_i=v_k|t_{&lt;i}) = \text{softmax}(\mathbf{z}^{'}_i)[k] = \frac{\exp(\mathbf{z}^{k}_i/\tau)}{\sum_{j=0}^{|V|-1} \exp(\mathbf{z}^{j}_i/\tau)} \tag{10}
                 $$
                 选择第$i$个token时，我们依旧使用多项式分布$\text{Cat}(\text{softmax}(\mathbf{z}^{'}_i))$，只是参数换成了温度缩放之后的$\text{softmax}(\mathbf{z}^{'}_i)$。</p>
                 <p>为什么加一个缩放因子$\tau$之后，就能做到减少选到低概率token的风险？这是因为temperature改变了不同tokens的「相对赔率」（relative odds）。这里可以做一个证明：令logit最大的token为$m$，可以计算，任意token $k$与logit最大的token的概率比为：
                 $$
-                \frac{p_{\tau}(k)}{p_{\tau}(m)} = \frac{\exp(\mathbf{z}^{k}_i/\tau)}{\exp(\mathbf{z}^{m}_i/\tau)} = \exp\left(\frac{\mathbf{z}^{k}_i - \mathbf{z}^{m}_i}{\tau}\right) \tag{12}
+                \frac{p_{\tau}(k)}{p_{\tau}(m)} = \frac{\exp(\mathbf{z}^{k}_i/\tau)}{\exp(\mathbf{z}^{m}_i/\tau)} = \exp\left(\frac{\mathbf{z}^{k}_i - \mathbf{z}^{m}_i}{\tau}\right) \tag{11}
                 $$
                 如图1所示，由于$\exp(\mathbf{z}^{k}_i - \mathbf{z}^{m}_i) \geq 0, \tau &gt; 0$，所以</p>
                 <figure>
@@ -237,7 +237,7 @@ token = torch.multinomial(probs, num_samples=1)</code></pre>
                 p(t_i=v_k|t_{&lt;i}) = \begin{cases}
                     \frac{\exp(\mathbf{z}^{k}_i)}{\sum_{j \in S_k} \exp(\mathbf{z}^{j}_i)} &amp; \text{if } v_k \in S_k \\
                     0 &amp; \text{otherwise}
-                \end{cases} \tag{8}
+                \end{cases} \tag{12}
                 $$
                 工程上常用<code>mask logits</code>实现：对不在集合内的token令logit=$-\infty$，再softmax，自然完成“重新归一化”。代码实现如下：</p>
                 <pre><code class="language-python">values, _ = torch.topk(logits, k)
@@ -251,14 +251,14 @@ token = torch.multinomial(probs, 1)</code></pre>
                 <h3 id="top-p（nucleus-sampling）">Top-p（nucleus sampling）</h3>
                 <p>为了解决top-k候选集大小固定的问题，引入top-p（nucleus sampling）。Top-p的解决思路也很简单，就是把token按概率从大到小排序得到序列$(t^1, t^2, \dots, t^{|V|})$，取最小$m$满足累计概率：
                 $$
-                C_m = \sum_{r=1}^m p(t^r) \geq p_{\text{nuc}} \tag{9}
+                C_m = \sum_{r=1}^m p(t^r) \geq p_{\text{nuc}} \tag{13}
                 $$
                 保留$C_m=\{t^1, t^2, \dots, t^m\}$，并在其中重新归一化，此时选择第$i$个token的概率分布为：
                 $$
                 p(t_i=v_k|t_{&lt;i}) = \begin{cases}
                     \frac{\exp(\mathbf{z}^{k}_i)}{\sum_{j \in C_m} \exp(\mathbf{z}^{j}_i)} &amp; \text{if } v_k \in C_m \\
                     0 &amp; \text{otherwise}
-                \end{cases} \tag{10}
+                \end{cases} \tag{14}
                 $$
                 代码实现如下：</p>
                 <pre><code class="language-python">probs = torch.softmax(logits, dim=-1)
