@@ -1852,6 +1852,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await typesetMath(postList || document.body);
     enhanceCodeBlocks(document.body);
     await highlightCodeBlocks(document.body);
+    initContentOverview();
     initSmoothScroll();
     initBackToTop();
     console.log('慢变量博客已加载完成！');
