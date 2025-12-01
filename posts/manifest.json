@@ -1,7 +1,33 @@
 {
-  "generatedAt": "2025-11-30T14:29:50.358Z",
-  "postCount": 11,
+  "generatedAt": "2025-12-01T13:31:21.276Z",
+  "postCount": 12,
   "posts": [
+    {
+      "id": "11399",
+      "slug": "distribution",
+      "title": "分布到底是什么？",
+      "createdAt": "2025-12-01",
+      "day": "1",
+      "month": "Dec",
+      "categories": [
+        "数学研究"
+      ],
+      "tags": [
+        "概率分布"
+      ],
+      "summary": [
+        {
+          "type": "p",
+          "html": "平时经常会听到“这个东西服从某个分布”，也听说过“高斯分布”，“泊松分布”等，但一直没有仔细思考过“分布”到底是什么。"
+        },
+        {
+          "type": "ul",
+          "html": "<ul><li>分布到底是个什么对象？是一条曲线？一张图？还是一堆参数？</li>\n                <li>我手上只有数据点，分布在哪里？</li>\n                <li>为什么同样叫分布，有时候是$p(x)$，有时候是$P(x)$，有时候是$F(x)$？</li></ul>"
+        }
+      ],
+      "link": "posts/distribution.html",
+      "metaText": "2025-12-01 | 分类：数学研究 | 标签：概率分布"
+    },
     {
       "id": "11398",
       "slug": "llm-temperature-topp",

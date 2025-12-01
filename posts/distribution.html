@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分布到底是什么？ | 慢变量</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="icon" href="../icons/deceleration.png" type="image/png">
+
+    <script type="application/json" id="post-metadata">
+        {
+            "id": "11399",
+            "slug": "distribution",
+            "title": "分布到底是什么？",
+            "createdAt": "2025-12-01",
+            "day": "1",
+            "month": "Dec",
+            "categories": [
+                "数学研究"
+            ],
+            "tags": [
+                "概率分布"
+            ],
+            "summary": [],
+            "link": "posts/distribution.html"
+        }
+    </script>
+
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$']],
+                displayMath: [['$$', '$$'], ['\[', '\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+</head>
+
+<body>
+    <div class="page-container">
+        <div data-include="../partials/navbar.html"></div>
+
+    <main class="main-content">
+        <div class="wrapper">
+            <article class="post">
+                <div data-component="post-header"
+                     data-day="1"
+                     data-month="Dec"
+                     data-title="分布到底是什么？"
+                     data-link=""
+                     data-meta="&lt;span class=&quot;meta-item meta-categories&quot;&gt;分类：&lt;a href=&quot;#&quot;&gt;数学研究&lt;/a&gt;&lt;/span&gt;&lt;span class=&quot;meta-divider&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;meta-item meta-tags&quot;&gt;标签：&lt;a href=&quot;#&quot;&gt;概率分布&lt;/a&gt;&lt;/span&gt;"
+                     data-heading="h1"
+                     data-meta-class="post-meta"
+                     data-title-class="post-title"></div>
+
+                <div class="post-content single-post-content">
+                <p>平时经常会听到“这个东西服从某个分布”，也听说过“高斯分布”，“泊松分布”等，但一直没有仔细思考过“分布”到底是什么。</p>
+                <ul>
+                <li>分布到底是个什么对象？是一条曲线？一张图？还是一堆参数？</li>
+                <li>我手上只有数据点，分布在哪里？</li>
+                <li>为什么同样叫分布，有时候是$p(x)$，有时候是$P(x)$，有时候是$F(x)$？</li>
+                </ul>
+                <p>要弄清楚这些，得先从一些基本概念开始。</p>
+                <section class="post-section" id="一些基本概念"><h2 data-heading-id="一些基本概念">一些基本概念</h2>
+                <figure>
+                <img src="../assets/11399/sample-space-event-variables.png" alt="sample-space-event-variables">
+                <figcaption>图1：分布的可视化表示（图片来自Nano Banana Pro）</figcaption>
+                </figure>
+                
+                <ul>
+                <li><strong>样本$w$</strong>：是随机现象可能出现的结果，例如掷骰子可能出现的结果是$点数为1$、$点数为2$、$点数为3$、$点数为4$、$点数为5$、$点数为6$。</li>
+                <li><strong>样本空间$\Omega$</strong>：随机现象可能出现的所有结果的集合，也就是样本的集合。例如掷骰子的样本空间是$\Omega = \{点数为1, 点数为2, 点数为3, 点数为4, 点数为5, 点数为6\}$。</li>
+                <li>事件$A$：样本空间$\Omega$的一个子集，例如掷骰子出现偶数的事件是$A = \{点数为2, 点数为4, 点数为6\}$。</li>
+                <li><strong>随机变量$X$</strong>：<strong>是一个函数</strong>，它将样本空间$\Omega$的每个元素映射到实数域上的一个点，例如掷骰子的随机变量$X$是一个函数，它将样本空间的每个元素映射到实数域上的一个点:
+                $$X(w): \Omega \to \mathbb{R}$$
+                例如$X(w=点数为1) = 1, X(w=点数为2) = 2, \ldots, X(w=点数为6) = 6$。</li>
+                </ul>
+                <blockquote>
+                <p>我的理解随机变量这个概念就是一个数学建模的工具，它将随机现象出现的结果映射到一个数字，方便我们用数学的方式对随机现象进行分析，所以为了方便，我们通常将$X(w=点数为1) = 1$写为$X=1$。</p>
+                </blockquote>
+                <ul>
+                <li><p><strong>频率</strong>：做$n$次独立重复实验，事件$A$发生了$N_n(A)$次，那么事件$A$发生的频率是：
+                $$f_n(A) = \frac{N_n(A)}{n}$$</p>
+                </li>
+                <li><p><strong>概率</strong>：是一个事件$A$发生的可能性，它是一个数，范围在$[0, 1]$之间。例如掷骰子出现偶数的概率是$P(A) = 3/6 = 0.5$。</p>
+                <blockquote>
+                <p>频率和概率的关系：做$n$次独立重复实验，事件$A$发生的频率和概率的关系是：
+                $$P(A) = \lim_{n \to \infty} f_n(A)$$</p>
+                </blockquote>
+                </li>
+                <li><p><strong>分布（更准确叫概率分布）</strong>：是一个函数，它将事件$A$映射到$[0, 1]$区间上的一个点，它是定义在事件$A$的集合上$\mathcal{F}$的一个函数:
+                $$P(A): \mathcal{F} \to [0, 1]$$
+                例如掷骰子出现偶数的概率分布是一个函数，它将事件$A=\{X(w)=2, X(w)=4, X(w)=6\}$映射到$[0, 1]$区间上的一个点$P(A) = 0.5$。</p>
+                <blockquote>
+                <p>所以分布是一套“给事件分配概率”的规则，它满足如下的一致性规则：</p>
+                <ol>
+                <li>非负性：对任意事件$A$，$P(A) \ge 0$。</li>
+                <li>规范化：一切可能都发生在全集里$P(\Omega) = 1$。</li>
+                <li>可列可加性：不相交事件的概率可加，对任意互斥事件$A_1, A_2, \ldots$，有$P(A_1 \cup A_2 \cup \ldots) = P(A_1) + P(A_2) + \ldots$。</li>
+                </ol>
+                <p>所以分布真正做的事只有一件：<strong>回答“这个事件发生的概率是多少？”</strong></p>
+                </blockquote>
+                </li>
+                </ul>
+                </section><section class="post-section" id="概率分布的表示方式"><h2 data-heading-id="概率分布的表示方式">概率分布的表示方式</h2>
+                <p>在概率论里，“分布”最本质的对象是一个概率测度。</p>
+                <ul>
+                <li>我们有概率空间$(\Omega, \mathcal{F}, P)$，其中$P$是一个概率测度。</li>
+                <li>有随机变量$X: \Omega \to \mathbb{R}$，它将样本空间$\Omega$的每个元素映射到实数域上的一个点。</li>
+                <li>那么$X$的分布就是一个在实数轴上的概率规则：
+                $$\mu_X(A) := P(X \in B),\quad B \in \mathcal{B}$$
+                这里的$\mu_X$就是“给事件分配概率”这句话的具体实现。针对不同的情况，$\mu_X$有不同的“外衣”，例如：</li>
+                <li>离散型随机变量的概率质量函数（PMF）</li>
+                <li>连续型随机变量的概率密度函数（PDF）</li>
+                <li>累计分布函数（CDF）</li>
+                </ul>
+                <h3 id="离散型随机变量的概率质量函数（pmf）">离散型随机变量的概率质量函数（PMF）</h3>
+                <p>设$X$只会取可数个值（有限或者可数无限）：
+                $$\text{supp}(X) = \{x_1, x_2, \ldots\}$$
+                对每个可能的取值$x_k$，它对应的事件是：
+                $$\{X=x_k\} = \{w \in \Omega \mid X(w) = x_k\} \in \mathcal{F}$$
+                对每个可能的取值$x_k$，它对应的概率是：
+                $$P(X=x_k) = P(\{X=x_k\})$$</p>
+                <h3 id="连续型随机变量的概率密度函数（pdf）">连续型随机变量的概率密度函数（PDF）</h3>
+                <h3 id="累计分布函数（cdf）">累计分布函数（CDF）</h3></section>
+                </div>
+
+                <div data-component="post-navigation"></div>
+            </article>
+        </div>
+
+        <div data-include="../partials/sidebar-post.html"></div>
+    </main>
+
+    <div data-include="../partials/footer.html"></div>
+    </div><!-- end page-container -->
+
+    <script src="../script.js"></script>
+</body>
+
+</html>
