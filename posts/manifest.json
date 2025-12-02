@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2025-12-01T13:31:21.276Z",
+  "generatedAt": "2025-12-02T04:24:28.130Z",
   "postCount": 12,
   "posts": [
     {
@@ -53,7 +53,7 @@
         },
         {
           "type": "p",
-          "html": "目前主流的大模型都是使用Next-Token-Prediction (NTP)这种范式，其本质上是给定前面的tokens，预测下一个token的条件概率分布：\n                $$\n                P(t_i|t_{&lt;i})=\\text{softmax}(\\mathbf{z}_i) \\tag{1}\n                $$\n                其中，$\\mathbf{z}_i=\\text{LLM}_{\\theta}(t_{&lt;i}) \\in \\mathbb{R}^{|V|}$是第$i$步输出的logits，$t_{&lt;i}$是前面的tokens，$P(t_i|t_{&lt;i})$是$t_i$给定$t_{&lt;i}$的条件概率，$\\theta$是模型的参数，$|V|$是词表的大小。"
+          "html": "目前主流的大模型都是使用Next-Token-Prediction (NTP)这种范式，其本质上是给定前面的tokens，预测下一个token的条件概率分布：\r\n                $$\r\n                P(t_i|t_{&lt;i})=\\text{softmax}(\\mathbf{z}_i) \\tag{1}\r\n                $$\r\n                其中，$\\mathbf{z}_i=\\text{LLM}_{\\theta}(t_{&lt;i}) \\in \\mathbb{R}^{|V|}$是第$i$步输出的logits，$t_{&lt;i}$是前面的tokens，$P(t_i|t_{&lt;i})$是$t_i$给定$t_{&lt;i}$的条件概率，$\\theta$是模型的参数，$|V|$是词表的大小。"
         },
         {
           "type": "p",
@@ -149,7 +149,7 @@
       "summary": [
         {
           "type": "p",
-          "html": "在医学CT图像处理中，窗宽（Window Width, WW）和窗位（Window Level,\n                            WL）是两个非常重要的参数，用于调整图像的对比度和亮度，从而更好地显示不同组织结构的细节。"
+          "html": "在医学CT图像处理中，窗宽（Window Width, WW）和窗位（Window Level,\r\n                            WL）是两个非常重要的参数，用于调整图像的对比度和亮度，从而更好地显示不同组织结构的细节。"
         },
         {
           "type": "h2",
@@ -157,11 +157,11 @@
         },
         {
           "type": "ul",
-          "html": "<ul><li>窗宽（WW）：表示CT图像中灰度级别的范围。较大的窗宽可以显示更多的灰度级别，适用于显示密度差异较大的组织（如肺部）；较小的窗宽则适用于显示密度差异较小的组织（如脑组织）。\n                                </li>\n                                <li>窗位（WL）：表示CT图像灰度级别的中心值。通过调整窗位，可以改变图像的亮度，使得特定密度范围内的组织更加清晰可见。</li></ul>"
+          "html": "<ul><li>窗宽（WW）：表示CT图像中灰度级别的范围。较大的窗宽可以显示更多的灰度级别，适用于显示密度差异较大的组织（如肺部）；较小的窗宽则适用于显示密度差异较小的组织（如脑组织）。\r\n                                </li>\r\n                                <li>窗位（WL）：表示CT图像灰度级别的中心值。通过调整窗位，可以改变图像的亮度，使得特定密度范围内的组织更加清晰可见。</li></ul>"
         },
         {
           "type": "figure",
-          "html": "<figure><img src=\"../assets/11395/ct_window.png\" alt=\"CT图像窗宽与窗位示意图\" ,=\"\" width=\"360\">\n                                <figcaption>CT图像窗宽与窗位示意图</figcaption></figure>"
+          "html": "<figure><img src=\"../assets/11395/ct_window.png\" alt=\"CT图像窗宽与窗位示意图\" ,=\"\" width=\"360\">\r\n                                <figcaption>CT图像窗宽与窗位示意图</figcaption></figure>"
         }
       ],
       "link": "posts/ct-window.html",
@@ -375,7 +375,7 @@
         },
         {
           "type": "figure",
-          "html": "<figure><img src=\"../assets/11388/ct-device.png\" alt=\"CT设备\">\n                            <figcaption>CT设备</figcaption></figure>"
+          "html": "<figure><img src=\"../assets/11388/ct-device.png\" alt=\"CT设备\">\r\n                            <figcaption>CT设备</figcaption></figure>"
         },
         {
           "type": "p",
