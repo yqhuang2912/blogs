@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2025-12-02T04:24:28.130Z",
+  "generatedAt": "2025-12-02T04:37:01.537Z",
   "postCount": 12,
   "posts": [
     {
@@ -23,6 +23,18 @@
         {
           "type": "ul",
           "html": "<ul><li>分布到底是个什么对象？是一条曲线？一张图？还是一堆参数？</li>\n                <li>我手上只有数据点，分布在哪里？</li>\n                <li>为什么同样叫分布，有时候是$p(x)$，有时候是$P(x)$，有时候是$F(x)$？</li></ul>"
+        },
+        {
+          "type": "p",
+          "html": "要弄清楚这些，得先从一些基本概念开始。"
+        },
+        {
+          "type": "h2",
+          "html": "一些基本概念"
+        },
+        {
+          "type": "figure",
+          "html": "<figure><img src=\"../assets/11399/sample-space-event-variables.png\" alt=\"sample-space-event-variables\">\n                <figcaption>图1：分布的可视化表示（图片来自Nano Banana Pro）</figcaption></figure>"
         }
       ],
       "link": "posts/distribution.html",
