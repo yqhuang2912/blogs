@@ -136,7 +136,7 @@ token = torch.multinomial(probs, num_samples=1)</code></pre>
                 <li>我们一般使用大模型的时候一般都会要求模型按照一定的格式要求进行输出，直接从多项式分布中采样一个token作为第$i$个token的预测结果，会<strong>更容易导致格式崩坏</strong>。</li>
                 </ul>
                 <p>于是后面的采样方法基本都在回答同一个问题：如何做到<strong>随机带来多样性</strong>，但又<strong>别抽到垃圾长尾token</strong>？下面介绍一些常见的做法。</p>
-                </section><section class="post-section" id="temperature"><h2 data-heading-id="temperature">Temperature</h2>
+                <h3 id="temperature">Temperature</h3>
                 <p>Temperature的做法是对模型输出的logits进行缩放：
                 $$
                 \mathbf{z}^{'}_i = \frac{\mathbf{z}_i}{\tau}, \quad \tau &gt; 0 \tag{9}

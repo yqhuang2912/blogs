@@ -89,7 +89,7 @@ token = torch.multinomial(probs, num_samples=1)
 
 于是后面的采样方法基本都在回答同一个问题：如何做到**随机带来多样性**，但又**别抽到垃圾长尾token**？下面介绍一些常见的做法。
 
-## Temperature
+### Temperature
 Temperature的做法是对模型输出的logits进行缩放：
 $$
 \mathbf{z}^{'}_i = \frac{\mathbf{z}_i}{\tau}, \quad \tau > 0 \tag{9}
