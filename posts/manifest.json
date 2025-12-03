@@ -1,7 +1,38 @@
 {
-  "generatedAt": "2025-12-03T04:16:22.689Z",
-  "postCount": 12,
+  "generatedAt": "2025-12-03T06:32:42.911Z",
+  "postCount": 13,
   "posts": [
+    {
+      "id": "11400",
+      "slug": "probability-and-likelihood",
+      "title": "概率和似然",
+      "createdAt": "2025-12-03",
+      "day": "3",
+      "month": "Dec",
+      "categories": [
+        "数学研究"
+      ],
+      "tags": [
+        "概率分布",
+        "极大似然"
+      ],
+      "summary": [
+        {
+          "type": "p",
+          "html": "在概率论中，概率（Probability）和似然（Likelihood）是两个相关但是完全不同的概念。理解它们的区别对于统计推断和机器学习等领域非常重要。"
+        },
+        {
+          "type": "h2",
+          "html": "概率和似然"
+        },
+        {
+          "type": "ul",
+          "html": "<ul><li><p><strong>概率</strong>：描述的是<strong>在已知模型参数$\\theta$的情况下，观察到某个数据$D$的可能性</strong>。例如：已知一枚硬币是公平的（这里的公平指的是正常的，没有被动过手脚的），那么抛一枚硬币，得到正面正面朝上的概率是就是$p(正面朝上|硬币公平)=0.5$。这里说的<u>模型的参数已知可以理解为投掷硬币的概率分布$P_\\theta$是已知的</u>。概率的公式为：\n                $$p(D|\\theta),\\theta=\\begin{cases}0.5 &amp; D=正面朝上 \\\\ 0.5 &amp; D=反面朝上 \\end{cases} \\tag{1}$$\n                其中，$D$表示观察到的数据，$\\theta$表示模型的参数。那么，在已知$\\theta$的情况下，我们可以计算抛10次硬币，得到7次正面朝上的概率为：\n                $$p(D|\\theta) = \\binom{10}{7} (0.5)^7 (0.5)^3 \\tag{2}$$</p>\n                </li>\n                <li><p><strong>似然</strong>：描述的是<strong>在已知数据$D$的情况下，模型参数$\\theta$取某个值的可能性</strong>。例如：假设我们抛了一枚硬币10次，结果得到7次正面朝上，3次反面朝上。那么，我们想知道这枚硬币是公平的（$\\theta=0.5$）的可能性有多大，或者偏向正面朝上的（$\\theta&gt;0.5$）的可能性更大。计算的方式为：\n                $$\\mathcal{L}(\\theta|7正面,3反面) = \\binom{10}{7} \\theta^7 (1-\\theta)^3 \\tag{3}$$</p>\n                </li></ul>"
+        }
+      ],
+      "link": "posts/probability-and-likelihood.html",
+      "metaText": "2025-12-03 | 分类：数学研究 | 标签：概率分布,极大似然"
+    },
     {
       "id": "11399",
       "slug": "distribution",
