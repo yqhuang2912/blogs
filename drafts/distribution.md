@@ -15,8 +15,8 @@ tags:
 
 ## 一些基本概念
 <figure>
-<img src="images/sample-space-event-variables.png" alt="sample-space-event-variables" />
-<figcaption>图1：分布的可视化表示（图片来自Nano Banana Pro）</figcaption>
+<img src="images/sample-space-event-variables.png" alt="sample-space-event-variables" width="400">
+<figcaption>图1：一些基本概念的可视化</figcaption>
 </figure>
 
 <!-- more -->
