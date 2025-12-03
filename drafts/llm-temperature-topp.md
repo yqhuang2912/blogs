@@ -1,5 +1,5 @@
 ---
-title: "大模型中随机性和多样性"
+title: "大模型输出的随机性和多样性"
 createdAt: 2025-11-30
 categories:
   - 人工智能
