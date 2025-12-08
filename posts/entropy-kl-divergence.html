@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>信息量、熵、交叉熵与KL散度 | 慢变量</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="icon" href="../icons/deceleration.png" type="image/png">
+
+    <script type="application/json" id="post-metadata">
+        {
+            "id": "11401",
+            "slug": "entropy-kl-divergence",
+            "title": "信息量、熵、交叉熵与KL散度",
+            "createdAt": "2025-12-08",
+            "day": "8",
+            "month": "Dec",
+            "categories": [
+                "数学研究"
+            ],
+            "tags": [
+                "信息论",
+                "熵",
+                "KL散度",
+                "交叉熵"
+            ],
+            "summary": [],
+            "link": "posts/entropy-kl-divergence.html"
+        }
+    </script>
+
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$']],
+                displayMath: [['$$', '$$'], ['\[', '\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+</head>
+
+<body>
+    <div class="page-container">
+        <div data-include="../partials/navbar.html"></div>
+
+    <main class="main-content">
+        <div class="wrapper">
+            <article class="post">
+                <div data-component="post-header"
+                     data-day="8"
+                     data-month="Dec"
+                     data-title="信息量、熵、交叉熵与KL散度"
+                     data-link=""
+                     data-meta="&lt;span class=&quot;meta-item meta-categories&quot;&gt;分类：&lt;a href=&quot;#&quot;&gt;数学研究&lt;/a&gt;&lt;/span&gt;&lt;span class=&quot;meta-divider&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;meta-item meta-tags&quot;&gt;标签：&lt;a href=&quot;#&quot;&gt;信息论&lt;/a&gt;,&lt;a href=&quot;#&quot;&gt;熵&lt;/a&gt;,&lt;a href=&quot;#&quot;&gt;KL散度&lt;/a&gt;,&lt;a href=&quot;#&quot;&gt;交叉熵&lt;/a&gt;&lt;/span&gt;"
+                     data-heading="h1"
+                     data-meta-class="post-meta"
+                     data-title-class="post-title"></div>
+
+                <div class="post-content single-post-content">
+                <p>我们经常会想要知道两个分布$P$和$Q$到底有多像？如果它们都是高斯，比如$P = \mathcal{N}(\mu_1, \sigma_1^2)$，$Q = \mathcal{N}(\mu_2, \sigma_2^2)$，我们可以通过比较它们的均值和方差来判断哪个更好。但如果两个分布形式完全不同，比如$P$是高斯分布，$Q$是泊松分布，靠「对比参数」就没法统一度量了。</p>
+                <p>这时候就会自然地问一句：有没有一种统一的刻度，能在同一把尺子上衡量不同概率模型？答案是有的，</p>
+                <ul>
+                <li>对于「单个系统本身的不确定性」：有这把尺子，叫<strong>熵（entropy）</strong>。</li>
+                <li>对于「两个分布之间的差异」：有另外一把尺子，叫<strong>相对熵（relative entropy）</strong>，也叫<strong>KL散度（Kullback-Leibler divergence）</strong>。</li>
+                </ul>
+                <section class="post-section" id="信息量：单个事件带来多少“确定性”"><h2 data-heading-id="信息量：单个事件带来多少“确定性”">信息量：单个事件带来多少“确定性”</h2>
+                <p>你听到一条消息，它究竟“有多少信息量”？直觉上有几个要求：</p>
+                <ul>
+                <li><strong>越不可能的事情，信息量越大</strong>。如果这个事件很罕见（概率很小），它带来的信息量应该更大，因为它让你对世界的认知发生了更大的改变。如果这个事件很常见（概率很大），它带来的信息量应该更小，因为它对你的认知几乎没有影响，比如：<ul>
+                <li>中国队夺得世界杯冠军：先验概率很小，这个消息的信息量就很大。</li>
+                <li>巴西队小组赛出线：先验概率很大，这个消息的信息量就很小。</li>
+                </ul>
+                </li>
+                </ul>
+                <!-- more -->
+                
+                <ul>
+                <li><strong>确定性事件没有信息量</strong>。如果一个事件是确定会发生的（概率为1），那么它带来的信息量应该是0，因为它没有改变你的认知。</li>
+                <li><strong>独立事件的联合信息量应该可加</strong>。如果你听到两个独立事件的消息，这两个消息带来的总信息量应该等于它们各自信息量之和。比如，我们用事件$A$表示阿根廷进决赛，用事件$B$表示阿根廷赢决赛，则阿根廷夺冠 = $A$发生且$B$发生的概率为：
+                $$
+                P(\text{阿根廷夺冠}) = P(A) \cdot P(B) \tag{1}
+                $$
+                那么阿根廷夺冠的信息量应该是：
+                $$
+                I(\text{阿根廷夺冠}) = I(A) + I(B) \tag{2}
+                $$
+                从前面的信息量的直观理解我们知道，信息量是和事件发生的概率息息相关的，所以我们可以假设信息量是概率的某个函数：
+                $$
+                I(A) := f(P(A)) \tag{3}
+                $$
+                注意这里是$:=$表示这个式子是我们定义的，而不是从别的式子推导出来的。那么结合式(1)和式(2)，我们可以得到：
+                $$
+                \begin{aligned}
+                    I(\text{阿根廷夺冠}) &amp;= I(A) + I(B) \\
+                    f(P(\text{阿根廷夺冠})) &amp;= f(P(A)) + f(P(B)) \\
+                    f(P(A) \cdot P(B)) &amp;= f(P(A)) + f(P(B))
+                \end{aligned}  \tag{4}
+                $$
+                为了方便表示，我们令$x_1 = P(A), x_2 = P(B)$，那么式(4)可以写成：
+                $$f(x_1 \cdot x_2) = f(x_1) + f(x_2) \tag{5}$$</li>
+                </ul>
+                <p>而且结合前面的直观理解，我们还有两个边界条件：</p>
+                <ul>
+                <li>当事件是确定性事件时，$P(A) = 1$，信息量应该是0，即：
+                $$f(1) = 0 \tag{6}$$</li>
+                <li>当事件是不可能事件时，$P(A) = 0$，信息量应该是无穷大，即:
+                $$\lim_{x \to 0^+} f(x) = +\infty \tag{7}$$</li>
+                </ul>
+                <p>结合式(5-7)，我们很容易联想到信息量的表达式应该是一个对数函数，因为对数函数天然地满足式(5)和(6)，即：
+                $$f(x) := ? \log_{?}x \tag{8}$$
+                我们接下来需要做的就是确定这个系数和对数的底数。我们不妨设：
+                $$f(x) := k \log_{b}x \tag{9}$$</p>
+                <p>由前面的直观分析，我们知道概率越大，信息量越小，概率越小，信息量越大，即$f(x)$应该是一个单调递减函数，但是$\log_{b}x$是一个单调递增函数，所以系数$k$必须是负数，即$k &lt; 0$。同时为了满足式(7)，也可以知道$k &lt; 0$，所以我们可以设$k = -1$，那么信息量的表达式就变成了：
+                $$f(x) := - \log_{b}x \tag{10}$$</p>
+                <p>那么底数应该设置为多少呢？这个其实无所谓，但是可以为了方便设置成2，因为底数如果是2，$log_2 x$可以有一个含义：用多少比特（bit）的数据可以表示信息量这个值，这也就是现在信息量的单位为什么是比特的原因。</p>
+                <p>至此，我们得到了信息量的最终表达式：
+                $$f(x) := - \log_{2}x \tag{11}$$</p>
+                <p>这里的信息量信息量可以理解成一个事件，从原来的不确定变得确定的难度有多大，他只和先验概率$p(x)$有关，和其他因素无关，例如：</p>
+                <ul>
+                <li>假设中国队夺取世界杯冠军的概率为$1/1024$，那么中国队夺取世界杯冠军的信息量是$I(\text{中国夺冠})=f(1/1024)=-\log_2(1/1024)=10\ \text{bit}$，</li>
+                <li>假设阿根廷夺取世界杯冠军的概率为$1/8$，那么阿根廷夺取世界杯冠军的信息量是$I(\text{阿根廷夺冠})=f(1/8)=-\log_2(1/8)=3\ \text{bit}$.</li>
+                </ul>
+                <p>世界杯中国夺冠比阿根廷夺冠难得多（先验信息），也即10 bit的新闻（如果中国夺冠）要比3 bit的新闻（如果阿根廷夺冠）更「震撼」，更具有信息量。</p>
+                </section><section class="post-section" id="熵：整个系统的平均不确定性"><h2 data-heading-id="熵：整个系统的平均不确定性">熵：整个系统的平均不确定性</h2>
+                <p>上面只是讲了单个事件的信息量。现在看一个完整的概率系统，比如「世界杯冠军是谁」这个随机变量，假设：</p>
+                <ul>
+                <li>第一种情况：冠军在8支队伍中均匀分布，每支队伍夺冠概率都是$1/8$。</li>
+                <li>第二种情况：冠军只在法国和中国两支队伍中产生，法国夺冠概率是$0.99$，中国队是$0.01$。</li>
+                </ul>
+                <p>直觉上：</p>
+                <ul>
+                <li>第一种情况更难预测，不确定性更大，更加「混乱」，因为冠军可能是8支队伍中的任何一支，我们事先无法预测到底是哪支队伍。</li>
+                <li>第二种情况几乎每个人都觉得法国队会夺冠，不确定性更小，更加「有序」。</li>
+                </ul>
+                <p>所以我们需要一个指标，衡量整个系统的「平均不确定性」，这个指标就是<strong>熵（entropy）</strong>。</p>
+                <p>设随机变量$X$的取值范围为$\{x_1, x_2, \ldots, x_n\}$，对应的概率分别为$P(X=x_i) = p_i$，那么在这个系统分布下，平均信息量就是：
+                $$H(X) = \sum_{i=1}^{n} p_i (-\log_2 p_i) = \mathbb{E}_{X\sim P(X)} [-\log_2 p(X)] \tag{12}$$</p>
+                <p>也即，熵就是系统中所有可能事件的信息量的加权平均，权重就是事件发生的概率，用数学的语言来说，<strong>熵 = 信息量的期望值</strong>。</p>
+                <p>用两个例子算一下：</p>
+                <ul>
+                <li><p><strong>第一种情况</strong>：冠军在8支队伍中均匀分布，每支队伍夺冠概率都是$1/8$，那么熵就是：
+                $$H(X) = \sum_{i=1}^{8} \frac{1}{8} \cdot (-\log_2 \frac{1}{8}) = 3\ \text{bit} \tag{13}$$
+                每次听到「谁夺冠了」，平均获得3 bit信息量。</p>
+                </li>
+                <li><p><strong>第二种情况</strong>：冠军只在法国和中国两支队伍中产生，法国夺冠概率是$0.99$，中国队是$0.01$，那么熵就是：
+                $$H(X) = 0.99 \cdot (-\log_2 0.99) + 0.01 \cdot (-\log_2 0.01) \approx 0.0808\ \text{bit} \tag{14}$$
+                基本没什么悬念，熵非常小。这说明：</p>
+                </li>
+                <li><p>熵越大，系统越混乱，不确定性越大，预测难度越高。</p>
+                </li>
+                <li><p>熵越小，系统越有序，不确定性越小，预测难度越低。</p>
+                </li>
+                </ul>
+                </section><section class="post-section" id="用错模型时的平均代价：交叉熵"><h2 data-heading-id="用错模型时的平均代价：交叉熵">用错模型时的平均代价：交叉熵</h2>
+                <p>上面都假设你知道真实分布$P$，并用它自己来度量信息量和熵，现实情况是：</p>
+                <ul>
+                <li>数据是从某个真实分布$P_{\text{data}}$来的，根本无法知道它的具体形式。</li>
+                <li>你只能用一个假设分布$Q$去「解释或者预测」这些数据，比如用一个神经网络输出的概率分布$Q_{\theta}$去拟合数据。</li>
+                </ul>
+                <p>此时有两个不同的「平均信息量」概念：</p>
+                <ol>
+                <li><p><strong>最理想的平均代价</strong>：如果你知道真实分布$P$，就应该按$P$来编码，平均代价是熵：
+                $$H(P) = \mathbb{E}_{X\sim P} [-\log_2 P(X)] \tag{15}$$</p>
+                </li>
+                <li><p><strong>实际使用的平均代价</strong>：真实情况是我们并不知道真实分布，只能用假设分布$Q$来编码，平均代价是交叉熵：
+                $$H(P, Q) = \mathbb{E}_{X\sim P} [-\log_2 Q(X)] \tag{16}$$</p>
+                </li>
+                </ol>
+                <p>这就是<strong>交叉熵 (cross-entropy)</strong> 的定义，它衡量的是：如果数据是从真实分布$P$来的，但我们用假设分布$Q$去编码数据，平均要付出的信息量/编码长度。</p>
+                </section><section class="post-section" id="kl-散度：两个分布之间的多余信息量"><h2 data-heading-id="kl-散度：两个分布之间的多余信息量">KL 散度：两个分布之间的多余信息量</h2>
+                <p>现在终于到 KL 散度登场了。最理想的平均代价是熵$H(P)$，实际使用的平均代价是交叉熵$H(P, Q)$，那么两者的差值就是因为使用了错误分布$Q$而多付出的代价，这个差值就是<strong>KL 散度 (Kullback-Leibler divergence)</strong>：
+                $$
+                \begin{aligned}
+                    D_{KL}(P \| Q) &amp;= H(P, Q) - H(P) \\
+                    &amp;= \mathbb{E}_{X\sim P} [-\log_2 Q(X)] - \mathbb{E}_{X\sim P} [-\log_2 P(X)] \\
+                    &amp;= \mathbb{E}_{X\sim P} \left[\log_2 \frac{P(X)}{Q(X)}\right]
+                \end{aligned}
+                \tag{17}$$
+                直观上我们可以这样理解KL散度：</p>
+                <blockquote>
+                <p>KL散度=两个分布之间的多余信息量=用$Q$来解释$P$的数据时，比用$P$自己，多浪费了多少bit的信息量。</p>
+                </blockquote>
+                <p>所以：</p>
+                <ul>
+                <li>如果$P$和$Q$完全一样，KL散度为0，说明没有多余信息量，即：
+                $$D_{KL}(P \| Q) = 0, \quad \text{当且仅当} P = Q \tag{18}$$</li>
+                <li>一般情况下，$D_{KL}(P \| Q) &gt; 0$，这是因为用错误的分布$Q$来编码数据，平均会多付出一些代价。</li>
+                </ul>
+                <blockquote>
+                <p>$D_{KL}(P \| Q) &gt; 0$ 被称为<strong>Gibbs不等式 (Gibbs' inequality)</strong>，它是信息论中的一个基本定理。
+                证明：见<a href="https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence#Proof_of_non-negativity">维基百科</a>。</p>
+                </blockquote>
+                <p>此时比较两个系统的统一刻度就出来了：并不是单独比较熵，而是比较对应的 KL 散度$D_{KL}(P \| Q)$。</p>
+                </section><section class="post-section" id="机器学习中的交叉熵损失"><h2 data-heading-id="机器学习中的交叉熵损失">机器学习中的交叉熵损失</h2>
+                <p>在监督学习里，我们假设真实数据的分布是$P_{\text{data}}(x,y)$，但我们并不知道它的具体形式，只能用一个参数化的模型$Q_{\theta}(x,y)$去拟合它。此时我们希望找到一组参数$\theta$，让假设分布$Q_{\theta}(x,y)$尽可能接近真实分布$P_{\text{data}}(x,y)$，也即最小化 KL 散度：
+                $$
+                \theta^{*} = \arg\min_{\theta} D_{KL}(P_{\text{data}}(x,y) \| Q_{\theta}(x,y)) \tag{19}
+                $$
+                或者只看条件分布：
+                $$
+                \theta^{*} = \arg\min_{\theta} D_{KL}(P_{\text{data}}(y|x) \| Q_{\theta}(y|x)) \tag{20}
+                $$
+                我们将上面的目标函数展开：
+                $$
+                \begin{aligned}
+                    D_{KL}(P_{\text{data}}(y|x) \| Q_{\theta}(y|x)) &amp;= \mathbb{E}_{(x,y)\sim P_{\text{data}}} \left[\log_2 \frac{P_{\text{data}}(y|x)}{Q_{\theta}(y|x)}\right] \\
+                    &amp;= \mathbb{E}_{(x,y)\sim P_{\text{data}}} \left[\log_2 P_{\text{data}}(y|x) - \log_2 Q_{\theta}(y|x)\right] \\
+                    &amp;= \mathbb{E}_{(x,y)\sim P_{\text{data}}} \left[- \log_2 Q_{\theta}(y|x)\right] \\
+                    &amp;\qquad - \mathbb{E}_{(x,y)\sim P_{\text{data}}} \left[- \log_2 P_{\text{data}}(y|x)\right] \\
+                    &amp;= H(P_{\text{data}}(y|x), Q_{\theta}(y|x)) - H(P_{\text{data}}(y|x))
+                \end{aligned} \tag{21}$$
+                注意到最后一项$H(P_{\text{data}}(y|x))$和参数$\theta$无关，所以我们可以把它忽略掉，最终的优化目标就变成了最小化交叉熵：
+                $$
+                \theta^{*} = \arg\min_{\theta} H(P_{\text{data}}(y|x), Q_{\theta}(y|x)) \tag{22}
+                $$
+                也就是说<strong>交叉熵和KL散度之间只差一个和参数无关的常数H(P_{\text{data}}(y|x))</strong>。这就是为什么在机器学习中我们经常使用交叉熵作为损失函数的原因，因为它等价于最小化KL散度，从而让假设分布尽可能接近真实分布。</p>
+                <p>所以在训练时，我们做的就是用样本$(x_n, y_n)$来估计交叉熵：
+                $$
+                \begin{aligned}
+                    H(P_{\text{data}}(y|x), Q_{\theta}(y|x)) &amp;= \mathbb{E}_{(x,y)\sim P_{\text{data}}} \left[- \log_2 Q_{\theta}(y|x)\right]\\ 
+                    &amp; \approx - \frac{1}{N} \sum_{n=1}^{N}P_{\text{data}}(y|x) \log_2 Q_{\theta}(y_n|x_n)
+                \end{aligned} \tag{23}
+                $$
+                然后通过梯度下降法最小化这个估计值，从而让分布$Q_{\theta}(y|x)$尽可能接近真实分布$P_{\text{data}}(y|x)$。</p>
+                <p>我们回顾一下上一节<a href="probability-and-likelihood.html">概率和似然</a>介绍的<strong>最大似然估计（MLE）</strong>，可以发现，这个式子(23)正好就是MLE的目标函数的负对数形式。</p>
+                <p>所以，<strong>用$Q_{\theta}$去逼近真实分布$P_{\text{data}}$，等价于最大化似然估计，等价于最小化交叉熵，等价于最小化KL散度</strong>，这些目标函数本质上是一样的，只是从不同的角度去理解而已。</p></section>
+                </div>
+
+                <div data-component="post-navigation"></div>
+            </article>
+        </div>
+
+        <div data-include="../partials/sidebar-post.html"></div>
+    </main>
+
+    <div data-include="../partials/footer.html"></div>
+    </div><!-- end page-container -->
+
+    <script src="../script.js"></script>
+</body>
+
+</html>
