@@ -176,4 +176,4 @@ $$
 所以，**用$Q_{\theta}$去逼近真实分布$P_{\text{data}}$，等价于最大化似然估计，等价于最小化交叉熵，等价于最小化KL散度**，这些目标函数本质上是一样的，只是从不同的角度去理解而已。
 
 ## 参考资料
-- [从头开始，把概率论、统计、信息论中零散的知识统一起来](https://www.bilibili.com/video/BV1vv4y1B714/?spm_id_from=333.1387.0.0&vd_source=af1e89d4624a6f02ed73e2312d492273) - 王木头学科学
+1. [从头开始，把概率论、统计、信息论中零散的知识统一起来](https://www.bilibili.com/video/BV1vv4y1B714/?spm_id_from=333.1387.0.0&vd_source=af1e89d4624a6f02ed73e2312d492273) - 王木头学科学
