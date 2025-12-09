@@ -237,7 +237,7 @@
                 $$
                 \mathcal{L}_{\text{cls}}^{'} = - \frac{1}{N} \sum_{n=1}^{N} \hat{y}_n \log_2 y_n \tag{25}
                 $$
-                答案是不行的，因为交叉熵是<strong>不对称的</strong>，也即$H(P, Q) \ne H(Q, P)$，所以式(24)和式(25)是完全不同的两个Loss函数。实际上，式(25)在实际应用中是没有意义的，因为真实标签$y_n$是one-hot编码的分布，它只有一个类别的概率为1，其他类别概率为0，所以用式(25)计算出来的Loss基本上是无穷大，没有任何参考价值。</p>
+                答案是不行的，因为交叉熵是<strong>不对称的</strong>，也即$H(P, Q) \ne H(Q, P)$，所以式(24)和式(25)是完全不同的两个Loss函数。实际上，式(25)在实际应用中是没有意义的，因为真实标签$y_n$是one-hot编码的分布，它只有一个类别的概率为1，其他类别概率为0，$\log(0)$是没有意义的，所以用式(25)计算出来的Loss基本上是无穷大，没有任何参考价值。</p>
                 <p>交叉熵损失在Pytorch的实现中为<code>loss = F.cross_entropy(input, target)</code>，第一个参数<code>input</code>是模型预测的概率分布，第二个参数<code>target</code>是真实标签的索引（不是one-hot编码），所以我们写代码的时候要注意顺序，不要弄反了。</p>
                 </blockquote>
                 </section><section class="post-section" id="小结"><h2 data-heading-id="小结">小结</h2>
