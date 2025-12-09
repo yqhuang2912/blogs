@@ -1,7 +1,43 @@
 {
-  "generatedAt": "2025-12-09T07:39:24.368Z",
+  "generatedAt": "2025-12-09T07:41:08.065Z",
   "postCount": 15,
   "posts": [
+    {
+      "id": "11402",
+      "slug": "generative-model-mse",
+      "title": "为什么生成模型要使用MSE？",
+      "createdAt": "2025-12-09",
+      "day": "9",
+      "month": "Dec",
+      "categories": [
+        "人工智能",
+        "数学研究"
+      ],
+      "tags": [
+        "图像生成",
+        "均方误差"
+      ],
+      "summary": [
+        {
+          "type": "p",
+          "html": "在生成模型中，尤其是图像生成任务中，均方误差（Mean Squared Error, MSE）是一种常用的损失函数。那么，为什么生成模型要使用MSE呢？本文将从概率建模的角度来解释这个问题。"
+        },
+        {
+          "type": "h2",
+          "html": "定义生成任务"
+        },
+        {
+          "type": "p",
+          "html": "假设我们有一个生成任务，比如图像超分辨率或者CT图像重建。输入观测数据$z$，这里的$z$可以是低分辨率图像，也可以是CT的sinogram数据，在真实世界中客观存在一个映射关系$f^{\\ast}$，使得我们可以从$z$生成高质量的图像$x$。但是，这个真实的映射关系$f^{\\ast}$通常是未知的，我们只能通过数据来学习一个近似的映射函数$f_{\\theta}$，使得$f_{\\theta}(z)$产生的数据$\\hat{x}$尽可能接近真实的映射关系$f^{\\ast}(z)$产生的真实图像$x$。"
+        },
+        {
+          "type": "p",
+          "html": "在生成模型的视角下，生成不仅仅是预测一个具体的图像，而是希望学习一个条件概率分布$p(x|z; \\theta)$，表示在给定观测数据$z$的情况下，真实图像$x$的分布。"
+        }
+      ],
+      "link": "posts/generative-model-mse.html",
+      "metaText": "2025-12-09 | 分类：人工智能,数学研究 | 标签：图像生成,均方误差"
+    },
     {
       "id": "11401",
       "slug": "entropy-kl-divergence",
@@ -46,34 +82,6 @@
       ],
       "link": "posts/entropy-kl-divergence.html",
       "metaText": "2025-12-08 | 分类：数学研究 | 标签：信息论,熵,KL散度,交叉熵"
-    },
-    {
-      "id": "11402",
-      "slug": "generative-model-mse",
-      "title": "为什么生成模型要使用MSE？",
-      "createdAt": "2025-12-08",
-      "day": "8",
-      "month": "Dec",
-      "categories": [
-        "人工智能",
-        "数学研究"
-      ],
-      "tags": [
-        "图像生成",
-        "均方误差"
-      ],
-      "summary": [
-        {
-          "type": "p",
-          "html": "在生成模型中，尤其是图像生成任务中，均方误差（Mean Squared Error, MSE）是一种常用的损失函数。那么，为什么生成模型要使用MSE呢？本文将从概率建模的角度来解释这个问题。"
-        },
-        {
-          "type": "h2",
-          "html": "定义生成任务"
-        }
-      ],
-      "link": "posts/generative-model-mse.html",
-      "metaText": "2025-12-08 | 分类：人工智能,数学研究 | 标签：图像生成,均方误差"
     },
     {
       "id": "11400",

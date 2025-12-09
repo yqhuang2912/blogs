@@ -13,8 +13,8 @@
             "id": "11402",
             "slug": "generative-model-mse",
             "title": "为什么生成模型要使用MSE？",
-            "createdAt": "2025-12-08",
-            "day": "8",
+            "createdAt": "2025-12-09",
+            "day": "9",
             "month": "Dec",
             "categories": [
                 "人工智能",
@@ -53,7 +53,7 @@
         <div class="wrapper">
             <article class="post">
                 <div data-component="post-header"
-                     data-day="8"
+                     data-day="9"
                      data-month="Dec"
                      data-title="为什么生成模型要使用MSE？"
                      data-link=""
@@ -67,6 +67,8 @@
                 <section class="post-section" id="定义生成任务"><h2 data-heading-id="定义生成任务">定义生成任务</h2>
                 <p>假设我们有一个生成任务，比如图像超分辨率或者CT图像重建。输入观测数据$z$，这里的$z$可以是低分辨率图像，也可以是CT的sinogram数据，在真实世界中客观存在一个映射关系$f^{\ast}$，使得我们可以从$z$生成高质量的图像$x$。但是，这个真实的映射关系$f^{\ast}$通常是未知的，我们只能通过数据来学习一个近似的映射函数$f_{\theta}$，使得$f_{\theta}(z)$产生的数据$\hat{x}$尽可能接近真实的映射关系$f^{\ast}(z)$产生的真实图像$x$。</p>
                 <p>在生成模型的视角下，生成不仅仅是预测一个具体的图像，而是希望学习一个条件概率分布$p(x|z; \theta)$，表示在给定观测数据$z$的情况下，真实图像$x$的分布。</p>
+                <!-- more -->
+                
                 <p>我们现在有的是什么？我们可以从现实中收集到一组训练数据集$\mathcal{D} = \{(x_n, z_n)\}_{n=1}^{N}$，这些数据是从真实分布$p_{\text{data}}(x, z): z \to f^{\ast}(z)=x$中采样得到的。我们的终极目标是找到一个好的参数$\theta$，使得模型在观测数据$z$作为条件下生成的数据$\hat{x}$就好像是从真实分布$p_{\text{data}}(x,z)$中采样得到的一样。根据之前的《<a href="probability-and-likelihood.html">概率和似然</a>》一文，我们可以通过最大化似然估计来实现这个目标：
                 $$
                 \theta^{\ast} = \arg\max_{\theta} \prod_{i=1}^{N} p(x_i | z_i; \theta) \tag{1}
