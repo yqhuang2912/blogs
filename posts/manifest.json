@@ -1,7 +1,36 @@
 {
-  "generatedAt": "2025-12-09T07:41:08.065Z",
-  "postCount": 15,
+  "generatedAt": "2025-12-11T16:40:45.886Z",
+  "postCount": 16,
   "posts": [
+    {
+      "id": "11403",
+      "slug": "l1-advanced-mse",
+      "title": "L1解决了MSE的什么问题？",
+      "createdAt": "2025-12-12",
+      "day": "12",
+      "month": "Dec",
+      "categories": [
+        "人工智能",
+        "数学研究"
+      ],
+      "tags": [
+        "图像生成",
+        "Laplace分布",
+        "L1损失"
+      ],
+      "summary": [
+        {
+          "type": "p",
+          "html": "在上一篇《<strong>为什么生成模型要使用MSE？</strong>》中，我们从概率建模的角度推导了一个结论："
+        },
+        {
+          "type": "blockquote",
+          "html": "<blockquote><p>如果假设误差:\n                $$x = f_\\theta(y) + \\epsilon$$中的噪声$\\epsilon$服从高斯分布，那么最大化似然就等价于最小化\n                $$(x - f_\\theta(y))^2$$\n                也就是 <strong>MSE 损失</strong>。</p></blockquote>"
+        }
+      ],
+      "link": "posts/l1-advanced-mse.html",
+      "metaText": "2025-12-12 | 分类：人工智能,数学研究 | 标签：图像生成,Laplace分布,L1损失"
+    },
     {
       "id": "11402",
       "slug": "generative-model-mse",
@@ -28,11 +57,11 @@
         },
         {
           "type": "p",
-          "html": "假设我们有一个生成任务，比如图像超分辨率或者CT图像重建。输入观测数据$z$，这里的$z$可以是低分辨率图像，也可以是CT的sinogram数据，在真实世界中客观存在一个映射关系$f^{\\ast}$，使得我们可以从$z$生成高质量的图像$x$。但是，这个真实的映射关系$f^{\\ast}$通常是未知的，我们只能通过数据来学习一个近似的映射函数$f_{\\theta}$，使得$f_{\\theta}(z)$产生的数据$\\hat{x}$尽可能接近真实的映射关系$f^{\\ast}(z)$产生的真实图像$x$。"
+          "html": "假设我们有一个生成任务，比如图像超分辨率或者CT图像重建。输入观测数据$y$，这里的$y$可以是低分辨率图像，也可以是CT的sinogram数据，在真实世界中客观存在一个映射关系$f^{\\ast}$，使得我们可以从$y$生成高质量的图像$x$。但是，这个真实的映射关系$f^{\\ast}$通常是未知的，我们只能通过数据来学习一个近似的映射函数$f_{\\theta}$，使得$f_{\\theta}(y)$产生的数据$\\hat{x}$尽可能接近真实的映射关系$f^{\\ast}(y)$产生的真实图像$x$。"
         },
         {
           "type": "p",
-          "html": "在生成模型的视角下，生成不仅仅是预测一个具体的图像，而是希望学习一个条件概率分布$p(x|z; \\theta)$，表示在给定观测数据$z$的情况下，真实图像$x$的分布。"
+          "html": "在生成模型的视角下，生成不仅仅是预测一个具体的图像，而是希望学习一个条件概率分布$p(x|y; \\theta)$，表示在给定观测数据$y$的情况下，真实图像$x$的分布。"
         }
       ],
       "link": "posts/generative-model-mse.html",
@@ -65,7 +94,7 @@
         },
         {
           "type": "ul",
-          "html": "<ul><li>对于「单个系统本身的不确定性」：有把尺子，叫<strong>熵（entropy）</strong>。</li>\n                <li>对于「两个分布之间的差异」：有另外一把尺子，叫<strong>相对熵（relative entropy）</strong>，也叫<strong>KL散度（Kullback-Leibler divergence）</strong>。</li></ul>"
+          "html": "<ul><li>对于「单个系统本身的不确定性」：有把尺子，叫<strong>熵（entropy）</strong>。</li>\r\n                <li>对于「两个分布之间的差异」：有另外一把尺子，叫<strong>相对熵（relative entropy）</strong>，也叫<strong>KL散度（Kullback-Leibler divergence）</strong>。</li></ul>"
         },
         {
           "type": "h2",
@@ -77,7 +106,7 @@
         },
         {
           "type": "ul",
-          "html": "<ul><li><strong>越不可能的事情，信息量越大</strong>。如果这个事件很罕见，发生的概率很小，那么当它发生时所带来的信息量应该很大，因为它让我们对世界的认知发生了很大的改变。如果这个事件很常见，发生的概率很大，那么当它发生时所带来的信息量应该很小，因为它对我们的认知几乎没有影响，比如：<ul>\n                <li>中国队夺得世界杯冠军：先验概率很小，这个消息的信息量就很大。</li>\n                <li>巴西队小组赛出线：先验概率很大，这个消息的信息量就很小。</li></ul>"
+          "html": "<ul><li><strong>越不可能的事情，信息量越大</strong>。如果这个事件很罕见，发生的概率很小，那么当它发生时所带来的信息量应该很大，因为它让我们对世界的认知发生了很大的改变。如果这个事件很常见，发生的概率很大，那么当它发生时所带来的信息量应该很小，因为它对我们的认知几乎没有影响，比如：<ul>\r\n                <li>中国队夺得世界杯冠军：先验概率很小，这个消息的信息量就很大。</li>\r\n                <li>巴西队小组赛出线：先验概率很大，这个消息的信息量就很小。</li></ul>"
         }
       ],
       "link": "posts/entropy-kl-divergence.html",
@@ -108,7 +137,7 @@
         },
         {
           "type": "ul",
-          "html": "<ul><li><p><strong>概率</strong>：描述的是<strong>在已知模型参数$\\theta$的情况下，观察到某个数据$D$的可能性</strong>。例如：已知一枚硬币是公平的（这里的公平指的是正常的，没有被动过手脚的），那么抛一枚硬币，得到正面正面朝上的概率是就是$p(正面朝上|硬币公平)=0.5$。这里说的<u>模型的参数已知可以理解为投掷硬币的概率分布$P_\\theta$是已知的</u>。概率的公式为：\n                $$p(D|\\theta),\\theta=\\begin{cases}0.5 &amp; D=正面朝上 \\\\ 0.5 &amp; D=反面朝上 \\end{cases} \\tag{1}$$\n                其中，$D$表示观察到的数据，$\\theta$表示模型的参数。那么，在已知$\\theta$的情况下，我们可以计算抛10次硬币，得到7次正面朝上的概率为：\n                $$p(D|\\theta) = \\binom{10}{7} (0.5)^7 (0.5)^3 \\tag{2}$$</p>\n                </li>\n                <li><p><strong>似然</strong>：描述的是<strong>在已知数据$D$的情况下，模型参数$\\theta$取某个值的可能性</strong>。例如：假设我们抛了一枚硬币10次，结果得到7次正面朝上，3次反面朝上。那么，我们想知道这枚硬币是公平的（$\\theta=0.5$）的可能性有多大，或者偏向正面朝上的（$\\theta&gt;0.5$）的可能性更大。计算的方式为：\n                $$\\mathcal{L}(\\theta|7正面,3反面) = \\binom{10}{7} \\theta^7 (1-\\theta)^3 \\tag{3}$$</p>\n                </li></ul>"
+          "html": "<ul><li><p><strong>概率</strong>：描述的是<strong>在已知模型参数$\\theta$的情况下，观察到某个数据$D$的可能性</strong>。例如：已知一枚硬币是公平的（这里的公平指的是正常的，没有被动过手脚的），那么抛一枚硬币，得到正面正面朝上的概率是就是$p(正面朝上|硬币公平)=0.5$。这里说的<u>模型的参数已知可以理解为投掷硬币的概率分布$P_\\theta$是已知的</u>。概率的公式为：\r\n                $$p(D|\\theta),\\theta=\\begin{cases}0.5 &amp; D=正面朝上 \\\\ 0.5 &amp; D=反面朝上 \\end{cases} \\tag{1}$$\r\n                其中，$D$表示观察到的数据，$\\theta$表示模型的参数。那么，在已知$\\theta$的情况下，我们可以计算抛10次硬币，得到7次正面朝上的概率为：\r\n                $$p(D|\\theta) = \\binom{10}{7} (0.5)^7 (0.5)^3 \\tag{2}$$</p>\r\n                </li>\r\n                <li><p><strong>似然</strong>：描述的是<strong>在已知数据$D$的情况下，模型参数$\\theta$取某个值的可能性</strong>。例如：假设我们抛了一枚硬币10次，结果得到7次正面朝上，3次反面朝上。那么，我们想知道这枚硬币是公平的（$\\theta=0.5$）的可能性有多大，或者偏向正面朝上的（$\\theta&gt;0.5$）的可能性更大。计算的方式为：\r\n                $$\\mathcal{L}(\\theta|7正面,3反面) = \\binom{10}{7} \\theta^7 (1-\\theta)^3 \\tag{3}$$</p>\r\n                </li></ul>"
         }
       ],
       "link": "posts/probability-and-likelihood.html",
@@ -134,7 +163,7 @@
         },
         {
           "type": "ul",
-          "html": "<ul><li>分布到底是个什么对象？是一条曲线？一张图？还是一堆参数？</li>\n                <li>我手上只有数据点，分布在哪里？</li>\n                <li>为什么同样叫分布，有时候是$p(x)$，有时候是$P(x)$，有时候是$F(x)$？</li></ul>"
+          "html": "<ul><li>分布到底是个什么对象？是一条曲线？一张图？还是一堆参数？</li>\r\n                <li>我手上只有数据点，分布在哪里？</li>\r\n                <li>为什么同样叫分布，有时候是$p(x)$，有时候是$P(x)$，有时候是$F(x)$？</li></ul>"
         },
         {
           "type": "p",
@@ -146,7 +175,7 @@
         },
         {
           "type": "figure",
-          "html": "<figure><img src=\"../assets/11399/sample-space-event-variables.png\" alt=\"sample-space-event-variables\" width=\"400\">\n                <figcaption>图1：一些基本概念的可视化</figcaption></figure>"
+          "html": "<figure><img src=\"../assets/11399/sample-space-event-variables.png\" alt=\"sample-space-event-variables\" width=\"400\">\r\n                <figcaption>图1：一些基本概念的可视化</figcaption></figure>"
         }
       ],
       "link": "posts/distribution.html",
@@ -177,7 +206,7 @@
         },
         {
           "type": "p",
-          "html": "目前主流的大模型都是使用Next-Token-Prediction (NTP)这种范式，其本质上是给定前面的tokens，预测下一个token的条件概率分布：\n                $$\n                P(t_i|t_{&lt;i})=\\text{softmax}(\\mathbf{z}_i) \\tag{1}\n                $$\n                其中，$\\mathbf{z}_i=\\text{LLM}_{\\theta}(t_{&lt;i}) \\in \\mathbb{R}^{|V|}$是第$i$步输出的logits，$t_{&lt;i}$是前面的tokens，$P(t_i|t_{&lt;i})$是$t_i$给定$t_{&lt;i}$的条件概率，$\\theta$是模型的参数，$|V|$是词表的大小。"
+          "html": "目前主流的大模型都是使用Next-Token-Prediction (NTP)这种范式，其本质上是给定前面的tokens，预测下一个token的条件概率分布：\r\n                $$\r\n                P(t_i|t_{&lt;i})=\\text{softmax}(\\mathbf{z}_i) \\tag{1}\r\n                $$\r\n                其中，$\\mathbf{z}_i=\\text{LLM}_{\\theta}(t_{&lt;i}) \\in \\mathbb{R}^{|V|}$是第$i$步输出的logits，$t_{&lt;i}$是前面的tokens，$P(t_i|t_{&lt;i})$是$t_i$给定$t_{&lt;i}$的条件概率，$\\theta$是模型的参数，$|V|$是词表的大小。"
         },
         {
           "type": "p",
@@ -273,7 +302,7 @@
       "summary": [
         {
           "type": "p",
-          "html": "在医学CT图像处理中，窗宽（Window Width, WW）和窗位（Window Level,\r\n                            WL）是两个非常重要的参数，用于调整图像的对比度和亮度，从而更好地显示不同组织结构的细节。"
+          "html": "在医学CT图像处理中，窗宽（Window Width, WW）和窗位（Window Level,\n                            WL）是两个非常重要的参数，用于调整图像的对比度和亮度，从而更好地显示不同组织结构的细节。"
         },
         {
           "type": "h2",
@@ -281,11 +310,11 @@
         },
         {
           "type": "ul",
-          "html": "<ul><li>窗宽（WW）：表示CT图像中灰度级别的范围。较大的窗宽可以显示更多的灰度级别，适用于显示密度差异较大的组织（如肺部）；较小的窗宽则适用于显示密度差异较小的组织（如脑组织）。\r\n                                </li>\r\n                                <li>窗位（WL）：表示CT图像灰度级别的中心值。通过调整窗位，可以改变图像的亮度，使得特定密度范围内的组织更加清晰可见。</li></ul>"
+          "html": "<ul><li>窗宽（WW）：表示CT图像中灰度级别的范围。较大的窗宽可以显示更多的灰度级别，适用于显示密度差异较大的组织（如肺部）；较小的窗宽则适用于显示密度差异较小的组织（如脑组织）。\n                                </li>\n                                <li>窗位（WL）：表示CT图像灰度级别的中心值。通过调整窗位，可以改变图像的亮度，使得特定密度范围内的组织更加清晰可见。</li></ul>"
         },
         {
           "type": "figure",
-          "html": "<figure><img src=\"../assets/11395/ct_window.png\" alt=\"CT图像窗宽与窗位示意图\" ,=\"\" width=\"360\">\r\n                                <figcaption>CT图像窗宽与窗位示意图</figcaption></figure>"
+          "html": "<figure><img src=\"../assets/11395/ct_window.png\" alt=\"CT图像窗宽与窗位示意图\" ,=\"\" width=\"360\">\n                                <figcaption>CT图像窗宽与窗位示意图</figcaption></figure>"
         }
       ],
       "link": "posts/ct-window.html",
@@ -499,7 +528,7 @@
         },
         {
           "type": "figure",
-          "html": "<figure><img src=\"../assets/11388/ct-device.png\" alt=\"CT设备\">\r\n                            <figcaption>CT设备</figcaption></figure>"
+          "html": "<figure><img src=\"../assets/11388/ct-device.png\" alt=\"CT设备\">\n                            <figcaption>CT设备</figcaption></figure>"
         },
         {
           "type": "p",

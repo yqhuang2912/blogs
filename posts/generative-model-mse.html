@@ -65,23 +65,23 @@
                 <div class="post-content single-post-content">
                 <p>在生成模型中，尤其是图像生成任务中，均方误差（Mean Squared Error, MSE）是一种常用的损失函数。那么，为什么生成模型要使用MSE呢？本文将从概率建模的角度来解释这个问题。</p>
                 <section class="post-section" id="定义生成任务"><h2 data-heading-id="定义生成任务">定义生成任务</h2>
-                <p>假设我们有一个生成任务，比如图像超分辨率或者CT图像重建。输入观测数据$z$，这里的$z$可以是低分辨率图像，也可以是CT的sinogram数据，在真实世界中客观存在一个映射关系$f^{\ast}$，使得我们可以从$z$生成高质量的图像$x$。但是，这个真实的映射关系$f^{\ast}$通常是未知的，我们只能通过数据来学习一个近似的映射函数$f_{\theta}$，使得$f_{\theta}(z)$产生的数据$\hat{x}$尽可能接近真实的映射关系$f^{\ast}(z)$产生的真实图像$x$。</p>
-                <p>在生成模型的视角下，生成不仅仅是预测一个具体的图像，而是希望学习一个条件概率分布$p(x|z; \theta)$，表示在给定观测数据$z$的情况下，真实图像$x$的分布。</p>
+                <p>假设我们有一个生成任务，比如图像超分辨率或者CT图像重建。输入观测数据$y$，这里的$y$可以是低分辨率图像，也可以是CT的sinogram数据，在真实世界中客观存在一个映射关系$f^{\ast}$，使得我们可以从$y$生成高质量的图像$x$。但是，这个真实的映射关系$f^{\ast}$通常是未知的，我们只能通过数据来学习一个近似的映射函数$f_{\theta}$，使得$f_{\theta}(y)$产生的数据$\hat{x}$尽可能接近真实的映射关系$f^{\ast}(y)$产生的真实图像$x$。</p>
+                <p>在生成模型的视角下，生成不仅仅是预测一个具体的图像，而是希望学习一个条件概率分布$p(x|y; \theta)$，表示在给定观测数据$y$的情况下，真实图像$x$的分布。</p>
                 <!-- more -->
                 
-                <p>我们现在有的是什么？我们可以从现实中收集到一组训练数据集$\mathcal{D} = \{(x_n, z_n)\}_{n=1}^{N}$，这些数据是从真实分布$p_{\text{data}}(x, z): z \to f^{\ast}(z)=x$中采样得到的。我们的终极目标是找到一个好的参数$\theta$，使得模型在观测数据$z$作为条件下生成的数据$\hat{x}$就好像是从真实分布$p_{\text{data}}(x,z)$中采样得到的一样。根据之前的《<a href="probability-and-likelihood.html">概率和似然</a>》一文，我们可以通过最大化似然估计来实现这个目标：
+                <p>我们现在有的是什么？我们可以从现实中收集到一组训练数据集$\mathcal{D} = \{(x_n, z_n)\}_{n=1}^{N}$，这些数据是从真实分布$p_{\text{data}}(x, y): y \to f^{\ast}(y)=x$中采样得到的。我们的终极目标是找到一个好的参数$\theta$，使得模型在观测数据$y$作为条件下生成的数据$\hat{x}$就好像是从真实分布$p_{\text{data}}(x,y)$中采样得到的一样。根据之前的《<a href="probability-and-likelihood.html">概率和似然</a>》一文，我们可以通过最大化似然估计来实现这个目标：
                 $$
-                \theta^{\ast} = \arg\max_{\theta} \prod_{i=1}^{N} p(x_i | z_i; \theta) \tag{1}
+                \theta^{\ast} = \arg\max_{\theta} \prod_{i=1}^{N} p(x_i | y_i; \theta) \tag{1}
                 $$
                 为了简化计算，我们通常取<span style="color: red">负对数似然</span>，将乘法转换为加法，将最大化问题转换为最小化问题：
                 $$
-                \theta^{\ast} = \arg\min_{\theta} - \sum_{i=1}^{N} \log p(x_i | z_i; \theta) \tag{2}
+                \theta^{\ast} = \arg\min_{\theta} - \sum_{i=1}^{N} \log p(x_i | y_i; \theta) \tag{2}
                 $$
-                这就是生成问题的最一般化的目标函数的形式。接下来我们面临一个关键问题：<strong>条件概率分布$p(x|z)$到底长啥样？</strong></p>
+                这就是生成问题的最一般化的目标函数的形式。接下来我们面临一个关键问题：<strong>条件概率分布$p(x|y)$到底长啥样？</strong></p>
                 </section><section class="post-section" id="为什么选择高斯分布？"><h2 data-heading-id="为什么选择高斯分布？">为什么选择高斯分布？</h2>
                 <p>我们换个思路：我们想要生成的图像$\hat{x}$应该和真实图像$x$尽可能接近，但是，什么叫“尽可能接近”呢？就是这两者之间的差异要尽可能小。我们使用$\epsilon$来表示这个差异，则有：
-                $$x = \hat{x} + \epsilon = f_{\theta}(z) + \epsilon \tag{3}$$</p>
-                <p>这意味着，$p(x|z)$的形状完全取决于$\epsilon$的分布的形状。</p>
+                $$x = \hat{x} + \epsilon = f_{\theta}(y) + \epsilon \tag{3}$$</p>
+                <p>这意味着，$p(x|y)$的形状完全取决于$\epsilon$的分布的形状。</p>
                 <p>在实际应用中，我们通常假设$\epsilon$服从均值为0，方差为$\sigma^2 I$的高斯分布，这是为什么呢？这里有两个“第一性原理”的支撑。</p>
                 <h3 id="中心极限定理-物理视角">中心极限定理--物理视角</h3>
                 <p>在CT图像重建或者自然图像生成任务中，生成的图像$\hat{x}$与真实图像$x$之间的差异$\epsilon$往往不是由单一因素造成的，而是无数微小干扰的叠加：</p>
@@ -156,21 +156,21 @@
                 这正是均值为$0$，方差为$\sigma^2$的高斯分布。</p>
                 <p>因此，从<strong>中心极限定理</strong>和<strong>最大熵原理</strong>两个角度来看，假设误差是高斯的，是因为这是在已知方差限制下，<strong>最诚实、偏差最少</strong>的假设。</p>
                 </section><section class="post-section" id="从高斯分布到mse"><h2 data-heading-id="从高斯分布到mse">从高斯分布到MSE</h2>
-                <p>既然基于<strong>中心极限定理</strong>和<strong>最大熵原理</strong>确定了误差$\epsilon$服从高斯分布：$\epsilon \sim \mathcal{N}(0, \sigma^2)$，那么条件概率分布$p(x|z)$也就确定下来了：
-                $$p(x|z; \theta) = \mathcal{N}(x; f_{\theta}(z), \sigma^2 I) \tag{14}$$
+                <p>既然基于<strong>中心极限定理</strong>和<strong>最大熵原理</strong>确定了误差$\epsilon$服从高斯分布：$\epsilon \sim \mathcal{N}(0, \sigma^2)$，那么条件概率分布$p(x|y)$也就确定下来了：
+                $$p(x|y; \theta) = \mathcal{N}(x; f_{\theta}(y), \sigma^2 I) \tag{14}$$
                 将(14)式中的结果代入(13)式中，我们可以得到：
-                $$p(x|z; \theta) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\left(-\frac{(x - f_{\theta}(z))^2}{2\sigma^2}\right) \tag{15}$$
+                $$p(x|y; \theta) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\left(-\frac{(x - f_{\theta}(y))^2}{2\sigma^2}\right) \tag{15}$$
                 将(15)式代入最大似然估计的负对数形式(2)中，有：
                 $$
                 \begin{aligned}
-                    \theta^{\ast} &amp;= \arg\min_{\theta} - \sum_{i=1}^{N} \log p(x_i | z_i; \theta) \\
-                    &amp;= \arg\min_{\theta} - \sum_{i=1}^{N} \log \left[ \frac{1}{\sqrt{2\pi \sigma^2}} \exp\left(-\frac{(x_i - f_{\theta}(z_i))^2}{2\sigma^2}\right) \right] \\
-                    &amp;= \arg\min_{\theta} - \sum_{i=1}^{N} \left[\log\left(\frac{1}{\sqrt{2\pi \sigma^2}}\right) - \frac{(x_i - f_{\theta}(z_i))^2}{2\sigma^2}\right] \\
+                    \theta^{\ast} &amp;= \arg\min_{\theta} - \sum_{i=1}^{N} \log p(x_i | y_i; \theta) \\
+                    &amp;= \arg\min_{\theta} - \sum_{i=1}^{N} \log \left[ \frac{1}{\sqrt{2\pi \sigma^2}} \exp\left(-\frac{(x_i - f_{\theta}(y_i))^2}{2\sigma^2}\right) \right] \\
+                    &amp;= \arg\min_{\theta} - \sum_{i=1}^{N} \left[\log\left(\frac{1}{\sqrt{2\pi \sigma^2}}\right) - \frac{(x_i - f_{\theta}(y_i))^2}{2\sigma^2}\right] \\
                 \end{aligned} \tag{16}
                 $$
                 注意到$\log\left(\frac{1}{\sqrt{2\pi \sigma^2}}\right)$是一个常数项，与参数$\theta$无关，因此在优化过程中可以忽略。最终，我们得到：
                 $$
-                \theta^{\ast} = \arg\min_{\theta} \sum_{i=1}^{N} (x_i - f_{\theta}(z_i))^2 \tag{17}
+                \theta^{\ast} = \arg\min_{\theta} \sum_{i=1}^{N} (x_i - f_{\theta}(y_i))^2 \tag{17}
                 $$
                 这正是均方误差（MSE）损失函数的形式。</p></section>
                 </div>
