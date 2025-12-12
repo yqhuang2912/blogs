@@ -69,7 +69,7 @@
                 <p>在生成模型的视角下，生成不仅仅是预测一个具体的图像，而是希望学习一个条件概率分布$p(x|y; \theta)$，表示在给定观测数据$y$的情况下，真实图像$x$的分布。</p>
                 <!-- more -->
                 
-                <p>我们现在有的是什么？我们可以从现实中收集到一组训练数据集$\mathcal{D} = \{(x_n, z_n)\}_{n=1}^{N}$，这些数据是从真实分布$p_{\text{data}}(x, y): y \to f^{\ast}(y)=x$中采样得到的。我们的终极目标是找到一个好的参数$\theta$，使得模型在观测数据$y$作为条件下生成的数据$\hat{x}$就好像是从真实分布$p_{\text{data}}(x,y)$中采样得到的一样。根据之前的《<a href="probability-and-likelihood.html">概率和似然</a>》一文，我们可以通过最大化似然估计来实现这个目标：
+                <p>我们现在有的是什么？我们可以从现实中收集到一组训练数据集$\mathcal{D} = \{(x_i, y_i)\}_{i=1}^{N}$，这些数据是从真实分布$p_{\text{data}}(x, y): y \to f^{\ast}(y)=x$中采样得到的。我们的终极目标是找到一个好的参数$\theta$，使得模型在观测数据$y$作为条件下生成的数据$\hat{x}$就好像是从真实分布$p_{\text{data}}(x,y)$中采样得到的一样。根据之前的《<a href="probability-and-likelihood.html">概率和似然</a>》一文，我们可以通过最大化似然估计来实现这个目标：
                 $$
                 \theta^{\ast} = \arg\max_{\theta} \prod_{i=1}^{N} p(x_i | y_i; \theta) \tag{1}
                 $$
@@ -170,8 +170,14 @@
                 $$
                 注意到$\log\left(\frac{1}{\sqrt{2\pi \sigma^2}}\right)$是一个常数项，与参数$\theta$无关，因此在优化过程中可以忽略。最终，我们得到：
                 $$
-                \theta^{\ast} = \arg\min_{\theta} \sum_{i=1}^{N} (x_i - f_{\theta}(y_i))^2 \tag{17}
+                \begin{aligned}
+                    \theta^{\ast} &amp;= \arg\min_{\theta} \sum_{i=1}^{N} (x_i - f_{\theta}(y_i))^2 \\
+                    &amp;= \arg\min_{\theta} \sum_{i=1}^{N} (x_i - \hat{x}_i)^2
+                \end{aligned}
+                \tag{17}
                 $$
+                即:
+                $$\mathcal{L}_{\text{MSE}}(\theta) = \sum_{i=1}^{N} (x_i - \hat{x}_i)^2 \tag{18}$$
                 这正是均方误差（MSE）损失函数的形式。</p></section>
                 </div>
 
