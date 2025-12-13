@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2025-12-13T05:44:08.956Z",
+  "generatedAt": "2025-12-13T06:10:25.221Z",
   "postCount": 16,
   "posts": [
     {
@@ -21,7 +21,7 @@
       "summary": [
         {
           "type": "p",
-          "html": "在上一篇《<a href=\"generative-model-mse.html\">为什么生成模型要使用MSE？</a>》中，我们从概率建模的角度推导了一个结论：如果假设误差:$x = f_\\theta(y) + \\epsilon$中的噪声$\\epsilon$服从高斯分布，那么最大化似然就等价于最小化$(x - f_\\theta(y))^2$，也就是 <strong>MSE 损失</strong>。"
+          "html": "在上一篇《<a href=\"generative-model-mse.html\">为什么生成模型要使用MSE？</a>》中，我们从概率建模的角度推导了一个结论：如果假设误差:$x = f_\\theta(y) + \\epsilon$中的噪声$\\epsilon$服从高斯分布，那么最大化似然就等价于最小化$(x - f_\\theta(y))^2$，也就是<strong>MSE损失</strong>。"
         },
         {
           "type": "p",
@@ -33,7 +33,7 @@
         },
         {
           "type": "p",
-          "html": "我们先把条件$y$固定下来，只关注「在这个$y$下，$x$的真实分布是什么」。设真实数据来自$p_{\\text{data}}(x|y)$，模型在这个$y$上输出的预测记为：\r\n                $$\r\n                \\hat{x} = f_\\theta(y) \\tag{1}\r\n                $$\r\n                在使用MSE时，我们希望在给定$y$的情况下，最小化<strong>期望平方误差</strong>：\r\n                $$\r\n                \\mathcal{L}_2(\\hat{x}; y) = \\mathbb{E}_{x\\sim p_{\\text{data}}(x|y)}\\big[(x - \\hat{x})^2\\big]\r\n                \\tag{2}\r\n                $$\r\n                把$y$看成参数，对某个固定的$y$，$\\hat{x}$就是一个需要优化的标量。先在一维上推导，高维时每个维度类似：\r\n                $$\r\n                \\begin{aligned}\r\n                \\mathcal{L}_2(\\hat{x}; y)\r\n                &amp;= \\mathbb{E}\\big[x^2 - 2x\\hat{x} + \\hat{x}^2\\big] \\\\\r\n                &amp;= \\mathbb{E}[x^2] - 2\\hat{x}\\mathbb{E}[x] + \\hat{x}^2\r\n                \\end{aligned}\r\n                \\tag{3}\r\n                $$"
+          "html": "我们先把条件$y$固定下来，只关注「在这个$y$下，$x$的真实分布是什么」。设真实数据来自$p_{\\text{data}}(x|y)$，模型在这个$y$上输出的预测记为：\n                $$\n                \\hat{x} = f_\\theta(y) \\tag{1}\n                $$\n                在使用MSE时，我们希望在给定$y$的情况下，最小化<strong>期望平方误差</strong>：\n                $$\n                \\mathcal{L}_2(\\hat{x}; y) = \\mathbb{E}_{x\\sim p_{\\text{data}}(x|y)}\\big[(x - \\hat{x})^2\\big]\n                \\tag{2}\n                $$\n                把$y$看成参数，对某个固定的$y$，$\\hat{x}$就是一个需要优化的标量。先在一维上推导，高维时每个维度类似：\n                $$\n                \\begin{aligned}\n                \\mathcal{L}_2(\\hat{x}; y)\n                &amp;= \\mathbb{E}\\big[x^2 - 2x\\hat{x} + \\hat{x}^2\\big] \\\\\n                &amp;= \\mathbb{E}[x^2] - 2\\hat{x}\\mathbb{E}[x] + \\hat{x}^2\n                \\end{aligned}\n                \\tag{3}\n                $$"
         }
       ],
       "link": "posts/l1-advanced-mse.html",

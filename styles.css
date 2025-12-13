@@ -288,9 +288,6 @@ a:focus {
     color: #cc3000;
 }
 
-/* 通知横幅 */
-/* 移除未使用的通知横幅与参与按钮样式 */
-
 /* 容器布局 */
 /* 主内容区 - 作为白色背景容器 */
 .main-content {
@@ -893,8 +890,8 @@ pre[class*="language-"] {}
 
 .post-content strong,
 .single-post-content strong {
-    font-weight: 600;
-    color: #c13d3d;
+    font-weight: normal;
+    color: red;
 }
 
 .post-content blockquote,
