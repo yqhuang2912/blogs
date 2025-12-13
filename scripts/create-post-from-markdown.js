@@ -600,7 +600,7 @@ function renderMarkdown(markdown, assetsMap = new Map()) {
     }).trim();
 
     const restored = restoreMathSegments(rendered, placeholders);
-    return normalizeMathBlocks(restored);
+    return normalizeBlockquoteCite(normalizeMathBlocks(restored));
 }
 
 function protectMathSegments(markdown) {
@@ -630,6 +630,41 @@ function protectMathSegments(markdown) {
     });
 
     return { content, placeholders };
+}
+
+function normalizeBlockquoteCite(html) {
+    if (typeof html !== 'string' || !html) {
+        return html;
+    }
+
+    const $ = cheerio.load(`<div id="__blockquote-root">${html}</div>`, {
+        decodeEntities: false,
+    });
+
+    const root = $('#__blockquote-root');
+    const prefixPattern = /^\s*(?:\[(?:cite|引用)\]|\{(?:cite|引用)\}|!cite)\s*:?\s*/i;
+
+    root.find('blockquote').each((_, el) => {
+        const block = $(el);
+        const p = block.children('p').first();
+        if (p && p.length) {
+            const innerHtml = p.html() || '';
+            if (prefixPattern.test(innerHtml)) {
+                const replaced = innerHtml.replace(prefixPattern, '').trim();
+                p.html(replaced);
+                block.addClass('cite');
+            }
+            return;
+        }
+
+        const blockHtml = block.html() || '';
+        if (prefixPattern.test(blockHtml)) {
+            block.html(blockHtml.replace(prefixPattern, '').trim());
+            block.addClass('cite');
+        }
+    });
+
+    return root.html().trim();
 }
 
 function restoreMathSegments(html, placeholders) {

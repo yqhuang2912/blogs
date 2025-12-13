@@ -25,17 +25,16 @@ body {
     padding: 0 10px;
     background: #515459;
     color: #000;
-    font: 14px Georgia, "Times New Roman", Times, sans-serif;
+    font: 12px Georgia, "Times New Roman", Times, sans-serif;
 }
 
 /* 全局统一容器 */
 .page-container {
-    max-width: calc(var(--layout-max-width) + var(--layout-h-padding) * 2);
-    margin: 6px auto 6px;
+    max-width: var(--layout-max-width);
+    margin: 0 auto;
     background-color: #777C7F;
     box-shadow: 0 2px 18px rgba(0, 0, 0, 0.28);
     border-radius: 6px;
-    padding: 0;
     overflow: hidden;
 }
 
@@ -69,41 +68,14 @@ a:focus {
 
 /* MathJax 数学公式样式 */
 .MathJax,
-.MathJax_Display,
-mjx-container,
-mjx-container[jax="CHTML"][display="true"],
-mjx-container[jax="CHTML"] {
-    color: blue !important;
+.MathJax_PHTML,
+.MathJax_CHTML,
+.MathJax_SVG,
+.MathJax_MathML {
+    color: blue;
 }
 
-/* 行内数学公式 */
-mjx-container[jax="CHTML"]:not([display="true"]) {
-    color: blue !important;
-}
 
-/* 块级数学公式 */
-mjx-container[jax="CHTML"][display="true"] {
-    color: blue !important;
-    margin: 16px auto;
-    display: block !important;
-    text-align: center;
-}
-
-.math-block {
-    margin: 16px auto;
-    text-align: center;
-    overflow-x: auto;
-}
-
-.math-block mjx-container {
-    display: inline-block !important;
-    max-width: 100%;
-}
-
-.post-content mjx-container[jax="CHTML"]:not([display="true"]),
-.single-post-content mjx-container[jax="CHTML"]:not([display="true"]) {
-    display: inline-block;
-}
 
 /* 顶部导航条 */
 .top-bar {
@@ -322,7 +294,7 @@ mjx-container[jax="CHTML"][display="true"] {
 /* 容器布局 */
 /* 主内容区 - 作为白色背景容器 */
 .main-content {
-    max-width: calc(var(--layout-max-width) + var(--layout-h-padding) * 2);
+    max-width: var(--layout-max-width);
     margin: 6px var(--layout-h-padding) 6px;
     padding: 18px 6px 6px 18px;
     background-color: #fff;
@@ -361,9 +333,9 @@ mjx-container[jax="CHTML"][display="true"] {
     gap: 8px;
     margin: 0 0 12px 0;
     padding: 10px;
-    border: 1px solid #e8e8e8;
+    /* border: 1px solid #e8e8e8; */
     border-radius: 4px;
-    background-color: #fafafa;
+    background-color: #f3eddc;
     --badge-height: 40px;
 }
 
@@ -416,7 +388,7 @@ mjx-container[jax="CHTML"][display="true"] {
     margin: 0;
     line-height: 21px;
     font-weight: bold;
-    color: #c33;
+    color: #F60;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -424,13 +396,13 @@ mjx-container[jax="CHTML"][display="true"] {
 
 .post-title a:link,
 .post-title a:visited {
-    color: #c33;
+    color: #F60;
     font-weight: bold;
     text-decoration: none;
 }
 
 .post-title a:hover {
-    color: #a00;
+    color: #f7800a;
     text-decoration: underline;
 }
 
@@ -441,8 +413,6 @@ mjx-container[jax="CHTML"][display="true"] {
     line-height: 19px;
 }
 
-/* 移除未使用的 kimi-link 样式 */
-
 /* 文章内容区域 */
 .post-body {
     clear: both;
@@ -451,10 +421,12 @@ mjx-container[jax="CHTML"][display="true"] {
 /* 首页卡片中的标题样式 - 确保不会比 post-title 大 */
 .post-content-wrapper .post-body h2 {
     font-size: 18px;
-    color: inherit;
+    color: #333;
     margin: 20px 0 5px 0;
     line-height: 21px;
     font-weight: 700;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
 }
 
 /* 隐藏首页卡片中的锚点符号 */
@@ -464,18 +436,22 @@ mjx-container[jax="CHTML"][display="true"] {
 
 .post-content-wrapper .post-body h3 {
     font-size: 16px;
-    color: inherit;
+    color: #333;
     margin: 20px 0 5px 0;
     line-height: 1.35;
     font-weight: 700;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
 }
 
 .post-content-wrapper .post-body h4 {
     font-size: 15px;
-    color: inherit;
+    color: #333;
     margin: 20px 0 5px 0;
     line-height: 1.35;
     font-weight: 700;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
 }
 
 .post-content-wrapper .post-body h5 {
@@ -491,6 +467,9 @@ mjx-container[jax="CHTML"][display="true"] {
     line-height: 21px;
     margin: 20px 0 5px 0;
     font-weight: 700;
+    color: #333;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
 }
 
 .single-post-content h3 {
@@ -498,6 +477,9 @@ mjx-container[jax="CHTML"][display="true"] {
     line-height: 1.35;
     margin: 20px 0 5px 0;
     font-weight: 700;
+    color: #333;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
 }
 
 .single-post-content h4 {
@@ -505,6 +487,9 @@ mjx-container[jax="CHTML"][display="true"] {
     line-height: 1.35;
     margin: 20px 0 5px 0;
     font-weight: 700;
+    color: #333;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
 }
 
 .single-post-content h5 {
@@ -514,28 +499,23 @@ mjx-container[jax="CHTML"][display="true"] {
     font-weight: 700;
 }
 
-.post-content-wrapper .post-body .heading-size-xs,
-.single-post-content .heading-size-xs {
+.post-content-wrapper .post-body .heading-size-xs {
     font-size: 100%;
 }
 
-.post-content-wrapper .post-body .heading-size-sm,
-.single-post-content .heading-size-sm {
+.post-content-wrapper .post-body .heading-size-sm {
     font-size: 110%;
 }
 
-.post-content-wrapper .post-body .heading-size-md,
-.single-post-content .heading-size-md {
+.post-content-wrapper .post-body .heading-size-md {
     font-size: 120%;
 }
 
-.post-content-wrapper .post-body .heading-size-lg,
-.single-post-content .heading-size-lg {
+.post-content-wrapper .post-body .heading-size-lg {
     font-size: 140%;
 }
 
-.post-content-wrapper .post-body .heading-size-xl,
-.single-post-content .heading-size-xl {
+.post-content-wrapper .post-body .heading-size-xl {
     font-size: 160%;
 }
 
@@ -758,6 +738,42 @@ mjx-container[jax="CHTML"][display="true"] {
     color: #d14;
 }
 
+code[class*="language-"],
+pre[class*="language-"] {}
+
+code[class*="language-"]::-moz-selection,
+pre[class*="language-"]::-moz-selection,
+code[class*="language-"] ::-moz-selection,
+pre[class*="language-"] ::-moz-selection {}
+
+code[class*="language-"]::selection,
+pre[class*="language-"]::selection,
+code[class*="language-"] ::selection,
+pre[class*="language-"] ::selection {}
+
+pre[class*="language-"] {}
+
+:not(pre)>code[class*="language-"],
+pre[class*="language-"] {}
+
+:not(pre)>code[class*="language-"] {}
+
+.line-highlight {}
+
+.line-highlight:before,
+.line-highlight[data-end]:after {}
+
+.line-highlight[data-end]:after {}
+
+.line-numbers .line-highlight:after,
+.line-numbers .line-highlight:before {}
+
+pre[class*="language-"] .line-numbers-rows {}
+
+pre[class*="language-"] .line-numbers-rows>span:before {}
+
+pre[class*="language-"] {}
+
 .code-block code {
     color: inherit;
 }
@@ -885,18 +901,20 @@ mjx-container[jax="CHTML"][display="true"] {
 .single-post-content blockquote {
     background: #f2f2f2;
     color: #333;
-    font-size: 14px;
+    font-size: 13px;
     border: 1px solid #ddd;
     margin: 0.5em 0 1em 0;
     padding: 10px 15px;
     line-height: 1.8;
     font-style: normal;
     border-radius: 0;
+    overflow: hidden;
 }
 
 .post-content blockquote p,
 .single-post-content blockquote p {
     margin: 4px 0 10px;
+    font-size: 15px;
 }
 
 /* 引用（cite）样式，参考 reference_css.css 的格式 */
@@ -904,48 +922,71 @@ mjx-container[jax="CHTML"][display="true"] {
 .single-post-content blockquote.cite {
     font-size: 15px;
     color: #999;
-    padding: 18px;
+    padding: 16px 16px;
     border: none;
     position: relative;
-    background-color: #fff;
+    background-color: white;
+    overflow: hidden;
 }
 
 .post-content blockquote.cite:before,
 .single-post-content blockquote.cite:before {
     content: "\201C";
     position: absolute;
-    top: 1px;
-    left: 1px;
-    width: 18px;
-    height: 18px;
-    font-size: 18px;
-    line-height: 18px;
-    color: #ccc;
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 25px;
+    height: 25px;
+    background-image: url('icons/openquote.gif');
 }
 
 .post-content blockquote.cite:after,
 .single-post-content blockquote.cite:after {
     content: "\201D";
     position: absolute;
-    bottom: 1px;
-    right: 1px;
-    width: 18px;
-    height: 18px;
-    font-size: 18px;
-    line-height: 18px;
-    color: #ccc;
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 25px;
+    height: 25px;
+    background-image: url('icons/closequote.gif');
 }
 
 .post-content p {
     margin-bottom: 10px;
 }
 
+.post-content h2,
+.post-content h3,
+.post-content h4 {
+    color: #333;
+    margin: 20px 0 5px 0;
+    font-weight: 700;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
+}
+
+.post-content h2 {
+    font-size: 18px;
+    line-height: 21px;
+}
+
 .post-content h3 {
     font-size: 16px;
-    color: inherit;
-    margin: 20px 0 5px 0;
     line-height: 1.35;
-    font-weight: 700;
+}
+
+.post-content h4 {
+    font-size: 15px;
+    line-height: 1.35;
+}
+
+.post-content h5 {
+    font-size: 14px;
+    line-height: 1.35;
 }
 
 .post-content ul,
@@ -971,7 +1012,7 @@ mjx-container[jax="CHTML"][display="true"] {
 
 .read-more {
     color: #97bf0d;
-    font-size: 11px;
+    font-size: 14px;
 }
 
 .read-more:hover {
@@ -1024,10 +1065,12 @@ mjx-container[jax="CHTML"][display="true"] {
 
 .post-section h2 {
     font-size: 18px;
-    color: inherit;
+    color: #333;
     margin: 20px 0 5px 0;
     line-height: 21px;
     font-weight: 700;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
 }
 
 .post-content-wrapper .post-body h2::before,
@@ -1058,11 +1101,6 @@ mjx-container[jax="CHTML"][display="true"] {
     color: #a0a0a0;
     margin-left: 4px;
 }
-
-
-/* 移除未使用的提示与摘要样式 */
-
-/* 移除未使用的单篇文章页脚与元信息样式 */
 
 .meta-divider {
     margin: 0 8px;
@@ -1119,13 +1157,9 @@ mjx-container[jax="CHTML"][display="true"] {
     }
 }
 
-/* 移除未使用的相关文章/引用/打赏样式 */
-
-/* 移除未使用的评论样式 */
-
 .single-sidebar {
-    width: 33.333%;
-    flex: 0 0 33.333%;
+    width: 30.5%;
+    float: right;
 }
 
 .toc .toc-list {
@@ -1309,8 +1343,6 @@ mjx-container[jax="CHTML"][display="true"] {
     color: #777;
     line-height: 1.6;
 }
-
-/* 移除未使用的搜索状态样式 */
 
 .search-results-heading {
     font-size: 14px;

@@ -56,7 +56,7 @@ def poisson_noise_simulation(p_ict, N0, alpha=1.0):
 然而CT系统记录的不是$N$，而是通过对数变换得到的投影数据$p_{\text{measured}}$：
 $$p_{\text{measured}} = -\ln\left(\frac{N}{N_0}\right) \tag{6}$$
 由于$N$是随机的，$p_{\text{measured}}$ 也是一个随机变量。我们的任务就是精确地刻画$p_{\text{measured}}$的统计特性（均值和方差）。Whiting et al.(2006)在其论文的Section II.A.4中明确指出：
-> "As exposure increases, the pdf will approach a Gaussian distribution characterized by a mean $\kappa_1 I$ and variance $\kappa_2 I$, with negligible higher moments, as expected from the central limit theorem."
+> [cite] As exposure increases, the pdf will approach a Gaussian distribution characterized by a mean $\kappa_1 I$ and variance $\kappa_2 I$, with negligible higher moments, as expected from the central limit theorem.
 
 也就是说，当入射光子数$N_0$较大时，其概率密度函数会趋近于一个高斯分布，其高阶矩（如偏度、峰度）可以忽略不计，这是中心极限定理的预期结果。而且论文Introduction中还给出了结论：**当检测到的光子数$N > 20$时，泊松分布与高斯分布的差异已经非常小，高斯近似是足够精确的。**
 
