@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2025-12-13T06:10:25.221Z",
-  "postCount": 16,
+  "generatedAt": "2025-12-14T15:33:20.538Z",
+  "postCount": 17,
   "posts": [
     {
       "id": "11403",
@@ -119,6 +119,35 @@
       ],
       "link": "posts/entropy-kl-divergence.html",
       "metaText": "2025-12-08 | 分类：数学研究 | 标签：信息论,熵,KL散度,交叉熵"
+    },
+    {
+      "id": "11404",
+      "slug": "generative-discriminative",
+      "title": "生成式和判别式模型",
+      "createdAt": "2025-12-06",
+      "day": "6",
+      "month": "Dec",
+      "categories": [
+        "人工智能"
+      ],
+      "tags": [
+        "有监督学习",
+        "无监督学习",
+        "生成模型",
+        "判别模型"
+      ],
+      "summary": [
+        {
+          "type": "p",
+          "html": "在AI中，「学习」总是离不开数据，一个朴素但是真实的假设是：<strong>存在一个真实但未知的分布$p$</strong>，我们所能接触到的数据，都是从这个分布中采样得到的。针对采集到的数据的情况不同（有没有标签），我们一般有两种不同的学习方式："
+        },
+        {
+          "type": "h2",
+          "html": "有监督学习"
+        }
+      ],
+      "link": "posts/generative-discriminative.html",
+      "metaText": "2025-12-06 | 分类：人工智能 | 标签：有监督学习,无监督学习,生成模型,判别模型"
     },
     {
       "id": "11400",
