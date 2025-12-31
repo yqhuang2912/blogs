@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>从分布建模的角度看生成模型 | 慢变量</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="icon" href="../icons/deceleration.png" type="image/png">
+
+    <script type="application/json" id="post-metadata">
+        {
+            "id": "11405",
+            "slug": "distribution-modeling-generative-model",
+            "title": "从分布建模的角度看生成模型",
+            "createdAt": "2025-12-31",
+            "day": "31",
+            "month": "Dec",
+            "categories": [
+                "人工智能"
+            ],
+            "tags": [
+                "生成模型",
+                "分布建模"
+            ],
+            "summary": [],
+            "link": "posts/distribution-modeling-generative-model.html"
+        }
+    </script>
+
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$']],
+                displayMath: [['$$', '$$'], ['\[', '\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+</head>
+
+<body>
+    <div class="page-container">
+        <div data-include="../partials/navbar.html"></div>
+
+    <main class="main-content">
+        <div class="wrapper">
+            <article class="post">
+                <div data-component="post-header"
+                     data-day="31"
+                     data-month="Dec"
+                     data-title="从分布建模的角度看生成模型"
+                     data-link=""
+                     data-meta="&lt;span class=&quot;meta-item meta-categories&quot;&gt;分类：&lt;a href=&quot;#&quot;&gt;人工智能&lt;/a&gt;&lt;/span&gt;&lt;span class=&quot;meta-divider&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;meta-item meta-tags&quot;&gt;标签：&lt;a href=&quot;#&quot;&gt;生成模型&lt;/a&gt;,&lt;a href=&quot;#&quot;&gt;分布建模&lt;/a&gt;&lt;/span&gt;"
+                     data-heading="h1"
+                     data-meta-class="post-meta"
+                     data-title-class="post-title"></div>
+
+                <div class="post-content single-post-content">
+                <p><strong>文章来源</strong>：<a href="https://zhuanlan.zhihu.com/p/1905427654582183119">一图读懂生成式模型 (Generative Modeling) 的主要流派</a></p>
+                <p>生成模型的终极目标，是去建模真实世界数据的复杂联合分布 $p_{\text{data}}(x)$。一旦学到了这个分布，我们就能从中采样，生成“看起来像真的”新样本。</p>
+                <p>举个直观例子：如果我们想生成猫咪图片，真实世界中的猫千姿百态——颜色、姿态、背景、光照都不同——这让 $p_{\text{data}}(x)$ 变得异常复杂。生成模型要做的，就是尽可能捕捉这种复杂性，然后从学到的分布里采样出新的猫咪图片。</p>
+                <p>但问题是：<strong>直接学习高维联合分布通常极其困难</strong>。因此主流生成建模方法，大多可以归结为三条路线：</p>
+                <ul>
+                <li><strong>分布分解建模</strong>：把联合分布拆成一串条件分布来学（链式法则）</li>
+                <li><strong>分布变换建模</strong>：从一个简单分布出发，通过映射/路径“变换”成数据分布</li>
+                <li><strong>混合建模</strong>：把不同路线的优势组合起来，兼顾质量与效率</li>
+                </ul>
+                <section class="post-section" id="分布分解建模（distribution-factorization-modeling）"><h2 data-heading-id="分布分解建模（distribution-factorization-modeling）">分布分解建模（Distribution Factorization Modeling）</h2>
+                <p>这条路线的核心思想是：利用概率论的链式法则，把高维联合分布分解为条件分布的乘积。对多维数据 $x=(x_1,x_2,\ldots,x_n)$，有：</p>
+                <div class="math-block">$$
+                \begin{aligned}
+                p(x) = p(x_1, x_2, \ldots, x_n)
+                &amp;= p(x_1)p(x_2|x_1)p(x_3|x_1,x_2)\cdots \\
+                &amp;= \prod_{i=1}^{n} p(x_i \mid x_1, x_2, \ldots, x_{i-1})
+                \end{aligned}
+                \tag{1}
+                $$</div>
+                <p>这类方法最典型的代表，就是<strong>自回归模型</strong>（Autoregressive Models, AR）。AR的生成过程是严格序列化的：每一步根据已生成的部分，预测下一个“单元”。这个单元可以是像素、token，或更抽象的表示。</p>
+                <blockquote>
+                <p>直觉上：AR 把“生成”变成了一个很长的条件概率链，每一环都尽可能学得准确。</p>
+                </blockquote>
+                <p>它的优势在于：能够细致地建模复杂依赖关系，因此常能生成高质量样本；代价在于：<strong>生成往往难以并行</strong>，速度可能受限。</p>
+                <p>根据要预测的下一个“单元”不同，自回归模型常见可分为：</p>
+                <ul>
+                <li><p><strong>Next-Pixel Prediction</strong><br>典型如 PixelRNN / PixelCNN：直接在像素空间逐像素生成图像。</p>
+                </li>
+                <li><p><strong>Next-Token Prediction</strong><br>最经典的 AR 形式：广泛用于大语言模型（如 GPT 系列），也用于早期的图像/视频 token 化生成（例如一些基于离散 token 的方法）。</p>
+                </li>
+                <li><p><strong>Next-Set-of-Tokens Prediction</strong><br>一次预测一组 token，而不是单个 token：在尽量保持质量的同时提升并行度，代表性如 MaskGIT 思路。</p>
+                </li>
+                <li><p><strong>Next-Scale Prediction</strong><br>以多尺度方式逐步生成（先低分辨率/全局，再高分辨率/细节），用于同时捕捉全局结构与局部纹理（你提到的 VAR 等思路可归在这一类讨论语境中）。</p>
+                </li>
+                <li><p><strong>Next-Embedding Prediction</strong><br>不在像素或离散 token 上做一步步预测，而是直接在 latent/embedding 空间里做 AR 式建模。一个常见动机是：latent 往往更“紧凑/语义化”，也更利于统一多模态输入输出的表示形式。</p>
+                </li>
+                </ul>
+                </section><section class="post-section" id="分布变换建模（distribution-mapping-modeling）"><h2 data-heading-id="分布变换建模（distribution-mapping-modeling）">分布变换建模（Distribution Mapping Modeling）</h2>
+                <p>与分解联合分布不同，这条路线的核心是：学习一个映射$G$，把易采样的简单分布$p_Z(z)$（如高斯/均匀）变换为目标数据分布$p_X(x)$：</p>
+                <ul>
+                <li>先采样$z \sim p_Z(z)$</li>
+                <li>再通过$x = G(z)$得到样本</li>
+                </ul>
+                <p>这一路线下面通常可以再分成两大分支。</p>
+                <h3 id="直接映射建模：一步到位的math9">直接映射建模：一步到位的$x = G(z)$</h3>
+                <ul>
+                <li><p><strong>GAN（Generative Adversarial Networks）</strong><br>通过生成器 $G$ 与判别器 $D$ 的对抗训练，让 $G$ 逐渐学会把噪声映射成“像真数据”的样本。</p>
+                </li>
+                <li><p><strong>VAE（Variational Autoencoders）</strong><br>通过潜变量与变分推断，学习从潜在空间到数据空间的生成过程；训练目标通常对应证据下界（ELBO）。直观上，它同时学“如何把数据压到潜空间”与“如何从潜空间还原回数据空间”。</p>
+                </li>
+                </ul>
+                <h3 id="概率路径建模">概率路径建模</h3>
+                <p>这类方法不追求“一步到位”的映射，而是构造一个连续或离散的演化过程，让样本从简单初始分布逐渐变成目标分布。</p>
+                <p>从某种意义上，它也可以被理解为在“时间/步数维度”上建模条件分布，因此与“分解建模”的思想存在呼应。</p>
+                <ul>
+                <li><p><strong>扩散模型（Diffusion Models）</strong><br>正向过程逐渐加噪，把数据推向纯噪声；反向过程学习逐步去噪，把噪声还原为数据。每一步都涉及条件分布的学习，因此常被描述为马尔可夫链式的逐步生成。</p>
+                </li>
+                <li><p><strong>流匹配 / 连续流模型（Flow Matching Models）</strong><br>通过定义连续时间的演化过程，学习把简单分布“运输”到数据分布。实现形式可以是离散化步进，也可以是连续 ODE/flow 的训练视角。</p>
+                </li>
+                </ul>
+                </section><section class="post-section" id="混合建模（hybrid-modeling）"><h2 data-heading-id="混合建模（hybrid-modeling）">混合建模（Hybrid Modeling）</h2>
+                <p>近年来，一个越来越清晰的趋势是：<strong>把AR与Diffusion（或更广义的路径式生成）结合</strong>，试图同时拿到：</p>
+                <ul>
+                <li>AR在依赖关系建模上的优势</li>
+                <li>Diffusion在样本质量与分布覆盖上的优势</li>
+                </ul>
+                <h3 id="为什么要混合？">为什么要混合？</h3>
+                <ul>
+                <li><strong>优势互补</strong>：AR擅长建模元素之间的依赖结构；Diffusion往往更擅长生成高保真样本。</li>
+                <li><strong>统一多模态</strong>：文本侧AR是主流范式，视觉侧Diffusion是主流范式。若目标是原生统一多模态大模型，混合路线提供了一条工程上与方法论上都很自然的路径。</li>
+                </ul>
+                <h3 id="四类常见的结合方式">四类常见的结合方式</h3>
+                <table>
+                <thead>
+                <tr>
+                <th>类别</th>
+                <th>核心做法</th>
+                <th>代表性工作（示例）</th>
+                <th>直观备注</th>
+                </tr>
+                </thead>
+                <tbody><tr>
+                <td>1) 共享参数的AR + Diffusion</td>
+                <td>同一套backbone/参数同时做AR与Diffusion任务</td>
+                <td>Transfusion</td>
+                <td>形式统一更容易；但两类目标差异大时可能互相牵制</td>
+                </tr>
+                <tr>
+                <td>2) AR backbone + Diffusion loss / sampler</td>
+                <td>以AR为主，加入diffusion式目标或轻量diffusion head</td>
+                <td>MAR</td>
+                <td>常见叙事：AR建模依赖结构，Diffusion更像刻画每个元素的局部分布</td>
+                </tr>
+                <tr>
+                <td>3) 解耦的两阶段（AR→Diffusion）</td>
+                <td>先AR生成条件表示，再一次性交给强Diffusion解码生成</td>
+                <td>EMU2</td>
+                <td>流程更清晰：AR负责规划/条件，Diffusion 负责渲染/解码</td>
+                </tr>
+                <tr>
+                <td>4) 自回归扩散（AR inside Diffusion）</td>
+                <td>把自回归的约束/顺序性融进Diffusion本身</td>
+                <td>Diffusion Forcing / CausalFusion</td>
+                <td>本质仍是Diffusion框架，但依赖关系在Diffusion内部处理</td>
+                </tr>
+                </tbody></table>
+                </section><section class="post-section" id="小结："><h2 data-heading-id="小结：">小结：</h2>
+                <ul>
+                <li><strong>分解建模（AR）</strong>：把联合分布拆成条件链来学，依赖结构强，但生成并行性常受限  </li>
+                <li><strong>变换建模（GAN/VAE/扩散/流）</strong>：从简单分布出发，通过映射或路径得到目标分布  </li>
+                <li><strong>混合建模</strong>：在“结构建模能力”和“高质量采样能力”之间折中，尤其契合多模态统一的大趋势</li>
+                </ul></section>
+                </div>
+
+                <div data-component="post-navigation"></div>
+            </article>
+        </div>
+
+        <div data-include="../partials/sidebar-post.html"></div>
+    </main>
+
+    <div data-include="../partials/footer.html"></div>
+    </div><!-- end page-container -->
+
+    <script src="../script.js"></script>
+</body>
+
+</html>

@@ -1,7 +1,34 @@
 {
-  "generatedAt": "2025-12-18T16:02:20.344Z",
-  "postCount": 17,
+  "generatedAt": "2025-12-31T13:54:38.574Z",
+  "postCount": 18,
   "posts": [
+    {
+      "id": "11405",
+      "slug": "distribution-modeling-generative-model",
+      "title": "从分布建模的角度看生成模型",
+      "createdAt": "2025-12-31",
+      "day": "31",
+      "month": "Dec",
+      "categories": [
+        "人工智能"
+      ],
+      "tags": [
+        "生成模型",
+        "分布建模"
+      ],
+      "summary": [
+        {
+          "type": "p",
+          "html": "<strong>文章来源</strong>：<a href=\"https://zhuanlan.zhihu.com/p/1905427654582183119\">一图读懂生成式模型 (Generative Modeling) 的主要流派</a>"
+        },
+        {
+          "type": "p",
+          "html": "生成模型的终极目标，是去建模真实世界数据的复杂联合分布 $p_{\\text{data}}(x)$。一旦学到了这个分布，我们就能从中采样，生成“看起来像真的”新样本。"
+        }
+      ],
+      "link": "posts/distribution-modeling-generative-model.html",
+      "metaText": "2025-12-31 | 分类：人工智能 | 标签：生成模型,分布建模"
+    },
     {
       "id": "11403",
       "slug": "l1-advanced-mse",
