@@ -107,7 +107,7 @@ x_t &= \alpha_t x_{t-1} + \beta_t \epsilon_t \\
 \end{equation}$$
 
 至此，我们就得到了DDPM的前向公式$x_t=\sqrt{\bar{\alpha}_t}x_0+\sqrt{1-\bar{\alpha}_t}\bar{\epsilon}_t$，这个公式定义我们如何从输入的清晰图像$x_0$通过一步加噪就可以得到任意一个中间结果$x_t$，省去了扩散过程中的高斯噪声的采样的次数。
-而且，只要设计合理的$\bar{\alpha}_t$，使得在$T\to +\infty$时，$\bar{\alpha}_T\to 0$且$T\to 0$时，$\bar{\alpha}_T\to 1$，就可以保证扩散过程开始于清晰图像，结束于纯高斯噪声$\epsilon_T$。
+而且，只要设计合理的$\bar{\alpha}_t$，使得在$T\to +\infty$时，$\bar{\alpha}_T\to 0$且$T\to 0$时，$\bar{\alpha}_T\to 1$，就可以保证扩散过程开始于清晰图像$x_0$，结束于纯高斯噪声$\epsilon_T$。
 
 ## 去噪过程（反向过程）
 DDPM的目的不是为了给清晰图像加噪声，而是反过来，从纯高斯噪声出发，逐步生成与$x_0$属于同一分布的图像（长得像$x_0$的图像），即：$\epsilon_T \to x_T \to x_{T-1} \to \cdots \to x_1 \to x_0$。
@@ -338,3 +338,14 @@ for epoch in epochs:
         loss.backward()
 
 ```
+
+## 生成过程
+生成过程就是反向的扩散过程，即：$\epsilon_T = x_T \to x_{T-1} \to \cdots \to x_1 \to x_0$，每一步的生成公式如下：
+$$x_{t-1} = \frac{1}{\alpha_t}(x_t-\beta_t\epsilon_\theta(x_t, t)) \tag{31}
+$$
+
+为了增加生成过程的随机性，DDPM在每一步的生成公式中加入了一个噪声项$\sigma_t z$，即：
+$$x_{t-1} = \frac{1}{\alpha_t}(x_t-\beta_t\epsilon_\theta(x_t, t)) + \sigma_t z \tag{32}$$
+
+$\sigma_t$是一个可调节的超参数，$z\sim \mathcal{N}(0,I)$，一般可以设置$\sigma_t=\beta_t$，即正向和反向的噪声强度相同。
+
