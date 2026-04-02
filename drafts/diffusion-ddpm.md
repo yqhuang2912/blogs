@@ -26,6 +26,7 @@ $$\begin{equation}
 x_t = \alpha_t x_{t-1} + \beta_t \epsilon_t,\quad \alpha_t,\beta_t>0\, 并且 \, \alpha_t^2+\beta_t^2=1 \tag{1}
 \end{equation}$$
 
+<!-- more -->
 这里的$\alpha_t x_{t-1}$可以直观理解为第$t$步拆除之后剩余的楼体的部分，$\beta_t \epsilon_t$可以理解为拆楼得到的原材料。反复执行扩散过程，可以得到：
 $$
 \begin{align}
