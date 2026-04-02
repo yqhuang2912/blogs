@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-02T14:56:41.712Z",
+  "generatedAt": "2026-04-02T15:04:40.563Z",
   "postCount": 19,
   "posts": [
     {
@@ -24,6 +24,22 @@
         {
           "type": "figure",
           "html": "<figure><img src=\"../assets/11406/ddpm.png\" alt=\"DDPM示意图\">\n                  <figcaption>图1 DDPM示意图</figcaption></figure>"
+        },
+        {
+          "type": "p",
+          "html": "借鉴<a href=\"https://kexue.fm/archives/9119\">苏剑林拆楼建楼</a>的比喻，扩散模型包含“拆楼”和“建楼”两个相反的过程，拆楼是为了更好的建楼，核心的思想是从一堆材料出发去直接一步建成一个楼是比较困难的，但是如果我们有已经建好的楼，一步步将其拆除，将拆除过程中的每一对中间过程$(x_t,x_{t-1})$记下来，那么建楼的过程就被分解成了在上一步的基础上，添加被拆掉的那一部分，就可以恢复被拆之前的楼的结构，问题就变得简单了。"
+        },
+        {
+          "type": "ul",
+          "html": "<ul><li>前向过程就是将一个完整的楼$x_0$通过T步拆解，逐步变成原材料$x_T$的过程：\n                $x_0\\rightarrow x_1\\rightarrow x_2\\rightarrow x_3\\cdots \\rightarrow x_T$，中间的每一步都可以表示为$x_{t-1}\\rightarrow x_t: q(x_t|x_{t-1})$</li>\n                <li>反向过程就是从原材料$x_T$开始，一步步建楼，逐步建成完整的楼$x_0$的过程：\n                $x_T\\rightarrow \\cdots \\rightarrow x_3 \\rightarrow x_2 \\rightarrow x_1 \\rightarrow x_0$，中间的每一步都可以表示为$x_t \\rightarrow x_{t-1}:p_\\theta(x_{t-1}|x_t)$</li></ul>"
+        },
+        {
+          "type": "h2",
+          "html": "扩散过程（前向过程）"
+        },
+        {
+          "type": "p",
+          "html": "回到图像上来，DDPM的作者将“拆楼”的过程实现为逐步在一张清晰的图像$x_0$上加高斯噪声$\\epsilon_t$使其退化，这个过程也被称为扩散过程（Diffusion Process），在$T$步扩散之后，清晰图像$x_0$最终退化为纯高斯噪声$\\epsilon_T\\sim\\mathcal{N}(0,\\mathbf{I})$。退化的每一步可以表示为：\n                $$\\begin{equation}\n                x_t = \\alpha_t x_{t-1} + \\beta_t \\epsilon_t,\\quad \\alpha_t,\\beta_t&gt;0\\, 并且 \\, \\alpha_t^2+\\beta_t^2=1 \\tag{1}\n                \\end{equation}$$"
         }
       ],
       "link": "posts/diffusion-ddpm.html",
