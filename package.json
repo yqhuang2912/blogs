@@ -6,7 +6,9 @@
   "scripts": {
     "generate:posts": "node scripts/generate-post-manifest.js",
     "create:post": "node scripts/create-post-from-markdown.js",
-    "check": "node tests/security.test.js && node tests/ui.test.js && node scripts/check-site.js",
+    "post": "node scripts/manage-posts.js",
+    "posts:list": "node scripts/manage-posts.js --list",
+    "check": "node tests/security.test.js && node tests/ui.test.js && node tests/manager.test.js && node scripts/check-site.js",
     "build": "node scripts/build-site.js"
   },
   "engines": {
