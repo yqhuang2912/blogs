@@ -218,12 +218,19 @@ const SUMMARY_ALLOWED_TAGS = new Set([
 ]);
 let mathJaxReadyPromise;
 let mathResizeTimer;
-const HIGHLIGHT_CSS_URL = 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.css';
-const HIGHLIGHT_CSS_INTEGRITY = 'sha384-Uhn9VRzdRxBVYRT2aPFl8ECva7znqyZwWiqpE3v4GTBe8y2XrpwTWZtU1U5vujcN';
-const HIGHLIGHT_JS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js';
-const HIGHLIGHT_JS_INTEGRITY = 'sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp';
+const PRISM_RESOURCES = {
+    core: {
+        url: 'https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js',
+        integrity: 'sha384-Cn/s7dpCMIb2rgIjtCYcpcv3LPJjUciybJ5G/sGMK025lFiqdJ4pRgUEgIcolGuJ',
+    },
+    extensions: [
+        ['bash', 'https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-bash.min.js', 'sha384-9WmlN8ABpoFSSHvBGGjhvB3E/D8UkNB9HpLJjBQFC2VSQsM1odiQDv4NbEo+7l15'],
+        ['python', 'https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-python.min.js', 'sha384-WJdEkJKrbsqw0evQ4GB6mlsKe5cGTxBOw4KAEIa52ZLB7DDpliGkwdme/HMa5n1m'],
+        ['latex', 'https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-latex.min.js', 'sha384-0nsIVNQ4g9RGWsgDQrcaGu8y08audiWEfgtByjEnR6SqWp9MnaG28GHu7IB3xNQO'],
+        ['line-numbers', 'https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/line-numbers/prism-line-numbers.min.js', 'sha384-6QJu8apxMmB9TiPVWzYKF5pRgKcz7snO0/QU+MrWmgBLECQjoa6erxX2VQ5t41Jd'],
+    ],
+};
 let highlightReadyPromise;
-let highlightConfigured = false;
 let manifestFetchPromise = null;
 let cachedPostList = null;
 let mobileDrawerCloseHandler = null;
@@ -621,55 +628,27 @@ async function ensureHighlightResources() {
         return null;
     }
 
-    if (window.hljs && typeof window.hljs.highlightElement === 'function') {
-        return window.hljs;
+    if (window.Prism && typeof window.Prism.highlightElement === 'function') {
+        return window.Prism;
     }
 
     if (highlightReadyPromise) {
         return highlightReadyPromise;
     }
 
-    highlightReadyPromise = new Promise((resolve, reject) => {
-        const resolveIfReady = () => {
-            if (window.hljs && typeof window.hljs.highlightElement === 'function') {
-                resolve(window.hljs);
-            } else {
-                reject(new Error('Highlight.js failed to initialize'));
-            }
-        };
-
-        if (!document.querySelector('link[data-hljs="theme"]')) {
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = HIGHLIGHT_CSS_URL;
-            link.integrity = HIGHLIGHT_CSS_INTEGRITY;
-            link.crossOrigin = 'anonymous';
-            link.dataset.hljs = 'theme';
-            document.head.appendChild(link);
+    highlightReadyPromise = (async () => {
+        window.Prism = { manual: true };
+        await loadPrismScript('core', PRISM_RESOURCES.core.url, PRISM_RESOURCES.core.integrity);
+        await Promise.all(PRISM_RESOURCES.extensions.map(([name, url, integrity]) => (
+            loadPrismScript(name, url, integrity)
+        )));
+        if (!window.Prism || typeof window.Prism.highlightElement !== 'function') {
+            throw new Error('Prism failed to initialize');
         }
-
-        if (document.querySelector('script[data-hljs="library"]')) {
-            const existing = document.querySelector('script[data-hljs="library"]');
-            existing.addEventListener('load', resolveIfReady, { once: true });
-            existing.addEventListener('error', reject, { once: true });
-            return;
-        }
-
-        const script = document.createElement('script');
-        script.src = HIGHLIGHT_JS_URL;
-        script.integrity = HIGHLIGHT_JS_INTEGRITY;
-        script.crossOrigin = 'anonymous';
-        script.async = true;
-        script.defer = true;
-        script.dataset.hljs = 'library';
-        script.addEventListener('load', () => {
-            window.setTimeout(resolveIfReady, 0);
-        }, { once: true });
-        script.addEventListener('error', reject, { once: true });
-        document.head.appendChild(script);
-    })
+        return window.Prism;
+    })()
         .catch((error) => {
-            console.error('Highlight.js load failed', error);
+            console.error('Prism load failed', error);
             highlightReadyPromise = null;
             return null;
         });
@@ -678,21 +657,13 @@ async function ensureHighlightResources() {
 }
 
 async function highlightCodeBlocks(root) {
-    const hljs = await ensureHighlightResources();
-    if (!hljs) {
-        return;
-    }
-
-    if (!highlightConfigured) {
-        hljs.configure({ ignoreUnescapedHTML: true });
-        highlightConfigured = true;
-    }
-
     const container = root && typeof root.querySelectorAll === 'function' ? root : document;
     const codeElements = container.querySelectorAll('pre code, code.language-plaintext');
+    const prism = await ensureHighlightResources();
 
     codeElements.forEach((codeEl) => {
         if (codeEl.dataset.highlighted === 'true') {
+            ensureCodeLineNumbers(codeEl);
             return;
         }
 
@@ -702,9 +673,28 @@ async function highlightCodeBlocks(root) {
             codeEl.classList.add('language-plaintext');
         }
 
-        hljs.highlightElement(codeEl);
-        codeEl.dataset.highlighted = 'true';
+        codeEl.parentElement?.classList.add('line-numbers');
+        if (prism) {
+            prism.highlightElement(codeEl);
+            codeEl.dataset.highlighted = 'true';
+        }
+        ensureCodeLineNumbers(codeEl);
     });
+}
+
+function ensureCodeLineNumbers(codeEl) {
+    if (!codeEl || codeEl.querySelector('.line-numbers-rows')) {
+        return;
+    }
+    const source = codeEl.textContent || '';
+    const lineCount = Math.max(1, source.replace(/\n$/, '').split('\n').length);
+    const rows = document.createElement('span');
+    rows.className = 'line-numbers-rows';
+    rows.setAttribute('aria-hidden', 'true');
+    for (let index = 0; index < lineCount; index += 1) {
+        rows.appendChild(document.createElement('span'));
+    }
+    codeEl.appendChild(rows);
 }
 
 async function handleCodeCopyClick(event) {
@@ -1100,6 +1090,32 @@ function updateTagQueryParam(tag) {
     }
     url.searchParams.delete('page');
     window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+}
+
+function loadPrismScript(name, url, integrity) {
+    return new Promise((resolve, reject) => {
+        const selector = `script[data-prism-resource="${name}"]`;
+        const existing = document.querySelector(selector);
+        if (existing?.dataset.loaded === 'true') {
+            resolve();
+            return;
+        }
+
+        const script = existing || document.createElement('script');
+        script.addEventListener('load', () => {
+            script.dataset.loaded = 'true';
+            resolve();
+        }, { once: true });
+        script.addEventListener('error', () => reject(new Error(`Prism resource failed: ${name}`)), { once: true });
+        if (!existing) {
+            script.src = url;
+            script.integrity = integrity;
+            script.crossOrigin = 'anonymous';
+            script.async = true;
+            script.dataset.prismResource = name;
+            document.head.appendChild(script);
+        }
+    });
 }
 
 function resetIndexQueryParams() {
@@ -1835,6 +1851,29 @@ function fitDisplayMath(root = document) {
         math.style.transformOrigin = 'top left';
         math.style.marginBottom = `${-naturalHeight * (1 - scale)}px`;
         math.dataset.fitScale = scale.toFixed(4);
+    });
+
+    optimizeInlineMath(root);
+}
+
+function optimizeInlineMath(root = document) {
+    root.querySelectorAll('mjx-container:not([display="true"])').forEach((math) => {
+        const textContainer = math.closest('.post-content p, .post-content li');
+        if (!textContainer) {
+            return;
+        }
+        textContainer.classList.add('contains-inline-math');
+        math.classList.remove('inline-math-overflow');
+
+        // Measure the rendered formula itself. The inline container's scrollWidth
+        // can reflect its line box, which incorrectly promotes ordinary formulas
+        // to full-width blocks.
+        const formula = math.querySelector('mjx-math') || math.firstElementChild;
+        const availableWidth = textContainer.clientWidth;
+        const formulaWidth = formula?.getBoundingClientRect().width || 0;
+        if (availableWidth > 0 && formulaWidth > availableWidth + 1) {
+            math.classList.add('inline-math-overflow');
+        }
     });
 }
 

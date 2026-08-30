@@ -16,6 +16,36 @@ test('wide display math is measured, scaled proportionally, and recalculated on 
     assert.match(styles, /mjx-container\[display="true"\]/);
 });
 
+test('inline math avoids justified spacing and oversized formulas get a safe fallback', () => {
+    const inlineMathHandler = script.match(/function optimizeInlineMath[\s\S]*?\n}\n\nfunction initResponsiveMath/)?.[0] || '';
+    assert.match(script, /function optimizeInlineMath/);
+    assert.match(script, /contains-inline-math/);
+    assert.match(script, /formulaWidth > availableWidth/);
+    assert.doesNotMatch(inlineMathHandler, /math\.scrollWidth/);
+    assert.match(script, /inline-math-overflow/);
+    assert.match(styles, /\.post-content p\.contains-inline-math[\s\S]*text-align:\s*start/s);
+    assert.match(styles, /mjx-container\.inline-math-overflow[\s\S]*overflow-x:\s*auto/s);
+});
+
+test('article typography uses the Scientific Spaces font scale consistently', () => {
+    assert.match(styles, /--article-font-family:\s*Georgia,[^;]*"Microsoft YaHei"/);
+    assert.match(styles, /--article-font-size:\s*14px/);
+    assert.match(styles, /--article-line-height:\s*1\.8/);
+    assert.match(styles, /--article-aux-font-size:\s*12px/);
+    assert.match(styles, /\.single-post-content\s*\{[\s\S]*font-family:\s*var\(--article-font-family\)/s);
+    assert.match(styles, /blockquote\s*\{[\s\S]*font-size:\s*inherit/s);
+    assert.match(styles, /blockquote p[\s\S]*font-size:\s*inherit/s);
+    assert.doesNotMatch(styles, /blockquote(?:\.cite)?[^}]*font-size:\s*(?:13|15)px/s);
+    assert.match(styles, /figcaption\s*\{[\s\S]*font-size:\s*var\(--article-aux-font-size\)/s);
+});
+
+test('desktop layout keeps a 960px frame and a wider article reading column', () => {
+    assert.match(styles, /--layout-max-width:\s*960px/);
+    assert.match(styles, /\.sidebar\s*\{[\s\S]*flex:\s*0 0 33\.333%/s);
+    assert.match(styles, /\.sidebar\.single-sidebar\s*\{[\s\S]*flex:\s*0 0 30\.5%/s);
+    assert.match(styles, /@media \(max-width:\s*768px\)[\s\S]*\.main-content\s*\{[\s\S]*flex-direction:\s*column/s);
+});
+
 test('interactive elements retain visible keyboard focus', () => {
     assert.doesNotMatch(styles, /a:focus\s*\{[^}]*outline:\s*none/s);
     assert.match(styles, /a:focus-visible[\s\S]*outline:\s*2px/);
@@ -35,6 +65,20 @@ test('tables and code use accessible horizontal scroll regions on narrow screens
     assert.match(styles, /\.table-scroll\s*\{[\s\S]*overflow-x:\s*auto/s);
     assert.match(styles, /\.code-scroll\s*\{[\s\S]*overflow:\s*auto/s);
     assert.doesNotMatch(styles, /\.post-content table\s*\{[^}]*display:\s*block/s);
+});
+
+test('code blocks use one self-contained Scientific Spaces-style theme', () => {
+    assert.doesNotMatch(script, /HIGHLIGHT_JS_URL|window\.hljs|data-hljs/);
+    assert.match(script, /PRISM_RESOURCES[\s\S]*prismjs@1\.30\.0\/prism\.min\.js/);
+    assert.match(script, /integrity:\s*'sha384-/);
+    assert.match(script, /classList\.add\('line-numbers'\)/);
+    assert.match(script, /function ensureCodeLineNumbers/);
+    assert.match(script, /rows\.className\s*=\s*'line-numbers-rows'/);
+    assert.match(styles, /--code-bg:\s*#f5f2f0/);
+    assert.match(styles, /\.code-block\s*\{[\s\S]*--code-font-size:\s*var\(--article-font-size\)/s);
+    assert.match(styles, /\.token\.comment,[\s\S]*color:\s*#708090/s);
+    assert.match(styles, /\.token\.keyword\s*\{[\s\S]*color:\s*#07a/s);
+    assert.match(styles, /\.line-numbers \.line-numbers-rows[\s\S]*border-right:\s*1px solid #999/s);
 });
 
 test('images remain proportional and figures stay within content width', () => {
