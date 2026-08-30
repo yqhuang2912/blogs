@@ -7,8 +7,9 @@
     <div class="sidebar-section search" data-search-section>
         <h3>智能搜索</h3>
         <div class="search-box">
-            <input type="text" placeholder="请输入关键词" data-search-input>
-            <button type="button" data-search-button>🔍</button>
+            <label class="visually-hidden" for="post-search-input">搜索文章</label>
+            <input id="post-search-input" type="search" placeholder="请输入关键词" data-search-input>
+            <button type="button" data-search-button aria-label="搜索">🔍</button>
         </div>
         <!-- <p class="search-status" data-search-status hidden></p> -->
     </div>

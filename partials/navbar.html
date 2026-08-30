@@ -1,7 +1,7 @@
 <div class="top-bar">
     <div class="top-bar-container">
         <span class="slogan">慢下来，想明白</span>
-        <nav class="top-nav">
+        <nav class="top-nav" aria-label="外部链接">
             <a href="{{ROOT}}index.html">Home</a>
             <a href="https://scholar.google.com/citations?user=VmxnkI8AAAAJ&hl">Google Scholar</a>
             <a href="https://github.com/yqhuang2912">GitHub</a>
@@ -15,25 +15,28 @@
             <img class="logo-img" src="{{ROOT}}icons/logo.png" alt="慢变量"
                 onerror="this.onerror=null;this.src='{{ROOT}}icons/generative.png'">
         </div>
-        <nav class="header-cat-nav" data-category-nav>
+        <nav class="header-cat-nav" data-category-nav aria-label="文章分类">
             <a href="#" class="cat-item" data-category-placeholder><img class="icon-img" src="{{ROOT}}icons/all.png"
                     alt="加载分类"><span class="label">加载分类...</span></a>
         </nav>
-        <button type="button" class="mobile-menu-btn" data-mobile-menu>☰</button>
+        <button type="button" class="mobile-menu-btn" data-mobile-menu aria-label="打开菜单"
+            aria-controls="mobile-drawer" aria-expanded="false">☰</button>
     </div>
 </header>
 
-<div class="mobile-drawer" id="mobile-drawer" hidden>
+<div class="mobile-drawer" id="mobile-drawer" role="dialog" aria-modal="true" aria-labelledby="mobile-drawer-title"
+    tabindex="-1" hidden>
     <div class="drawer-header">
-        <div class="drawer-title">慢变量</div>
-        <button type="button" class="drawer-close" data-drawer-close>×</button>
+        <div class="drawer-title" id="mobile-drawer-title">慢变量</div>
+        <button type="button" class="drawer-close" data-drawer-close aria-label="关闭菜单">×</button>
     </div>
     <div class="drawer-content">
         <div class="drawer-section search" data-search-section>
             <h3>搜索</h3>
             <div class="search-box">
-                <input type="text" placeholder="请输入关键词" data-search-input>
-                <button type="button" data-search-button>🔍</button>
+                <label class="visually-hidden" for="drawer-search-input">搜索文章</label>
+                <input id="drawer-search-input" type="search" placeholder="请输入关键词" data-search-input>
+                <button type="button" data-search-button aria-label="搜索">🔍</button>
             </div>
         </div>
 

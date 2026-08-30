@@ -98,7 +98,7 @@ async function main() {
         if (options.mode === 'create') {
             id = await resolveId(options.id ?? frontmatter.id);
         } else {
-            id = String(options.id ?? frontmatter.id ?? existingEntry.id ?? '').trim();
+            id = normalizePostId(options.id ?? frontmatter.id ?? existingEntry.id);
             if (!id) {
                 throw new Error('Unable to determine post "id" for update. Add "id" to the front matter or pass --id.');
             }
@@ -109,7 +109,7 @@ async function main() {
         }
 
         const outputFileName = `${slug}.html`;
-        const outputPath = path.join(POSTS_DIR, outputFileName);
+        const outputPath = resolvePathInside(POSTS_DIR, outputFileName);
 
         if (options.mode === 'update' && existingEntry) {
             const slugConflict = manifestEntries.find((entry) => entry.slug === slug && entry.slug !== existingEntry.slug);
@@ -125,7 +125,7 @@ async function main() {
         let previousOutputPath = '';
         let slugChanged = false;
         if (options.mode === 'update' && existingEntry) {
-            previousOutputPath = path.join(POSTS_DIR, `${existingEntry.slug}.html`);
+            previousOutputPath = resolvePathInside(POSTS_DIR, `${normalizeSlug(existingEntry.slug)}.html`);
             slugChanged = existingEntry.slug !== slug;
             if (!slugChanged) {
                 const exists = await fileExists(previousOutputPath);
@@ -142,10 +142,10 @@ async function main() {
             }
         }
 
-        const targetAssetsDir = path.join(ASSETS_ROOT_DIR, id);
+        const targetAssetsDir = resolvePathInside(ASSETS_ROOT_DIR, id);
         if (options.mode === 'update') {
-            if (existingEntry && existingEntry.id && existingEntry.id !== id) {
-                await removeDirIfExists(path.join(ASSETS_ROOT_DIR, existingEntry.id));
+            if (existingEntry && existingEntry.id && normalizePostId(existingEntry.id) !== id) {
+                await removeDirIfExists(resolvePathInside(ASSETS_ROOT_DIR, normalizePostId(existingEntry.id)));
             }
             await removeDirIfExists(targetAssetsDir);
         }
@@ -172,6 +172,7 @@ async function main() {
         const metadataJson = JSON.stringify(metadata, null, 4);
         let bodyHtml = renderMarkdown(markdownBody, assetsMap);
         bodyHtml = rewriteInlineHtmlImages(bodyHtml, assetsMap);
+        bodyHtml = sanitizeRenderedHtml(bodyHtml);
         bodyHtml = wrapPostContentSections(bodyHtml);
         bodyHtml = normalizeCodeBlockWhitespace(bodyHtml);
         const metaHtml = buildMetaHtml(createdAt, categories, tags);
@@ -424,12 +425,13 @@ async function handleDelete(options) {
         slugCandidates,
     });
 
-    const resolvedSlug = entry ? entry.slug : (typeof options.slug === 'string' ? options.slug.trim() : '');
+    const resolvedSlugValue = entry ? entry.slug : options.slug;
+    const resolvedSlug = resolvedSlugValue ? normalizeSlug(resolvedSlugValue) : '';
     if (!resolvedSlug) {
         throw new Error('Delete mode requires a known post. Provide --slug or --id referring to an existing post.');
     }
 
-    const postPath = path.join(POSTS_DIR, `${resolvedSlug}.html`);
+    const postPath = resolvePathInside(POSTS_DIR, `${resolvedSlug}.html`);
     const exists = await fileExists(postPath);
     if (!exists) {
         throw new Error(`Post file not found at posts/${resolvedSlug}.html`);
@@ -440,7 +442,8 @@ async function handleDelete(options) {
 
     const assetId = entry ? entry.id : options.id;
     if (assetId) {
-        await removeDirIfExists(path.join(ASSETS_ROOT_DIR, String(assetId)), { label: `assets/${assetId}` });
+        const safeAssetId = normalizePostId(assetId);
+        await removeDirIfExists(resolvePathInside(ASSETS_ROOT_DIR, safeAssetId), { label: `assets/${safeAssetId}` });
     }
 }
 
@@ -463,9 +466,34 @@ function normalizeDate(value) {
     return date.toISOString().split('T')[0];
 }
 
+function normalizePostId(value) {
+    const id = String(value ?? '').trim();
+    if (!/^\d+$/.test(id)) {
+        throw new Error('Post "id" must contain digits only.');
+    }
+    return id;
+}
+
+function normalizeSlug(value) {
+    const slug = String(value ?? '').trim().toLowerCase();
+    if (!/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/.test(slug)) {
+        throw new Error('Post "slug" may contain only lowercase letters, digits, hyphens, and underscores.');
+    }
+    return slug;
+}
+
+function resolvePathInside(baseDir, ...segments) {
+    const base = path.resolve(baseDir);
+    const target = path.resolve(base, ...segments);
+    if (target === base || !target.startsWith(`${base}${path.sep}`)) {
+        throw new Error(`Refusing to access a path outside ${base}`);
+    }
+    return target;
+}
+
 async function resolveId(value) {
     if (value) {
-        return String(value).trim();
+        return normalizePostId(value);
     }
 
     const candidates = [];
@@ -502,14 +530,14 @@ async function resolveId(value) {
 
 async function resolveSlug({ slug, title, sourcePath, fallbackId }) {
     if (slug) {
-        return String(slug).trim();
+        return normalizeSlug(slug);
     }
 
     const candidates = [title, path.basename(sourcePath, path.extname(sourcePath)), fallbackId];
     for (const candidate of candidates) {
         const normalized = slugify(candidate);
         if (normalized) {
-            return normalized;
+            return normalizeSlug(normalized);
         }
     }
 
@@ -601,6 +629,81 @@ function renderMarkdown(markdown, assetsMap = new Map()) {
 
     const restored = restoreMathSegments(rendered, placeholders);
     return normalizeBlockquoteCite(normalizeMathBlocks(restored));
+}
+
+const CONTENT_ALLOWED_TAGS = new Set([
+    'a', 'blockquote', 'br', 'caption', 'code', 'div', 'em', 'figcaption', 'figure',
+    'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'img', 'li', 'ol', 'p', 'pre', 'section',
+    'span', 'strong', 'sub', 'sup', 'table', 'tbody', 'td', 'th', 'thead', 'tr', 'u', 'ul',
+]);
+const CONTENT_ALLOWED_ATTRIBUTES = new Set([
+    'alt', 'class', 'colspan', 'height', 'href', 'id', 'rowspan', 'src', 'title', 'width',
+]);
+
+function sanitizeRenderedHtml(html) {
+    const $ = cheerio.load(`<div id="__sanitize-root">${html}</div>`, { decodeEntities: false });
+    const root = $('#__sanitize-root');
+
+    root.find('script, style, iframe, object, embed, form, input, button, textarea, link, meta').remove();
+    root.find('*').each((_, element) => {
+        const node = $(element);
+        const tagName = String(element.name || '').toLowerCase();
+        if (!CONTENT_ALLOWED_TAGS.has(tagName)) {
+            node.replaceWith(node.contents());
+            return;
+        }
+
+        Object.keys(element.attribs || {}).forEach((attribute) => {
+            const name = attribute.toLowerCase();
+            if (!CONTENT_ALLOWED_ATTRIBUTES.has(name) && name !== 'style') {
+                node.removeAttr(attribute);
+            }
+        });
+
+        for (const attribute of ['href', 'src']) {
+            const value = node.attr(attribute);
+            if (value && !isSafeContentUrl(value, attribute === 'src')) {
+                node.removeAttr(attribute);
+            }
+        }
+
+        const style = node.attr('style');
+        if (style) {
+            const safeStyle = sanitizeInlineStyle(style);
+            if (safeStyle) {
+                node.attr('style', safeStyle);
+            } else {
+                node.removeAttr('style');
+            }
+        }
+
+        if (tagName === 'img') {
+            node.attr('loading', 'lazy');
+            node.attr('decoding', 'async');
+        }
+    });
+
+    return root.html();
+}
+
+function isSafeContentUrl(value, allowDataImage = false) {
+    const normalized = String(value).trim().replace(/[\u0000-\u0020]+/g, '');
+    if (!normalized) {
+        return false;
+    }
+    if (allowDataImage && /^data:image\/(?:png|gif|jpe?g|webp);base64,/i.test(normalized)) {
+        return true;
+    }
+    return /^(?:https?:|mailto:|#|\/\/|\/|\.\.?\/)/i.test(normalized)
+        || !/^[a-z][a-z0-9+.-]*:/i.test(normalized);
+}
+
+function sanitizeInlineStyle(style) {
+    return String(style)
+        .split(';')
+        .map((declaration) => declaration.trim())
+        .filter((declaration) => /^(?:color\s*:\s*(?:#[0-9a-f]{3,8}|[a-z]+)|border-bottom\s*:\s*[\w .#()%,-]+)$/i.test(declaration))
+        .join('; ');
 }
 
 function protectMathSegments(markdown) {
@@ -729,7 +832,7 @@ function buildMetaHtml(_createdAt, categories, tags) {
 }
 
 function buildPageHtml({ title, metadataJson, bodyHtml, day, month, metaHtml }) {
-    const metadataBlock = indentBlock(metadataJson, 8);
+    const metadataBlock = indentBlock(escapeJsonForHtml(metadataJson), 8);
     const contentBlock = indentBlock(bodyHtml, 16);
 
     return `<!DOCTYPE html>
@@ -759,7 +862,9 @@ ${metadataBlock}
             }
         };
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" id="MathJax-script"
+        integrity="sha384-Wuix6BuhrWbjDBs24bXrjf4ZQ5aFeFWBuKkFekO2t8xFU0iNaLQfp2K6/1Nxveei"
+        crossorigin="anonymous" async></script>
 </head>
 
 <body>
@@ -797,6 +902,15 @@ ${contentBlock}
 </body>
 
 </html>`;
+}
+
+function escapeJsonForHtml(json) {
+    return String(json)
+        .replace(/&/g, '\\u0026')
+        .replace(/</g, '\\u003c')
+        .replace(/>/g, '\\u003e')
+        .replace(/\u2028/g, '\\u2028')
+        .replace(/\u2029/g, '\\u2029');
 }
 
 function normalizeCodeBlockWhitespace(html) {
@@ -1056,7 +1170,7 @@ async function processMarkdownAssets({ markdown, markdownPath, postId }) {
 
     await fs.mkdir(ASSETS_ROOT_DIR, { recursive: true });
 
-    const postAssetsDir = path.join(ASSETS_ROOT_DIR, postId);
+    const postAssetsDir = resolvePathInside(ASSETS_ROOT_DIR, normalizePostId(postId));
     await assertAssetsDirectoryAvailable(postAssetsDir);
 
     const assetMap = new Map();
@@ -1289,4 +1403,14 @@ function printUsage() {
     console.log('  Delete: node scripts/create-post-from-markdown.js --mode delete --slug <slug> [--id <id>] [--no-manifest]');
 }
 
-main();
+module.exports = {
+    escapeJsonForHtml,
+    normalizePostId,
+    normalizeSlug,
+    resolvePathInside,
+    sanitizeRenderedHtml,
+};
+
+if (require.main === module) {
+    main();
+}

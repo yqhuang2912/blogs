@@ -92,17 +92,18 @@ function collectComponentData(element) {
 
 async function buildComponentMarkup(templateString, data, bodyContent, rootPrefix) {
     const titleText = data.TITLE || '';
-    const headingTag = (data.HEADING || 'h2').toLowerCase();
-    const wrapperClass = data.WRAPPER_CLASS || 'post-content-wrapper';
-    const metaClass = data.META_CLASS || 'post-meta';
+    const requestedHeading = (data.HEADING || 'h2').toLowerCase();
+    const headingTag = /^h[1-6]$/.test(requestedHeading) ? requestedHeading : 'h2';
+    const wrapperClass = sanitizeClassNames(data.WRAPPER_CLASS, 'post-content-wrapper');
+    const metaClass = sanitizeClassNames(data.META_CLASS, 'post-meta');
     const hasTitleClass = Object.prototype.hasOwnProperty.call(data, 'TITLE_CLASS');
-    const titleClass = hasTitleClass ? data.TITLE_CLASS : 'post-title';
+    const titleClass = sanitizeClassNames(hasTitleClass ? data.TITLE_CLASS : 'post-title', '');
     const link = data.LINK;
     const resolvedLink = resolveComponentLink(link, rootPrefix);
-    const linkOpen = resolvedLink ? `<a href="${resolvedLink}">` : '';
+    const linkOpen = resolvedLink ? `<a href="${escapeHtml(resolvedLink)}">` : '';
     const linkClose = resolvedLink ? '</a>' : '';
     const headingClassAttr = titleClass ? ` class="${titleClass}"` : '';
-    const titleElement = `<${headingTag}${headingClassAttr}>${linkOpen}${titleText}${linkClose}</${headingTag}>`;
+    const titleElement = `<${headingTag}${headingClassAttr}>${linkOpen}${escapeHtml(titleText)}${linkClose}</${headingTag}>`;
 
     const baseMap = {
         ROOT: rootPrefix,
@@ -144,10 +145,20 @@ function resolveComponentLink(link, rootPrefix) {
     if (!link) {
         return '';
     }
-    if (/^(?:[a-z]+:|\/\/|#)/i.test(link)) {
+    if (/^(?:https?:|mailto:|\/\/|#)/i.test(link)) {
         return link;
     }
+    if (/^[a-z][a-z0-9+.-]*:/i.test(link)) {
+        return '';
+    }
     return `${rootPrefix}${link}`;
+}
+
+function sanitizeClassNames(value, fallback) {
+    const names = String(value ?? '')
+        .split(/\s+/)
+        .filter((name) => /^[a-z0-9_-]+$/i.test(name));
+    return names.length ? names.join(' ') : fallback;
 }
 
 function fixPostMetaLinks(rootPrefix) {
@@ -203,37 +214,64 @@ const SUMMARY_ALLOWED_TAGS = new Set([
     'blockquote',
     'table',
     'figure',
+    'pre',
 ]);
 let mathJaxReadyPromise;
-const HIGHLIGHT_CSS_URL = 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/github.css';
+let mathResizeTimer;
+const HIGHLIGHT_CSS_URL = 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.css';
+const HIGHLIGHT_CSS_INTEGRITY = 'sha384-Uhn9VRzdRxBVYRT2aPFl8ECva7znqyZwWiqpE3v4GTBe8y2XrpwTWZtU1U5vujcN';
 const HIGHLIGHT_JS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js';
+const HIGHLIGHT_JS_INTEGRITY = 'sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp';
 let highlightReadyPromise;
 let highlightConfigured = false;
 let manifestFetchPromise = null;
 let cachedPostList = null;
+let mobileDrawerCloseHandler = null;
+let indexRenderVersion = 0;
+
+function getScrollBehavior() {
+    return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+}
 
 async function initIndexPage(rootPrefix) {
     const listContainer = document.querySelector('[data-post-list]');
     if (!listContainer) {
         return;
     }
+    const renderVersion = ++indexRenderVersion;
+    const isCurrentRender = () => renderVersion === indexRenderVersion;
 
     const paginationContainer = document.querySelector('[data-pagination]');
     setLoadingState(listContainer);
 
     try {
         const posts = await loadAndCachePosts(rootPrefix);
+        if (!isCurrentRender()) {
+            return;
+        }
         const searchQuery = getSearchQuery();
         const categoryFilter = getCategoryFilter();
         const tagFilter = getTagFilter();
 
         await initCategoryNav(rootPrefix, posts, categoryFilter);
+        if (!isCurrentRender()) {
+            return;
+        }
         await initTagCloud(rootPrefix, posts, tagFilter);
+        if (!isCurrentRender()) {
+            return;
+        }
         // Index page shows random posts in sidebar
         await initRandomPosts(rootPrefix, posts);
+        if (!isCurrentRender()) {
+            return;
+        }
 
         if (searchQuery) {
             await renderSearchResults(listContainer, paginationContainer, posts, searchQuery, rootPrefix);
+            if (!isCurrentRender()) {
+                return;
+            }
             await initTagCloud(rootPrefix, posts, tagFilter);
             await typesetMath(listContainer);
             return;
@@ -282,10 +320,17 @@ async function initIndexPage(rootPrefix) {
 
         renderPagination(paginationContainer, currentPage, totalPages);
         await renderComponents(rootPrefix);
+        if (!isCurrentRender()) {
+            return;
+        }
+        enhanceResponsiveTables(listContainer);
         enhanceCodeBlocks(listContainer);
         await highlightCodeBlocks(listContainer);
         await typesetMath(listContainer);
     } catch (error) {
+        if (!isCurrentRender()) {
+            return;
+        }
         console.error('Failed to load posts manifest', error);
         listContainer.innerHTML = '<p class="post-list-placeholder">文章加载失败，请稍后重试。</p>';
         if (paginationContainer) {
@@ -301,7 +346,7 @@ function setLoadingState(container) {
 
 async function fetchPostManifest(rootPrefix) {
     const manifestUrl = `${rootPrefix}posts/manifest.json`;
-    const response = await fetch(manifestUrl, { cache: 'no-store' });
+    const response = await fetch(manifestUrl);
     if (!response.ok) {
         throw new Error(`Failed to load manifest: ${manifestUrl}`);
     }
@@ -433,7 +478,52 @@ function buildSummaryHtml(summary, rootPrefix) {
         })
         .join('\n');
 
-    return rewriteSummaryAssetPaths(combined, rootPrefix);
+    return sanitizeSummaryMarkup(rewriteSummaryAssetPaths(combined, rootPrefix));
+}
+
+function sanitizeSummaryMarkup(html) {
+    const template = document.createElement('template');
+    template.innerHTML = html;
+    const allowedTags = new Set([
+        ...SUMMARY_ALLOWED_TAGS, 'a', 'br', 'caption', 'code', 'em', 'figcaption', 'hr',
+        'img', 'li', 'span', 'strong', 'sub', 'sup', 'tbody', 'td', 'th', 'thead', 'tr', 'u',
+    ]);
+    const allowedAttributes = new Set([
+        'alt', 'class', 'colspan', 'height', 'href', 'rowspan', 'src', 'title', 'width',
+    ]);
+
+    Array.from(template.content.querySelectorAll('*')).forEach((element) => {
+        const tag = element.tagName.toLowerCase();
+        if (!allowedTags.has(tag)) {
+            element.replaceWith(...element.childNodes);
+            return;
+        }
+        Array.from(element.attributes).forEach(({ name }) => {
+            if (!allowedAttributes.has(name.toLowerCase())) {
+                element.removeAttribute(name);
+            }
+        });
+        for (const attribute of ['href', 'src']) {
+            const value = element.getAttribute(attribute);
+            if (value && !isSafeBrowserUrl(value, attribute === 'src')) {
+                element.removeAttribute(attribute);
+            }
+        }
+        if (tag === 'img') {
+            element.loading = 'lazy';
+            element.decoding = 'async';
+        }
+    });
+    return template.innerHTML;
+}
+
+function isSafeBrowserUrl(value, allowDataImage = false) {
+    const normalized = String(value).trim().replace(/[\u0000-\u0020]+/g, '');
+    if (allowDataImage && /^data:image\/(?:png|gif|jpe?g|webp);base64,/i.test(normalized)) {
+        return true;
+    }
+    return /^(?:https?:|mailto:|#|\/\/|\/|\.\.?\/)/i.test(normalized)
+        || !/^[a-z][a-z0-9+.-]*:/i.test(normalized);
 }
 
 function normalizeLatexEscapes(html) {
@@ -492,6 +582,9 @@ function enhanceCodeBlocks(root) {
 
         const codeScroll = document.createElement('div');
         codeScroll.className = 'code-scroll';
+        codeScroll.tabIndex = 0;
+        codeScroll.setAttribute('role', 'region');
+        codeScroll.setAttribute('aria-label', '可横向滚动的代码');
 
         parent.insertBefore(wrapper, pre);
         pre.dataset.codeEnhanced = 'true';
@@ -500,6 +593,26 @@ function enhanceCodeBlocks(root) {
         codeBody.appendChild(codeScroll);
         wrapper.appendChild(copyButton);
         wrapper.appendChild(codeBody);
+    });
+}
+
+function enhanceResponsiveTables(root) {
+    if (typeof document === 'undefined') {
+        return;
+    }
+    const container = root && typeof root.querySelectorAll === 'function' ? root : document;
+    container.querySelectorAll('.post-content table').forEach((table) => {
+        if (table.parentElement?.classList.contains('table-scroll')) {
+            return;
+        }
+        const wrapper = document.createElement('div');
+        wrapper.className = 'table-scroll';
+        wrapper.tabIndex = 0;
+        wrapper.setAttribute('role', 'region');
+        const caption = table.querySelector('caption')?.textContent?.trim();
+        wrapper.setAttribute('aria-label', caption ? `表格：${caption}` : '可横向滚动的表格');
+        table.parentNode.insertBefore(wrapper, table);
+        wrapper.appendChild(table);
     });
 }
 
@@ -529,6 +642,8 @@ async function ensureHighlightResources() {
             const link = document.createElement('link');
             link.rel = 'stylesheet';
             link.href = HIGHLIGHT_CSS_URL;
+            link.integrity = HIGHLIGHT_CSS_INTEGRITY;
+            link.crossOrigin = 'anonymous';
             link.dataset.hljs = 'theme';
             document.head.appendChild(link);
         }
@@ -542,6 +657,8 @@ async function ensureHighlightResources() {
 
         const script = document.createElement('script');
         script.src = HIGHLIGHT_JS_URL;
+        script.integrity = HIGHLIGHT_JS_INTEGRITY;
+        script.crossOrigin = 'anonymous';
         script.async = true;
         script.defer = true;
         script.dataset.hljs = 'library';
@@ -985,6 +1102,15 @@ function updateTagQueryParam(tag) {
     window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
 }
 
+function resetIndexQueryParams() {
+    if (typeof window === 'undefined') {
+        return;
+    }
+    const url = new URL(window.location.href);
+    ['category', 'tag', 'search', 'page'].forEach((name) => url.searchParams.delete(name));
+    window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+}
+
 function buildIndexSearchUrl(rootPrefix, query) {
     const base = rootPrefix ? `${rootPrefix}index.html` : 'index.html';
     return `${base}?search=${encodeURIComponent(query)}`;
@@ -1035,6 +1161,7 @@ async function renderSearchResults(listContainer, paginationContainer, posts, qu
     });
 
     await renderComponents(rootPrefix);
+    enhanceResponsiveTables(listContainer);
     enhanceCodeBlocks(listContainer);
     await highlightCodeBlocks(listContainer);
     await initTagCloud(rootPrefix, posts, getTagFilter());
@@ -1136,6 +1263,7 @@ async function initCategoryNav(rootPrefix, postsArg, activeCategory) {
 
         if (isActive) {
             link.classList.add('active');
+            link.setAttribute('aria-current', 'page');
         }
 
         link.addEventListener('click', async (event) => {
@@ -1145,10 +1273,15 @@ async function initCategoryNav(rootPrefix, postsArg, activeCategory) {
             const targetUrl = buildCategoryHref(rootPrefix, value);
 
             if (listContainer) {
-                updateCategoryQueryParam(value);
-                updateSearchQueryParam('');
+                if (isAll) {
+                    window.location.assign(targetUrl);
+                    return;
+                } else {
+                    updateCategoryQueryParam(value);
+                    updateSearchQueryParam('');
+                }
                 await initIndexPage(rootPrefix);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                window.scrollTo({ top: 0, behavior: getScrollBehavior() });
             } else {
                 window.location.href = targetUrl;
             }
@@ -1157,7 +1290,8 @@ async function initCategoryNav(rootPrefix, postsArg, activeCategory) {
         nav.appendChild(link);
     };
 
-    appendEntry('', totalCount, !activeNormalized, true);
+    const isShowingAllPosts = !activeNormalized && !getTagFilter() && !getSearchQuery();
+    appendEntry('', totalCount, isShowingAllPosts, true);
 
     entries.forEach(({ name, count }) => {
         const normalizedName = normalizeCategoryValue(name);
@@ -1242,6 +1376,7 @@ async function initTagCloud(rootPrefix, postsArg, activeTag) {
 
             if (isActive) {
                 link.classList.add('active');
+                link.setAttribute('aria-current', 'page');
             }
 
             link.addEventListener('click', async (event) => {
@@ -1254,7 +1389,7 @@ async function initTagCloud(rootPrefix, postsArg, activeTag) {
                     updateSearchQueryParam('');
                     updateTagQueryParam(value);
                     await initIndexPage(rootPrefix);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    window.scrollTo({ top: 0, behavior: getScrollBehavior() });
                 } else {
                     window.location.href = targetUrl;
                 }
@@ -1449,18 +1584,14 @@ function initSidebarSearch(rootPrefix) {
         const performReset = async () => {
             if (!onIndexPage || resetting) {
                 setSearchStatus(statusEl, '');
-                updateCategoryQueryParam('');
-                updateSearchQueryParam('');
-                updateTagQueryParam('');
+                resetIndexQueryParams();
                 return;
             }
 
             resetting = true;
             try {
                 setSearchStatus(statusEl, '正在恢复列表…');
-                updateCategoryQueryParam('');
-                updateSearchQueryParam('');
-                updateTagQueryParam('');
+                resetIndexQueryParams();
                 await initIndexPage(rootPrefix);
                 await typesetMath(listContainer);
                 setSearchStatus(statusEl, '');
@@ -1659,6 +1790,7 @@ async function typesetMath(container) {
     if (typeof mathJax.typesetPromise === 'function') {
         try {
             await mathJax.typesetPromise(targets);
+            targets.forEach((target) => fitDisplayMath(target));
         } catch (error) {
             console.error('MathJax typeset failed', error);
         }
@@ -1667,9 +1799,50 @@ async function typesetMath(container) {
 
     if (mathJax.Hub && typeof mathJax.Hub.Queue === 'function') {
         targets.forEach((target) => {
-            mathJax.Hub.Queue(['Typeset', mathJax.Hub, target]);
+            mathJax.Hub.Queue(['Typeset', mathJax.Hub, target], () => fitDisplayMath(target));
         });
     }
+}
+
+function fitDisplayMath(root = document) {
+    if (!root || typeof root.querySelectorAll !== 'function') {
+        return;
+    }
+
+    root.querySelectorAll('mjx-container[display="true"]').forEach((math) => {
+        math.style.removeProperty('transform');
+        math.style.removeProperty('transform-origin');
+        math.style.removeProperty('width');
+        math.style.removeProperty('margin-bottom');
+        math.removeAttribute('data-fit-scale');
+
+        const parentWidth = math.parentElement?.clientWidth || 0;
+        const content = math.firstElementChild;
+        const mathWidth = Math.max(
+            math.scrollWidth,
+            math.getBoundingClientRect().width,
+            content?.scrollWidth || 0,
+            content?.getBoundingClientRect().width || 0,
+        );
+        if (!parentWidth || mathWidth <= parentWidth) {
+            return;
+        }
+
+        const scale = parentWidth / mathWidth;
+        const naturalHeight = math.getBoundingClientRect().height;
+        math.style.width = `${100 / scale}%`;
+        math.style.transform = `scale(${scale})`;
+        math.style.transformOrigin = 'top left';
+        math.style.marginBottom = `${-naturalHeight * (1 - scale)}px`;
+        math.dataset.fitScale = scale.toFixed(4);
+    });
+}
+
+function initResponsiveMath() {
+    window.addEventListener('resize', () => {
+        window.clearTimeout(mathResizeTimer);
+        mathResizeTimer = window.setTimeout(() => fitDisplayMath(document), 120);
+    });
 }
 
 function createEllipsis() {
@@ -1768,7 +1941,7 @@ function initSmoothScroll() {
             const target = document.querySelector(this.getAttribute('href'));
             if (target) {
                 e.preventDefault();
-                target.scrollIntoView({ behavior: 'smooth' });
+                target.scrollIntoView({ behavior: getScrollBehavior() });
             }
         });
     });
@@ -1777,6 +1950,8 @@ function initSmoothScroll() {
 function initBackToTop() {
     const backToTop = document.createElement('button');
     backToTop.className = 'back-to-top';
+    backToTop.type = 'button';
+    backToTop.setAttribute('aria-label', '返回顶部');
     backToTop.innerHTML = '↑';
     backToTop.style.cssText = `
         position: fixed;
@@ -1803,7 +1978,7 @@ function initBackToTop() {
     });
 
     backToTop.addEventListener('click', function () {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: getScrollBehavior() });
     });
 
     backToTop.addEventListener('mouseenter', function () {
@@ -1815,6 +1990,36 @@ function initBackToTop() {
             this.style.opacity = '0.7';
         }
     });
+}
+
+function initPdfDownload() {
+    const metadata = document.getElementById('post-metadata');
+    const postMeta = document.querySelector('.post > .post-header .post-meta');
+    if (!metadata || !postMeta) {
+        return;
+    }
+
+    let button = postMeta.querySelector('[data-download-pdf]');
+    if (!button) {
+        button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'download-pdf-btn';
+        button.dataset.downloadPdf = '';
+        button.setAttribute('aria-label', '将本文保存为 PDF');
+        button.textContent = '下载 PDF';
+        postMeta.appendChild(button);
+    }
+    if (button.dataset.pdfReady === 'true') {
+        return;
+    }
+    button.hidden = false;
+    button.dataset.pdfReady = 'true';
+    button.addEventListener('click', () => {
+        fitDisplayMath(document);
+        window.print();
+    });
+    window.addEventListener('beforeprint', () => fitDisplayMath(document));
+    window.addEventListener('afterprint', () => fitDisplayMath(document));
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1849,10 +2054,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const postList = document.querySelector('[data-post-list]');
+    enhanceResponsiveTables(postList || document.body);
     await typesetMath(postList || document.body);
     enhanceCodeBlocks(document.body);
     await highlightCodeBlocks(document.body);
     initContentOverview();
+    initResponsiveMath();
+    initPdfDownload();
     initSmoothScroll();
     initBackToTop();
     console.log('慢变量博客已加载完成！');
@@ -1913,11 +2121,16 @@ async function initCategoryList(rootPrefix, postsArg) {
             const targetUrl = buildCategoryHref(rootPrefix, value);
             const listContainer = document.querySelector('[data-post-list]');
             if (listContainer) {
-                updateCategoryQueryParam(value);
-                updateSearchQueryParam('');
+                if (!value) {
+                    window.location.assign(targetUrl);
+                    return;
+                } else {
+                    updateCategoryQueryParam(value);
+                    updateSearchQueryParam('');
+                }
                 await initIndexPage(rootPrefix);
                 closeMobileDrawer();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                window.scrollTo({ top: 0, behavior: getScrollBehavior() });
             } else {
                 window.location.href = targetUrl;
             }
@@ -1939,11 +2152,21 @@ function initMobileDrawer(rootPrefix) {
         return;
     }
 
+    let previouslyFocused = null;
+
+    const getFocusableElements = () => Array.from(drawer.querySelectorAll(
+        'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    )).filter((element) => !element.hasAttribute('hidden'));
+
     const open = () => {
+        previouslyFocused = document.activeElement;
         drawer.classList.add('open');
         drawer.removeAttribute('hidden');
         backdrop.removeAttribute('hidden');
         document.body.style.overflow = 'hidden';
+        btn.setAttribute('aria-expanded', 'true');
+        const focusable = getFocusableElements();
+        (focusable[0] || drawer).focus();
     };
 
     const close = () => {
@@ -1951,7 +2174,12 @@ function initMobileDrawer(rootPrefix) {
         drawer.setAttribute('hidden', '');
         backdrop.setAttribute('hidden', '');
         document.body.style.overflow = '';
+        btn.setAttribute('aria-expanded', 'false');
+        if (previouslyFocused && typeof previouslyFocused.focus === 'function') {
+            previouslyFocused.focus();
+        }
     };
+    mobileDrawerCloseHandler = close;
 
     btn.addEventListener('click', () => {
         open();
@@ -1962,12 +2190,41 @@ function initMobileDrawer(rootPrefix) {
     backdrop.addEventListener('click', () => {
         close();
     });
+    drawer.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            close();
+            return;
+        }
+        if (event.key !== 'Tab') {
+            return;
+        }
+        const focusable = getFocusableElements();
+        if (!focusable.length) {
+            event.preventDefault();
+            drawer.focus();
+            return;
+        }
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+        }
+    });
 
     initCategoryList(rootPrefix);
     initRecentPosts(rootPrefix);
 }
 
 function closeMobileDrawer() {
+    if (typeof mobileDrawerCloseHandler === 'function') {
+        mobileDrawerCloseHandler();
+        return;
+    }
     const drawer = document.getElementById('mobile-drawer');
     const backdrop = document.getElementById('mobile-drawer-backdrop');
     if (!drawer || !backdrop) {
@@ -1977,4 +2234,6 @@ function closeMobileDrawer() {
     drawer.setAttribute('hidden', '');
     backdrop.setAttribute('hidden', '');
     document.body.style.overflow = '';
+    const button = document.querySelector('[data-mobile-menu]');
+    button?.setAttribute('aria-expanded', 'false');
 }

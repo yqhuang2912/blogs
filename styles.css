@@ -62,8 +62,11 @@ a:active {
     text-decoration: underline;
 }
 
-a:focus {
-    outline: none;
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+    outline: 2px solid #f60;
+    outline-offset: 2px;
 }
 
 /* MathJax 数学公式样式 */
@@ -73,6 +76,12 @@ a:focus {
 .MathJax_SVG,
 .MathJax_MathML {
     color: blue;
+}
+
+mjx-container[display="true"] {
+    max-width: none;
+    overflow: visible;
+    will-change: transform;
 }
 
 
@@ -189,7 +198,7 @@ a:focus {
     height: 32px;
     border-radius: 4px;
     position: relative;
-    z-index: 1001;
+    z-index: 1;
 }
 
 /* 移除未使用的导航扩展样式 */
@@ -377,7 +386,8 @@ a:focus {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: var(--badge-height);
+    min-height: var(--badge-height);
+    height: auto;
 }
 
 .post-title {
@@ -408,6 +418,10 @@ a:focus {
     font-size: 12px;
     margin: 0;
     line-height: 19px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    column-gap: 4px;
 }
 
 /* 文章内容区域 */
@@ -588,8 +602,17 @@ a:focus {
 
 .code-scroll {
     overflow: auto;
+    max-width: 100%;
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
     background: transparent;
     padding: 0;
+}
+
+.code-scroll:focus-visible,
+.table-scroll:focus-visible {
+    outline: 2px solid #f60;
+    outline-offset: 2px;
 }
 
 .code-block pre {
@@ -735,42 +758,6 @@ a:focus {
     color: #d14;
 }
 
-code[class*="language-"],
-pre[class*="language-"] {}
-
-code[class*="language-"]::-moz-selection,
-pre[class*="language-"]::-moz-selection,
-code[class*="language-"] ::-moz-selection,
-pre[class*="language-"] ::-moz-selection {}
-
-code[class*="language-"]::selection,
-pre[class*="language-"]::selection,
-code[class*="language-"] ::selection,
-pre[class*="language-"] ::selection {}
-
-pre[class*="language-"] {}
-
-:not(pre)>code[class*="language-"],
-pre[class*="language-"] {}
-
-:not(pre)>code[class*="language-"] {}
-
-.line-highlight {}
-
-.line-highlight:before,
-.line-highlight[data-end]:after {}
-
-.line-highlight[data-end]:after {}
-
-.line-numbers .line-highlight:after,
-.line-numbers .line-highlight:before {}
-
-pre[class*="language-"] .line-numbers-rows {}
-
-pre[class*="language-"] .line-numbers-rows>span:before {}
-
-pre[class*="language-"] {}
-
 .code-block code {
     color: inherit;
 }
@@ -789,6 +776,28 @@ pre[class*="language-"] {}
     line-height: 1.3;
     color: blue;
     text-align: center;
+}
+
+.table-scroll {
+    width: 100%;
+    max-width: 100%;
+    margin: 18px 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+.post-content .table-scroll table {
+    width: max-content;
+    min-width: 0;
+    max-width: none;
+    margin: 0 auto;
+}
+
+.post-content .table-scroll th,
+.post-content .table-scroll td {
+    white-space: nowrap;
 }
 
 .single-post-content thead th,
@@ -1028,6 +1037,26 @@ pre[class*="language-"] {}
     font-size: 12px;
 }
 
+.download-pdf-btn {
+    margin-left: auto;
+    padding: 0 2px;
+    border: 0;
+    background: transparent;
+    color: #4183c4;
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.download-pdf-btn:hover {
+    color: #f60;
+    text-decoration: underline;
+}
+
+.download-pdf-btn:active {
+    transform: translateY(1px);
+}
+
 /* 移除未使用的 action-link 样式 */
 
 /* 单篇文章页面 */
@@ -1203,7 +1232,7 @@ pre[class*="language-"] {}
     font-weight: bold;
 }
 
-/* 侧边�?*/
+/* 侧边栏 */
 .sidebar {
     width: 33.333%;
     flex: 0 0 33.333%;
@@ -1294,7 +1323,7 @@ pre[class*="language-"] {}
     color: #c9302c;
 }
 
-/* 搜索�?*/
+/* 搜索框 */
 .search {
     background: linear-gradient(to bottom, #fffacd 0%, #fffef0 100%);
     border-color: #f0e68c;
@@ -1352,7 +1381,7 @@ pre[class*="language-"] {}
     line-height: 1.6;
 }
 
-/* 标签�?*/
+/* 标签 */
 .tags {
     background: linear-gradient(to bottom, #e8f9e8 0%, #f0faf0 100%);
     border-color: #c8e6c8;
@@ -1388,7 +1417,7 @@ pre[class*="language-"] {}
     color: #cc3000;
 }
 
-/* 最新文�?*/
+/* 最新文章 */
 .recent {
     background: linear-gradient(to bottom, #f0f8f0 0%, #f5faf5 100%);
     border-color: #d0e8d0;
@@ -1456,8 +1485,7 @@ pre[class*="language-"] {}
     text-decoration: none;
 }
 
-/* 响应式设�?*/
-@media (max-width: 1024px) {}
+/* 响应式设置 */
 
 @media (max-width: 768px) {
     .main-header {
@@ -1554,24 +1582,29 @@ pre[class*="language-"] {}
         font-size: 12px;
     }
 
-    .single-post-content pre,
-    .post pre {
-        font-size: 14px;
-    }
-
     .code-block {
+        --code-font-size: 13px;
         margin: 12px 0;
     }
 
-    .single-post-content table,
-    .post-content table {
-        display: block;
-        width: 100%;
-        overflow-x: auto;
+    .code-body {
+        padding: 9px 38px 9px 11px;
+    }
+
+    .code-copy-btn {
+        top: 3px;
+        right: 3px;
+        width: 28px;
+        height: 28px;
+    }
+
+    .table-scroll {
+        margin: 14px 0;
+        padding-bottom: 3px;
     }
 }
 
-/* 代码块样�?*/
+/* 代码块样式 */
 code {
     background-color: #f5f5f5;
     padding: 2px 5px;
@@ -1582,7 +1615,7 @@ code {
 }
 
 /* 图片样式 */
-/* 文章内图片容�?- 参�?kexue.fm 样式 */
+/* 文章内图片容器 - 参考 kexue.fm 样式 */
 .single-post-content figure,
 .post-content figure {
     margin: 20px auto;
@@ -1590,29 +1623,24 @@ code {
     background-color: transparent;
     border: 1px solid #e5e5e5;
     padding: 4px;
-    display: table;
+    display: block;
+    width: fit-content;
     max-width: 100%;
     box-sizing: border-box;
 }
 
-/* 文章内图�?*/
+/* 文章内图片 */
 .single-post-content img,
 .post-content img {
     max-width: 100%;
     height: auto;
+    object-fit: contain;
     display: block;
     margin: 0 auto;
     border: none;
-    cursor: pointer;
-    transition: opacity 0.2s ease;
 }
 
-.single-post-content img:hover,
-.post-content img:hover {
-    opacity: 0.85;
-}
-
-/* 图片标题/说明文字 - 位于边框内底�?*/
+/* 图片标题/说明文字 - 位于边框内底部 */
 .single-post-content figcaption,
 .post-content figcaption {
     margin-top: 4px;
@@ -1625,7 +1653,7 @@ code {
     border-top: 1px solid #e8e8e8;
 }
 
-/* 图片�?figure 元素内的样式 */
+/* 图片在 figure 元素内的样式 */
 .single-post-content figure img,
 .post-content figure img {
     display: block;
@@ -1636,7 +1664,7 @@ code {
 
 /* 移除未使用的图片 Lightbox 与动画样式 */
 
-/* 响应式图片调�?*/
+/* 响应式图片调整 */
 @media (max-width: 768px) {
     .top-nav {
         display: none;
@@ -1663,17 +1691,6 @@ code {
     max-width: 100%;
 }
 
-.image-lightbox-overlay img {
-    max-width: 95%;
-    max-height: 95%;
-}
-
-.image-lightbox-close {
-    top: 10px;
-    right: 15px;
-    font-size: 30px;
-}
-
 .single-post-content figcaption,
 .post-content figcaption {
     font-size: 11px;
@@ -1696,7 +1713,7 @@ code {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s ease;
-    z-index: 998;
+    z-index: 1000;
 }
 
 .mobile-drawer {
@@ -1706,12 +1723,13 @@ code {
     width: 86vw;
     max-width: 380px;
     height: 100vh;
+    height: 100dvh;
     background: linear-gradient(180deg, #3c4148 0%, #2f343a 100%);
     color: #f0f2f5;
     box-shadow: -6px 0 12px rgba(0, 0, 0, 0.28);
     transform: translateX(100%);
     transition: transform 0.25s ease;
-    z-index: 999;
+    z-index: 1001;
 }
 
 .mobile-drawer.open {
@@ -1748,6 +1766,7 @@ code {
     padding: 10px;
     overflow-y: auto;
     height: calc(100vh - 49px);
+    height: calc(100dvh - 49px);
 }
 
 .drawer-section {
@@ -1826,5 +1845,185 @@ code {
 
     .single-sidebar {
         display: none;
+    }
+}
+.visually-hidden {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
+
+@page {
+    size: A4 portrait;
+    margin: 14mm 13mm 16mm;
+}
+
+@media print {
+    html,
+    body {
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+        background: #fff;
+        color: #000;
+        font-size: 10.5pt;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+
+    .page-container,
+    .main-content {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 0;
+        overflow: visible;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        background: #fff;
+    }
+
+    .main-content {
+        display: block;
+    }
+
+    .wrapper {
+        width: 100%;
+        padding: 0;
+        border: 0;
+    }
+
+    .top-bar,
+    .main-header,
+    .sidebar,
+    .mobile-drawer,
+    .mobile-drawer-backdrop,
+    .footer,
+    .post-footer,
+    .download-pdf-btn,
+    .back-to-top,
+    .code-copy-btn {
+        display: none !important;
+    }
+
+    .post-header {
+        margin-bottom: 7mm;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        break-inside: avoid;
+    }
+
+    .post-date-badge {
+        display: none;
+    }
+
+    .post-header-content {
+        min-height: 0;
+    }
+
+    .post-title {
+        margin-bottom: 2mm;
+        color: #111;
+        font-size: 18pt;
+        line-height: 1.3;
+        white-space: normal;
+    }
+
+    .single-post-content {
+        color: #222;
+        font-size: 10.5pt;
+        line-height: 1.65;
+    }
+
+    .post-section h2,
+    .single-post-content h3,
+    .single-post-content h4,
+    .single-post-content h5 {
+        break-after: avoid;
+    }
+
+    .single-post-content p,
+    .single-post-content li {
+        orphans: 3;
+        widows: 3;
+    }
+
+    .single-post-content img,
+    .single-post-content figure,
+    .single-post-content table,
+    .single-post-content pre,
+    .single-post-content blockquote,
+    mjx-container[display="true"] {
+        max-width: 100%;
+        break-inside: avoid;
+    }
+
+    .single-post-content figure {
+        padding: 0;
+        border: 0;
+    }
+
+    .table-scroll,
+    .code-scroll,
+    .code-body {
+        width: 100%;
+        max-width: 100%;
+        overflow: visible;
+    }
+
+    .post-content .table-scroll table {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        font-size: 9pt;
+    }
+
+    .post-content .table-scroll th,
+    .post-content .table-scroll td {
+        padding: 2px 5px;
+        white-space: normal;
+    }
+
+    .code-body {
+        padding: 8px 10px;
+        border: 0;
+        box-shadow: none;
+    }
+
+    .code-block code {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        font-size: 8.5pt;
+    }
+
+    a,
+    a:visited {
+        color: #075f07;
+        text-decoration: underline;
     }
 }
