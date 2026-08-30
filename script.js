@@ -2006,7 +2006,7 @@ function initPdfDownload() {
         button.className = 'download-pdf-btn';
         button.dataset.downloadPdf = '';
         button.setAttribute('aria-label', '将本文保存为 PDF');
-        button.textContent = '下载 PDF';
+        button.title = '下载 PDF';
         postMeta.appendChild(button);
     }
     if (button.dataset.pdfReady === 'true') {

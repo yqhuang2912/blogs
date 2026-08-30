@@ -52,7 +52,10 @@ test('article pages expose print-to-PDF with an A4 content-only layout', () => {
     assert.match(styles, /@media print\s*\{/);
     assert.match(script, /button\.hidden\s*=\s*false/);
     assert.match(postHeaderTemplate, /data-download-pdf/);
+    assert.doesNotMatch(postHeaderTemplate, />下载 PDF<\/button>/);
     assert.match(styles, /\.download-pdf-btn\s*\{[\s\S]*margin-left:\s*auto/s);
+    assert.match(styles, /\.download-pdf-btn\s*\{[\s\S]*flex:\s*0 0 22px/s);
+    assert.match(styles, /\.download-pdf-btn\s*\{[\s\S]*background-image:\s*url/s);
     assert.match(styles, /\.download-pdf-btn[\s\S]*display:\s*none !important/s);
     assert.match(styles, /\.post-date-badge\s*\{[\s\S]*display:\s*none/s);
     assert.match(styles, /\.post-header\s*\{[\s\S]*background:\s*transparent/s);
